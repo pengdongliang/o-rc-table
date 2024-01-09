@@ -7,7 +7,7 @@ import { Classes } from './styles'
 
 const DefaultEmptyContent = React.memo(() => (
   <>
-    <img alt="empty-image" className="empty-image" src="//img.alicdn.com/tfs/TB1l1LcM3HqK1RjSZJnXXbNLpXa-50-50.svg" />
+    <img alt="empty" className="empty-image" src="//img.alicdn.com/tfs/TB1l1LcM3HqK1RjSZJnXXbNLpXa-50-50.svg" />
     <div className="empty-tips">
       没有符合查询条件的数据
       <br />
@@ -37,6 +37,7 @@ export function EmptyHtmlTable({
         <Colgroup descriptors={descriptors} />
         <tbody>
           <tr className={cx(Classes.tableRow, Classes.first, Classes.last, 'no-hover')} data-rowindex={0}>
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <td
               className={cx(Classes.tableCell, Classes.first, Classes.last)}
               colSpan={descriptors.length}

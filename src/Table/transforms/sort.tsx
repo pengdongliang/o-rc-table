@@ -161,6 +161,7 @@ export function makeSortTransform({
   return ({ dataSource, columns }) => {
     if (process.env.NODE_ENV !== 'production') {
       if (!hasAnySortableColumns(columns)) {
+        // eslint-disable-next-line no-console
         console.warn(
           '[ali-react-table] commonTransform.sort 缺少可排序的列，请通过 column.features.sortable 来指定哪些列可排序',
           columns
@@ -170,9 +171,9 @@ export function makeSortTransform({
 
     return { columns: processColumns(columns), dataSource: processDataSource(dataSource) }
 
-    function processDataSource(dataSource: any[]) {
+    function processDataSource(dataList: any[]) {
       if (keepDataSource) {
-        return dataSource
+        return dataList
       }
 
       const sortColumnsMap = new Map(
@@ -180,7 +181,7 @@ export function makeSortTransform({
           .filter((col) => col.features?.sortable != null)
           .map((col) => [col.code, col])
       )
-      return layeredSort(dataSource, (x, y) => {
+      return layeredSort(dataList, (x, y) => {
         for (const { code, order } of sorts) {
           const column = sortColumnsMap.get(code)
           // 如果 code 对应的 column 不可排序，我们跳过该 code
@@ -218,8 +219,8 @@ export function makeSortTransform({
       }
     }
 
-    function processColumns(columns: ArtColumn[]) {
-      return columns.map(dfs)
+    function processColumns(cols: ArtColumn[]) {
+      return cols.map(dfs)
 
       function dfs(col: ArtColumn): ArtColumn {
         const result = { ...col }

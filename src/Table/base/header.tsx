@@ -40,7 +40,7 @@ function filterNestedCenter(centerNested: ArtColumn[], hoz: HorizontalRenderRang
 
     const filtered: IndexedCol[] = []
 
-    for (const col of cols) {
+    cols.forEach((col) => {
       const colIndex = startColIndex + leafCount
       if (isLeafNode(col)) {
         leafCount += 1
@@ -54,7 +54,7 @@ function filterNestedCenter(centerNested: ArtColumn[], hoz: HorizontalRenderRang
           filtered.push({ colIndex, col, children: dfsRes.filtered })
         }
       }
-    }
+    })
 
     return { filtered, leafCount }
   }

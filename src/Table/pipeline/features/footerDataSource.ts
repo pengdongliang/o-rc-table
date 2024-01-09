@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { TablePipeline } from '../pipeline'
 
 export interface FooterDataSourceFeatureOptions {

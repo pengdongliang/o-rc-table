@@ -3,7 +3,7 @@ import { always } from '../../utils/others'
 import { DrillNode } from './interfaces'
 import simpleEncode from './simpleEncode'
 
-export interface BuildDrillTreeOptions<T extends DrillNode> {
+export interface BuildDrillTreeOptions {
   /** 是否生成顶层的「总计」节点，默认不生成 */
   includeTopWrapper?: boolean
 
@@ -31,7 +31,7 @@ export default function buildDrillTree(
     includeTopWrapper = false,
     isExpand = always(true),
     enforceExpandTotalNode = true,
-  }: BuildDrillTreeOptions<DrillNode> = {}
+  }: BuildDrillTreeOptions = {}
 ): DrillNode[] {
   const emptyPath: string[] = []
   const totalKey = encode(emptyPath)
@@ -76,7 +76,7 @@ export default function buildDrillTree(
 
   function dfs(slice: any[], path: string[]): DrillNode[] {
     const depth = path.length
-    const array: DrillNode[] = []
+    const list: DrillNode[] = []
     const code = codes[depth]
     const groups = groupBy(slice, (row) => row[code])
     for (const groupKey of Object.keys(groups)) {
@@ -87,7 +87,7 @@ export default function buildDrillTree(
         value: groupKey,
         path: path.slice(),
       }
-      array.push(node)
+      list.push(node)
 
       const group = groups[groupKey]
       if (group.length > 0 && depth < codes.length - 1) {
@@ -101,6 +101,6 @@ export default function buildDrillTree(
       path.pop()
     }
 
-    return array
+    return list
   }
 }

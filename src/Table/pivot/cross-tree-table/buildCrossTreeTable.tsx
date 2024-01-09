@@ -105,6 +105,7 @@ export default function buildCrossTreeTable(
           if (standardIsLeafNode(node)) {
             result.push(getDataColumn(node, ctx.depth))
           } else {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars
             const { key, value, children, ...others } = node
             result.push({
               ...others,
@@ -124,25 +125,26 @@ export default function buildCrossTreeTable(
         const leftNode = row.node
         return options.getValue(leftNode, topNode, leftDepth, topDepth)
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars
       const { key, value, children, ...others } = topNode
       return {
         ...others,
         getValue: columnGetValue,
         name: value,
         children: null,
-        render(value: any, row: CrossTreeTableRenderRow) {
+        render(val: any, row: CrossTreeTableRenderRow) {
           if (options.render) {
             const leftDepth = row.nodes.length - 1
             const leftNode = row.node
-            return options.render(value, leftNode, topNode, leftDepth, topDepth)
+            return options.render(val, leftNode, topNode, leftDepth, topDepth)
           }
-          return value
+          return val
         },
-        getCellProps(value, row: CrossTreeTableRenderRow) {
+        getCellProps(val, row: CrossTreeTableRenderRow) {
           if (options.getCellProps) {
             const leftDepth = row.nodes.length - 1
             const leftNode = row.node
-            return options.getCellProps(value, leftNode, topNode, leftDepth, topDepth)
+            return options.getCellProps(val, leftNode, topNode, leftDepth, topDepth)
           }
         },
       }
@@ -168,10 +170,10 @@ export default function buildCrossTreeTable(
             nodes: [...ctx.nodes, node],
           })
         } else {
-          const nodes = [...ctx.nodes, node]
+          const items = [...ctx.nodes, node]
           ctx.nodes.push(node)
           const children = dfs(node.children, ctx)
-          result.push({ [ROW_KEY]: node.key, node, nodes, children })
+          result.push({ [ROW_KEY]: node.key, node, nodes: items, children })
           ctx.nodes.pop()
         }
       }

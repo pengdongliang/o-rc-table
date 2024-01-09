@@ -4,7 +4,10 @@ order: 201
 ---
 
 ```jsx
-() => {
+import React from "react";
+import { Table, useTablePipeline, features } from "o-rc-table";
+
+export default () => {
   const columns = [
     { code: 'No', name: '序号', width: 60, align: 'center' },
     { code: 'order', name: '单据号', width: 200 },

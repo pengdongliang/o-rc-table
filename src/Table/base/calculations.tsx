@@ -40,10 +40,11 @@ function processColumns(columns: ArtColumn[], defaultColumnWidth: number) {
     columns = []
   }
 
-  function dfs(columns: ArtColumn[]): ArtColumn[] {
+  function dfs(dfsColumns: ArtColumn[]): ArtColumn[] {
     const result: ArtColumn[] = []
 
-    for (let column of columns) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (let column of dfsColumns) {
       if (column.width == null) {
         if (defaultColumnWidth != null) {
           column = { ...column, width: defaultColumnWidth }
@@ -76,6 +77,7 @@ function processColumns(columns: ArtColumn[], defaultColumnWidth: number) {
 export function getLeftNestedLockCount(columns: ArtColumn[]) {
   let nestedCount = 0
 
+  // eslint-disable-next-line no-restricted-syntax
   for (const col of columns) {
     if (isLock(col)) {
       nestedCount += 1
@@ -252,6 +254,7 @@ export function calculateRenderInfo(table: BaseTable): RenderInfo {
 
   const stickyRightMap = new Map<number, number>()
   let stickyRight = 0
+
   for (let i = 0; i < rightFlatCount; i++) {
     stickyRightMap.set(fullFlatCount - 1 - i, stickyRight)
     stickyRight += flat.full[fullFlatCount - 1 - i].width

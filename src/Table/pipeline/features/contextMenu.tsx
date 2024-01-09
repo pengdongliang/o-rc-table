@@ -50,9 +50,9 @@ export function contextMenu(opts: ContextMenuFeatureOptions = {}) {
       popupParent.appendChild(ePopupDiv)
 
       let popupHidden = false
-      const eventList = ['mousedown', 'contextmenu']
+      const eventList: (keyof GlobalEventHandlersEventMap)[] = ['mousedown', 'contextmenu']
 
-      const hidePopup = (event?: MouseEvent) => {
+      const hidePopup: any = (event?: MouseEvent) => {
         if (isEventFromCurrentPopup(event, ePopupDiv) || popupHidden) {
           return
         }
@@ -63,6 +63,8 @@ export function contextMenu(opts: ContextMenuFeatureOptions = {}) {
         })
       }
 
+      /** TODO React 17的用法, 18的用法不一样 */
+      // eslint-disable-next-line react/no-deprecated
       ReactDOM.render(menu, ePopupDiv, () => {
         setTimeout(() => {
           eventList.forEach((eventType) => {
@@ -226,7 +228,7 @@ function MenuItem(props) {
     typeof action === 'function' && action()
   }
 
-  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleMouseEnter = () => {
     if (disabled) {
       return
     }
@@ -236,7 +238,7 @@ function MenuItem(props) {
     }
   }
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleMouseLeave = () => {
     if (disabled) {
       return
     }
@@ -264,6 +266,7 @@ function MenuItem(props) {
 class MenuHelper {
   hidePopup: () => void
 
+  // eslint-disable-next-line no-useless-constructor
   constructor() {}
 
   init = (hidePopup) => {

@@ -1,7 +1,9 @@
-export { default as buildCrossTable, BuildCrossTableOptions } from './buildCrossTable'
+export type { BuildCrossTableOptions } from './buildCrossTable'
+export { default as buildCrossTable } from './buildCrossTable'
 export { ROW_KEY } from './constants'
-export { default as CrossTable, CrossTableProps } from './cross-table'
-export {
+export type { CrossTableProps } from './cross-table'
+export { default as CrossTable } from './cross-table'
+export type {
   CrossTableIndicator,
   CrossTableLeftMetaColumn,
   CrossTreeNode,

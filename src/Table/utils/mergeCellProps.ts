@@ -2,6 +2,7 @@ import cx from 'classnames'
 
 import { CellProps } from '../interfaces'
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function composeEventHandler(handler1: Function, handler2: Function) {
   return (...args: any) => {
     // 先执行原有的事件回调函数

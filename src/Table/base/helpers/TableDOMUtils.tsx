@@ -135,7 +135,7 @@ export class TableDOMHelper {
     e = e instanceof Array ? e[0] : e
     const curCell = e?.currentTarget
     const curRow = getParentNode(curCell, 'TR')
-    const curRowSpan = parseInt(e.currentTarget.getAttribute('rowspan')) || 1
+    const curRowSpan = parseInt(e.currentTarget.getAttribute('rowspan'), 10) || 1
     const rows = getParentNode(curCell, 'TABLE')?.rows
     return Array.from(rows).slice(curRow.rowIndex, curRow.rowIndex + curRowSpan)
   }

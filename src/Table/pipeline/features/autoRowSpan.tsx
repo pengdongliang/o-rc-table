@@ -60,7 +60,7 @@ export function autoRowSpan() {
 
         return {
           ...col,
-          getSpanRect(value: any, row: any, rowIndex: number) {
+          getSpanRect(_value: any, _row: any, rowIndex: number) {
             return spanRects[rowIndex]
           },
         }

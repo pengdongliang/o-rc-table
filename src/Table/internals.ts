@@ -11,7 +11,7 @@ function safeGetValue(column: ArtColumn, record: any, rowIndex: number) {
   return record[column.code]
 }
 
-function safeGetRowKey(primaryKey: string | ((record: any) => string), record: any, rowIndex: number): string {
+function safeGetRowKey(primaryKey: string | ((data: any) => string), record: any, rowIndex: number): string {
   let key
   if (typeof primaryKey === 'string') {
     key = record[primaryKey]

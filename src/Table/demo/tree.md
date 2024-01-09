@@ -1,13 +1,16 @@
 ---
 title: 树形数据展示
 order: 221
-date: 2021-04-06
 ---
+
 让表格支持树形数据的展示，当数据中有 children 字段时会自动展示为树形表格。可以通过设置 indentSize 以控制每一层的缩进宽度。
 
 [参数传送门](#treeMode)
 ```jsx
-() => {
+import React from "react";
+import { Table, useTablePipeline, features, collectNodes, isLeafNode } from "o-rc-table";
+
+export default () => {
   function renderOptions () {
     return (
       <div style={{display: 'flex'}}>
@@ -85,7 +88,7 @@ date: 2021-04-06
     { code: 'guide', name: '当地导游', width: 160 },
     { lock: true, name: '操作', render: renderOptions, width: 200 }
   ]
-  const [openKeys, onChangeOpenKeys] = useState(['4', '4-2'])
+  const [openKeys, onChangeOpenKeys] = React.useState(['4', '4-2'])
   const pipeline = useTablePipeline({ })
     .input({ dataSource: dataSource, columns: columns })
     .primaryKey('id')

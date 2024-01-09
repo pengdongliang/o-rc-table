@@ -65,7 +65,7 @@ export default function Loading({
           </div>
         </div>
       )}
-      <LoadingContentWrapper visible={visible} children={children} />
+      <LoadingContentWrapper visible={visible}>{children}</LoadingContentWrapper>
     </div>
   )
 }

@@ -25,7 +25,6 @@ interface FilterProps {
   setFilterModel: DefaultFilterPanelProps['setFilterModel']
   filterModel: DefaultFilterPanelProps['filterModel']
   setFilter: CustomeFilterPanelProps['setFilter']
-  onClick?: (e: React.MouseEvent) => any
   stopClickEventPropagation?: boolean
   stopESCKeyDownEventPropagation?: boolean
   hideFilterPopupHeader?: boolean
@@ -71,7 +70,7 @@ function Panel({
     zIndex: 1050,
   }
 
-  const handleFilterPanelResize = (resize) => {
+  const handleFilterPanelResize = () => {
     setPosition(calculatePopupRelative(ele, popupParent, _getPanelOffset(ele, hideFilterPopupHeader)))
   }
 
@@ -80,6 +79,7 @@ function Panel({
     return () => {
       resizeObserver && resizeObserver.disconnect()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -141,7 +141,11 @@ function Filter({
     )
   }
 
-  const handleIconClick = (e) => {
+  const handleIconClick = (e: {
+    currentTarget: { contains: (arg0: HTMLElement) => any }
+    target: HTMLElement
+    stopPropagation: () => void
+  }) => {
     // 只有当icon区域点击会触发面板展开
     // 防止 createPortal 区域的点击触发该事件
     if (e.currentTarget.contains(e.target as HTMLElement)) {
@@ -151,7 +155,12 @@ function Filter({
       e.stopPropagation()
     }
   }
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: {
+    keyCode: number
+    currentTarget: { contains: (arg0: HTMLElement) => any }
+    target: HTMLElement
+    stopPropagation: () => void
+  }) => {
     if (e.keyCode === KeyCode.ESC) {
       if (e.currentTarget.contains(e.target as HTMLElement)) {
         setShowPanel(false)

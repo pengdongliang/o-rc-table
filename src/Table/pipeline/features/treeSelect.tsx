@@ -106,10 +106,10 @@ export function treeSelect(opts: TreeSelectFeatureOptions) {
       align: 'center',
       title: opts.rootKey != null ? makeCheckbox(opts.rootKey, true) : undefined,
       ...opts.checkboxColumn,
-      render(value, record) {
+      render(_val, record) {
         return makeCheckbox(record[primaryKey], false, record)
       },
-      getCellProps(value: any, row: any): CellProps {
+      getCellProps(_val: any, row: any): CellProps {
         const rowKey = row[primaryKey]
         if (clickArea !== 'cell') {
           return

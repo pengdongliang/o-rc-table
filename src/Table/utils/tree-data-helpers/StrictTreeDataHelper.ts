@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { AbstractTreeNode } from '../../interfaces'
 import isLeafNode from '../isLeafNode'
 import { arrayUtils } from '../others'

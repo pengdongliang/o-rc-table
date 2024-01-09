@@ -59,38 +59,38 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
     } else {
       const rightNestedLockCount = getLeftNestedLockCount(columns.slice().reverse())
       const spliceIndex = columns.length - rightNestedLockCount
-      const fillColumns = {
+      const newFillColumns = {
         name: '',
         code: FILL_COLUMN_CODE,
         width,
         features: {
           resizeable: false,
         },
-        getCellProps: (value: any, record: any, rowIndex: number) => {
+        getCellProps: () => {
           return {
             className: Classes.emptyColCell,
           }
         },
       }
-      columns.splice(spliceIndex || columns.length, 0, fillColumns)
+      columns.splice(spliceIndex || columns.length, 0, newFillColumns)
     }
     pipeline.columns(columns)
   }
 
   return pipeline
 
-  function findFlexColumns(pipeline: TablePipeline) {
+  function findFlexColumns(findPipeline: TablePipeline) {
     const result = new Map([[FLEX_COLUMN_COUNT, 0]])
-    dfs(pipeline.getColumns(), result)
+    dfs(findPipeline.getColumns(), result)
     return result
-    function dfs(columns: ArtColumn[], result: Map<any, any>) {
+    function dfs(columns: ArtColumn[], newResult: Map<any, any>) {
       columns.forEach((col) => {
         if (isLeafNode(col)) {
-          if (isValidFlexColumn(col, pipeline)) {
-            result.set(FLEX_COLUMN_COUNT, result.get(FLEX_COLUMN_COUNT) + col.features.flex)
+          if (isValidFlexColumn(col, findPipeline)) {
+            newResult.set(FLEX_COLUMN_COUNT, newResult.get(FLEX_COLUMN_COUNT) + col.features.flex)
           }
         } else {
-          dfs(col.children, result)
+          dfs(col.children, newResult)
         }
       })
     }

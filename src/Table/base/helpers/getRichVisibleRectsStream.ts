@@ -71,6 +71,7 @@ function getRelativeLayoutRect(
   let deltaY = 0
 
   let elem = target
+  // eslint-disable-next-line eqeqeq
   while (elem != null && elem != base) {
     deltaY += elem.offsetTop
     deltaX += elem.offsetLeft
@@ -113,6 +114,7 @@ function listOffsetParents(target: Element | Window) {
   const result: Array<Element | Window> = []
 
   let elem = target
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     if (isWindow(elem)) {
       break
@@ -179,7 +181,7 @@ export function getRichVisibleRectsStream(
     op.distinctUntilChanged(shallowEqual),
     op.tap((structure) => {
       if (virtualDebugLabel) {
-        console.log(
+        console.info(
           `%c[ali-react-table STRUCTURE ${virtualDebugLabel}]`,
           'color: #4f9052; font-weight: bold',
           '\ntarget:',
@@ -217,7 +219,7 @@ export function getRichVisibleRectsStream(
     }),
     op.tap((rects) => {
       if (virtualDebugLabel) {
-        console.log(
+        console.info(
           `%c[ali-react-table RECTS ${virtualDebugLabel}]`,
           'color: #4f9052; font-weight: bold',
           '\noffsetY:',

@@ -49,15 +49,16 @@ interface PositionType {
   x: number
   y: number
 }
-export interface FilterPanel {
+export interface FilterPanelProps {
   onClose: () => any
   position: PositionType
   style?: CSSProperties
   filterIcon: ReactNode
   children?: ReactNode
+  hideFilterPopupHeader?: boolean
 }
 
-function FilterPanel({ style, children, position, filterIcon, onClose, hideFilterPopupHeader }) {
+function FilterPanel({ style, children, position, filterIcon, onClose, hideFilterPopupHeader }: FilterPanelProps) {
   const [perfectPosition, setPerfectPosition] = useState(position)
   const [visible, setVisible] = useState(false)
   const ref = React.useRef<HTMLDivElement>(null)

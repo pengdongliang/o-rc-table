@@ -2,34 +2,38 @@
 title: 可编辑表格
 order: 502
 ---
+
 带单元格编辑功能的表格, 具体逻辑可以根据实际场景定制
+
 ```jsx
-() => {
+import React from "react";
+import { Table, useTablePipeline, features } from "o-rc-table";
+
+export default () => {
   const initDataSource = [
-    {"No":1,"order":"AP-202009-00001","from":"陕西环宇科技","to":"深圳环球科技","amount":"26,800.00","balance":"5,200.00"},
-    {"No":2,"order":"AP-202009-00002","from":"陕西环宇科技","to":"深圳环球科技","amount":"236,800.00","balance":"1,500.00"},
-    {"No":3,"order":"AP-202009-00003","from":"陕西环宇科技","to":"深圳环球科技","amount":"246,800.00","balance":"5,300.00"},
-    {"No":4,"order":"AP-202009-00004","from":"陕西环宇科技","to":"深圳环球科技","amount":"216,800.00","balance":"5,400.00"},
-    {"No":5,"order":"AP-202009-00005","from":"陕西环宇科技","to":"深圳环球科技","amount":"236,800.00","balance":"1,500.00"}
+    {id: "1", "No":1,"order":"HK-FDF-24785-01","from":"11111111","to":"2222222","amount":"29400.00","balance":"1000.00"},
+    {id: "2", "No":2,"order":"HK-FDF-24785-01","from":"11111111","to":"2222222","amount":"239400.00","balance":"5000.00"},
+    {id: "3", "No":3,"order":"HK-FDF-24785-02","from":"11111111","to":"2222222","amount":"249400.00","balance":"3000.00"},
+    {id: "4", "No":4,"order":"AP-202009-00003","from":"11111111","to":"2222222","amount":"219400.00","balance":"4000.00"},
+    {id: "5", "No":5,"order":"AP-202009-00004","from":"11111111","to":"2222222","amount":"239400.00","balance":"5000.00"}
   ]
 
   const initColumns = [
-    { code: 'No', name: '序号', width: 60, align: 'center'},
-    { code: 'order', name: '单据号', width: 200, editable: true },
-    { code: 'from', name: '来户', width: 200, editable: true  },
-    { code: 'to', name: '往户', width: 200 , editable: true },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right'},
-    { code: 'balance', name: '应收余额', width: 100, align: 'right'}
+    { code: 'No', name: '序号', width: 60, align: 'center' },
+    { code: 'order', name: '单据号', width: 200 },
+    { code: 'from', name: '来户', width: 200 },
+    { code: 'to', name: '往户', width: 200 },
+    { code: 'amount', name: '应付金额', width: 100, align: 'right' },
+    { code: 'balance', name: '应收余额', width: 100, align: 'right' }
   ]
 
-const [dataSource,setDataSource] = useState(initDataSource)
-const [activeCell, setActiveCell] = useState({ row: -1, col: -1 });
+  const [dataSource, setDataSource] = React.useState(initDataSource)
+  const [activeCell, setActiveCell] = React.useState({ row: -1, col: -1 });
 
- const getCellProps = (col) => (value, record, rowIndex) => {
+  const getCellProps = (col) => (value, record, rowIndex) => {
     return {
-      style: {
-      },
-      onClick (event) {
+      style: {},
+      onClick(event) {
         const { row: preRow, col: preCol } = activeCell
         if (preRow !== rowIndex || preCol !== col) {
           setActiveCell({ row: rowIndex, col })
@@ -39,11 +43,11 @@ const [activeCell, setActiveCell] = useState({ row: -1, col: -1 });
   };
 
   const style = {
-      width:'100%',
-      height:'30px',
-      padding: '2px 10px',
-      border: '1px solid #cccccc',
-      borderRadius:'2px'
+    width: '100%',
+    height: '30px',
+    padding: '2px 10px',
+    border: '1px solid #cccccc',
+    borderRadius: '2px'
   }
 
   const Editor = ({ value, colIndex, rowIndex }) => {
@@ -58,14 +62,14 @@ const [activeCell, setActiveCell] = useState({ row: -1, col: -1 });
     const onBlur = () => {
       const code = initColumns[colIndex].code
       const newData = [...dataSource]
-      newData.splice(rowIndex,1,{ ...dataSource[rowIndex],[code]:cellValue })
+      newData.splice(rowIndex, 1, { ...dataSource[rowIndex], [code]: cellValue })
       setDataSource(newData)
-      setActiveCell({ row: -1, col:-1 })
+      setActiveCell({ row: -1, col: -1 })
     };
 
     return (
       <input
-        style={{...style, fontSize: 12}}
+        style={{ ...style, fontSize: 12 }}
         value={cellValue}
         autoFocus
         onChange={onChange}
@@ -75,26 +79,26 @@ const [activeCell, setActiveCell] = useState({ row: -1, col: -1 });
   };
 
   const transAction = (col, colIndex) => {
-      col.getCellProps = getCellProps(colIndex);
-      if (!col.editable) {
-          return col
-      }
-      col.render = (value, record, rowIndex) => {
+    col.getCellProps = getCellProps(colIndex);
+    if (!col.editable) {
+      return col
+    }
+    col.render = (value, record, rowIndex) => {
       if (activeCell.row === rowIndex && activeCell.col === colIndex) {
-          return  <Editor
-                colIndex={colIndex}
-                rowIndex={rowIndex}
-                value={value}
-              />
+        return <Editor
+          colIndex={colIndex}
+          rowIndex={rowIndex}
+          value={value}
+        />
       } else {
-          return <div style={{...style, display: 'flex' , 'alignItems': 'center'}}>{value}</div>;
+        return <div style={{ ...style, display: 'flex', 'alignItems': 'center' }}>{value}</div>;
       }
-      };
-      return col;
+    };
+    return col;
   };
-const columns = initColumns.map(transAction)
+  const columns = initColumns.map(transAction)
 
-const pipeline = useTablePipeline().input({ dataSource: dataSource, columns: columns })
-return <Table {...pipeline.getProps()}  />
+  const pipeline = useTablePipeline().input({ dataSource: dataSource, columns: columns })
+  return <Table {...pipeline.getProps()} />
 }
 ```

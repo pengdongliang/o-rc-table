@@ -18,7 +18,7 @@ function proto(baseRecord: any, ensureArray: boolean | 'auto' = 'auto') {
       if (isProtoFactory(base)) {
         result[key] = base(result[key])
       } else {
-        result[key] = result[key] ?? base
+        result[key] ??= base
       }
     })
     return result
@@ -36,7 +36,6 @@ function proto(baseRecord: any, ensureArray: boolean | 'auto' = 'auto') {
     return process(arg)
   }
 
-  // @ts-ignore
   factory[factorySymbol] = true
 
   factory.extends = (extRecord: any) => {

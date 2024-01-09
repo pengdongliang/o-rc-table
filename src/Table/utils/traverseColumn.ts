@@ -23,11 +23,11 @@ export default function traverseColumn(
   return ({ columns, dataSource }) => {
     return { dataSource, columns: dfs(columns, 0).result }
 
-    function dfs(columns: ArtColumn[], parentStartColIndex: number): { flatColCount: number; result: ArtColumn[] } {
+    function dfs(cols: ArtColumn[], parentStartColIndex: number): { flatColCount: number; result: ArtColumn[] } {
       let flatColCount = 0
       const result: ArtColumn[] = []
 
-      for (const col of columns) {
+      for (const col of cols) {
         const startColIndex = parentStartColIndex + flatColCount
 
         let unNormalized

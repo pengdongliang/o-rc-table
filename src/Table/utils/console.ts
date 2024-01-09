@@ -4,12 +4,14 @@ function isOutput() {
 
 function log(...msg) {
   if (isOutput()) {
+    // eslint-disable-next-line no-console
     console.log('[ocloud-table]', ...msg)
   }
 }
 
 function warn(...msg) {
   if (isOutput()) {
+    // eslint-disable-next-line no-console
     console.warn('[ocloud-table]', ...msg)
   }
 }
@@ -20,6 +22,7 @@ function error(...msg) {
 
 function table(...msg) {
   if (isOutput()) {
+    // eslint-disable-next-line no-console
     console.table('[ocloud-table]', ...msg)
   }
 }

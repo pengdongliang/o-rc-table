@@ -28,6 +28,7 @@ export const arrayUtils = {
 } as const
 
 export function always<T>(value: T) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return (...args: any[]) => value
 }
 
@@ -36,6 +37,7 @@ interface treeItem {
   code?: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function findByTree<T extends treeItem, U>(array: T[], condition: (item: T, index: number) => boolean): T {
   let index = 0
   const len = array.length

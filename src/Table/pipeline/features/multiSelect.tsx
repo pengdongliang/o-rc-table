@@ -103,12 +103,12 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
         <Checkbox
           checked={isAllChecked}
           indeterminate={!isAllChecked && isAnyChecked}
-          onChange={(_: any) => {
-            const allKeys = pipeline.getFeatureOptions(allEnableKeys)
+          onChange={() => {
+            const keys = pipeline.getFeatureOptions(allEnableKeys)
             if (isAllChecked) {
-              onChange(arrayUtils.diff(value, allKeys), '', allKeys, 'uncheck-all')
+              onChange(arrayUtils.diff(value, keys), '', keys, 'uncheck-all')
             } else {
-              onChange(arrayUtils.merge(value, allKeys), '', allKeys, 'check-all')
+              onChange(arrayUtils.merge(value, keys), '', keys, 'check-all')
             }
           }}
         />
@@ -120,10 +120,10 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
         width: 50,
         align: 'center',
         ...opts.checkboxColumn,
-        getCellProps(value: any, row: any, rowIndex: number): CellProps {
+        getCellProps(val: any, row: any, rowIndex: number): CellProps {
           const rowKey = internals.safeGetRowKey(primaryKey, row, rowIndex)
           let checkboxCellProps = {}
-          const preCellProps = opts.checkboxColumn?.getCellProps?.(value, row, rowIndex)
+          const preCellProps = opts.checkboxColumn?.getCellProps?.(val, row, rowIndex)
           const fullRowsSet = pipeline.getFeatureOptions(fullRowsSetKey) || new Set<string>()
           const selectValueSet = pipeline.getFeatureOptions(selectValueSetKey) || new Set<string>()
           if (fullRowsSet.has(rowKey) && clickArea === 'cell') {
@@ -237,11 +237,11 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       let batchKeys = [key]
 
       if (batch && lastKey) {
-        const allKeys = pipeline.getFeatureOptions(allEnableKeys)
-        const lastIdx = allKeys.indexOf(lastKey)
-        const cntIdx = allKeys.indexOf(key)
+        const keys = pipeline.getFeatureOptions(allEnableKeys)
+        const lastIdx = keys.indexOf(lastKey)
+        const cntIdx = keys.indexOf(key)
         const [start, end] = lastIdx < cntIdx ? [lastIdx, cntIdx] : [cntIdx, lastIdx]
-        batchKeys = allKeys.slice(start, end + 1)
+        batchKeys = keys.slice(start, end + 1)
       }
 
       if (prevChecked) {

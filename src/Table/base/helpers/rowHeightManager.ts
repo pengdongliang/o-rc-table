@@ -50,7 +50,7 @@ export function makeRowHeightManager(initRowCount: number, estimatedRowHeight: n
     }
 
     /** 获取虚拟滚动在 开始位置上的信息 */
-    function getStart(offset: number) {
+    function getStart(startOffset: number) {
       if (cache.length === 0) {
         return { topIndex: 0, topBlank: 0 }
       }
@@ -59,7 +59,7 @@ export function makeRowHeightManager(initRowCount: number, estimatedRowHeight: n
       let topBlank = 0
       while (topIndex < cache.length) {
         const h = cache[topIndex]
-        if (topBlank + h >= offset) {
+        if (topBlank + h >= startOffset) {
           break
         }
         topBlank += h
@@ -84,12 +84,12 @@ export function makeRowHeightManager(initRowCount: number, estimatedRowHeight: n
     /** 获取虚拟滚动 在结束位置上的信息 */
     function getEnd(endOffset: number, startInfo: Pick<VerticalRenderRange, 'topIndex' | 'topBlank'>) {
       let bottomIndex = startInfo.topIndex
-      let offset = startInfo.topBlank
-      while (bottomIndex < rowCount && offset < endOffset) {
-        offset += cache[bottomIndex]
+      let topBlankOffset = startInfo.topBlank
+      while (bottomIndex < rowCount && topBlankOffset < endOffset) {
+        topBlankOffset += cache[bottomIndex]
         bottomIndex += 1
       }
-      const bottomBlank = getEstimatedTotalSize(rowCount) - offset
+      const bottomBlank = getEstimatedTotalSize(rowCount) - topBlankOffset
       return overscanDownwards(bottomIndex, bottomBlank)
     }
 
@@ -106,8 +106,8 @@ export function makeRowHeightManager(initRowCount: number, estimatedRowHeight: n
       }
     }
 
-    function getEstimatedTotalSize(rowCount: number) {
-      return sum(cache) + (rowCount - cache.length) * estimatedRowHeight
+    function getEstimatedTotalSize(totalRowCount: number) {
+      return sum(cache) + (totalRowCount - cache.length) * estimatedRowHeight
     }
 
     function setRowCount(count: number) {

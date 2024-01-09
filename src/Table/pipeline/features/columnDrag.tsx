@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { ArtColumn, CellProps } from '../../interfaces'
 import { collectNodes, isLeafNode, isSelectColumn, makeRecursiveMapper, mergeCellProps } from '../../utils'
 import { TablePipeline } from '../pipeline'

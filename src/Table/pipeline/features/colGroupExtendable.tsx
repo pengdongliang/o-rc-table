@@ -9,8 +9,8 @@ import { makeRecursiveMapper } from '../../utils'
 import { TablePipeline } from '../pipeline'
 
 export interface ColGroupExtendOption {
-  onChangeExtendStatus?({}: any, {}: any): void
-  extendStatus?: {}
+  onChangeExtendStatus?(curState: any, changedValue: any): void
+  extendStatus?: Record<string, any>
   extendIcon?: ReactNode | ((extendStatus: boolean) => ReactNode)
 }
 
@@ -40,11 +40,11 @@ const ExpandIcon = ({ style, className, size, isExtend }: ExpandProps) => {
 export const colGroupExtendable =
   (opts: ColGroupExtendOption = {}) =>
   (pipeline: TablePipeline) => {
-    const columns = pipeline.getColumns()
+    const newColumns = pipeline.getColumns()
     const curState = opts.extendStatus ?? pipeline.getStateAtKey(stateKey) ?? {}
     const processColumns = (columns: ArtColumn[]) => {
       // 当组合列可伸缩，且处于收缩状态时，只渲染一个子列，其他不渲染
-      const toggle = (col) => {
+      const toggle = (col: ArtColumn) => {
         // 对应的 col 进行状态切换
         const changedValue = { [col.code]: !curState[col.code] }
         curState[col.code] = !curState[col.code]
@@ -95,6 +95,6 @@ export const colGroupExtendable =
         return col
       })(columns)
     }
-    pipeline.columns(processColumns(columns))
+    pipeline.columns(processColumns(newColumns))
     return pipeline
   }

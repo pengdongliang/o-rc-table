@@ -8,11 +8,11 @@ import isLeafNode from './isLeafNode'
  * * `leaf-only` 忽略内部节点，只收集叶子节点
  * */
 export default function collectNodes<T extends AbstractTreeNode>(
-  nodes: T[],
+  items: T[],
   order: 'pre' | 'post' | 'leaf-only' = 'pre'
 ) {
   const result: T[] = []
-  dfs(nodes)
+  dfs(items)
   return result
 
   function dfs(nodes: T[]) {

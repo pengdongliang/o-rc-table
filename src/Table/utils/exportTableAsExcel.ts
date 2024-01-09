@@ -49,7 +49,7 @@ function move({ c, r }: CellAddress, dx: number, dy: number): CellAddress {
 }
 
 function sanitizeCellDatum(value: any): XlsxCellDatum {
-  if (value === Infinity || value === -Infinity || (typeof value === 'number' && isNaN(value))) {
+  if (value === Infinity || value === -Infinity || (typeof value === 'number' && Number.isNaN(value))) {
     return null
   }
   return value
@@ -65,9 +65,9 @@ export default function exportTableAsExcel(
   const sheet = xlsxPackage.utils.aoa_to_sheet([])
   const topHeaderHeight = getTreeDepth(columns) + 1
 
-  const origin = { c: 0, r: 0 }
-  addTopHeaders(origin)
-  addDataPart(move(origin, 0, topHeaderHeight))
+  const position = { c: 0, r: 0 }
+  addTopHeaders(position)
+  addDataPart(move(position, 0, topHeaderHeight))
 
   xlsxPackage.writeFile(
     {

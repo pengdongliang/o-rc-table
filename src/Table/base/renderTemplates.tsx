@@ -295,6 +295,7 @@ function RowDetail(props: RowDetailOptions) {
   const detailRef = useRef(null)
   const { row, rowIndex, domHelper, renderDetail } = props
   const { artTable } = domHelper
+
   useEffect(() => {
     const selector = (position: string) => {
       return `.${position} .${Classes.tableRow}[data-rowindex="${rowIndex}"]`
@@ -309,6 +310,7 @@ function RowDetail(props: RowDetailOptions) {
       targetRowLeft && (targetRowLeft.style.height = `${itemRect.height}px`)
       targetRowRight && (targetRowRight.style.height = `${itemRect.height}px`)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

@@ -1,5 +1,4 @@
 import cx from 'classnames'
-import React from 'react'
 import { noop } from 'rxjs'
 import styled from 'styled-components'
 
@@ -27,7 +26,7 @@ const ExpandSpan = styled.span`
   }
 `
 
-type ConvertOptions<T extends CrossTreeNode = CrossTreeNode> = {
+type ConvertOptions = {
   /** 需要在子节点处附加的 指标节点 */
   indicators?: CrossTableIndicator[]
 
@@ -71,7 +70,7 @@ export function convertDrillTreeToCrossTree<T extends CrossTreeNode = CrossTreeN
     expandKeys,
     onChangeExpandKeys = noop,
     supportsExpand,
-  }: ConvertOptions<T> = {}
+  }: ConvertOptions = {}
 ): T[] {
   const totalKey = encode([])
   if (supportsExpand && expandKeys == null) {
@@ -130,7 +129,6 @@ export function convertDrillTreeToCrossTree<T extends CrossTreeNode = CrossTreeN
           crossTreeNode.children = dfs(node.children, depth + 1)
         } else if (expandKeySet.has(node.key)) {
           // 展开的父节点
-          // @ts-ignore
           crossTreeNode.title = (
             <ExpandSpan
               onClick={() => {

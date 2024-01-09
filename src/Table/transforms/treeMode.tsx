@@ -89,11 +89,11 @@ export function makeTreeModeTransform({
       return result
     }
 
-    function processColumns(columns: ArtColumn[]) {
-      if (columns.length === 0) {
-        return columns
+    function processColumns(cols: ArtColumn[]) {
+      if (cols.length === 0) {
+        return cols
       }
-      const [firstCol, ...others] = columns
+      const [firstCol, ...others] = cols
 
       const render = (value: any, record: any, recordIndex: number) => {
         const content = internals.safeRender(firstCol, record, recordIndex)

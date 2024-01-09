@@ -58,8 +58,8 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
       width: 50,
       align: 'center',
       ...opts.radioColumn,
-      getCellProps(value: any, row: any, rowIndex: number): CellProps {
-        const preCellProps = opts.radioColumn?.getCellProps?.(value, row, rowIndex)
+      getCellProps(val: any, row: any, rowIndex: number): CellProps {
+        const preCellProps = opts.radioColumn?.getCellProps?.(val, row, rowIndex)
         if (clickArea === 'cell') {
           const rowKey = internals.safeGetRowKey(primaryKey, row, rowIndex)
           const disabled = isDisabled(row, rowIndex)

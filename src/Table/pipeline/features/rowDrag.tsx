@@ -1,3 +1,4 @@
+/* eslint-disable */
 import cx from 'classnames'
 import React from 'react'
 import { fromEvent } from 'rxjs'
@@ -50,12 +51,12 @@ const defaultRowDragColumn: ArtColumn = {
   title: '',
   width: 40,
   align: 'center',
-  getCellProps(value: any, row: any, rowIndex: number): CellProps {
+  getCellProps(): CellProps {
     return {
       className: cx(Classes.rowDragCell),
     }
   },
-  render(value: any, row: any, rowIndex: number) {
+  render() {
     return (
       <svg
         viewBox="0 0 1024 1024"

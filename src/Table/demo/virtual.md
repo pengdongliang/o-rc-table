@@ -9,22 +9,27 @@ order: 33
 
 <br/>
 
-
-
 ```jsx 
-function () {
+import React from "react";
+import { Table, useTablePipeline, features } from "o-rc-table";
+
+export default () => {
 
   const data = React.useMemo(() => (
     Array.from(Array(100000)).map((item, index) => (
       {
-        "id": index, 
-        "No":index,
-        "order":"AP-202009-0000"+index,"from":"陕西环宇科技","to":"深圳环球科技","amount":"26,800.00","balance":"5,200.00"
+        "id": index,
+        "No": index,
+        "order": "HK-FDF-24785-0" + index,
+        "from": "11111111",
+        "to": "2222222",
+        "amount": "29400.00",
+        "balance": "1000.00"
       }
     ))
   ), [])
 
-  const baseColumns = [  
+  const baseColumns = [
     { code: 'order', name: '单据号', width: 200 },
     { code: 'from', name: '来户', width: 200 },
     { code: 'to', name: '往户', width: 200 },
@@ -33,19 +38,19 @@ function () {
   ]
   const columns = React.useMemo(() => (
     Array.from(Array(10)).reduce((acc, cur, index) => (
-      acc.concat(baseColumns.map(item=>{
-        return {...item, name: item.name + index}
+      acc.concat(baseColumns.map(item => {
+        return { ...item, name: item.name + index }
       }))
-    ),[{ code: 'No', name: '序号', width: 60, align: 'center', lock: true }])
-  ),[])
+    ), [{ code: 'No', name: '序号', width: 60, align: 'center', lock: true }])
+  ), [])
 
   return (
-      <Table
+    <Table
       style={{ height: 600, width: 800, overflow: 'auto' }}
       isLoading={false}
       dataSource={data}
       columns={columns}
-      />
+    />
   )
 }
 ```

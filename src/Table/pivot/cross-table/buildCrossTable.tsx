@@ -57,6 +57,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
       const leftPartColumns: CrossTableLeftColumn[] = []
       for (let index = 0; index < leftHeaderWidth; index++) {
         const metaCol = leftMetaColumns[index] ?? ({} as CrossTableLeftMetaColumn)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { getCellProps, render, ...staticMetaColConfig } = metaCol
         leftPartColumns.push({
           columnType: 'left',
@@ -74,7 +75,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
         metaCol: CrossTableLeftMetaColumn,
         colIndex: number
       ): ArtColumn['getCellProps'] {
-        return (_value: any, row: CrossTableRenderRow, rowIndex: number) => {
+        return (_value: any, row: CrossTableRenderRow) => {
           const node = row.nodes[colIndex]
           return metaCol.getCellProps?.(node, colIndex)
         }
@@ -87,15 +88,15 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
         return (_value: any, row: CrossTableRenderRow) => row.rects[colIndex]
       }
 
-      function leftHeaderGetValueFactory(metaCol: CrossTableLeftMetaColumn, colIndex: number) {
-        return (row: CrossTableRenderRow, rowIndex: number) => {
+      function leftHeaderGetValueFactory(_metaCol: CrossTableLeftMetaColumn, colIndex: number) {
+        return (row: CrossTableRenderRow) => {
           const node = row.nodes[colIndex]
           return node.value
         }
       }
 
       function leftHeaderRenderFactory(metaCol: CrossTableLeftMetaColumn, colIndex: number) {
-        return (v: any, row: CrossTableRenderRow, rowIndex: number) => {
+        return (v: any, row: CrossTableRenderRow) => {
           const node = row.nodes[colIndex]
           if (metaCol.render) {
             return metaCol.render(node, colIndex)
@@ -127,6 +128,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
             // 叶子节点
             result.push(getDataColumn(node, ctx.depth))
           } else {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { key, value, children, ...others } = node
             // 强制展开的节点
             result.push({
@@ -150,6 +152,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
         const leftNode = row.nodes[leftDepth]
         return options.getValue(leftNode, topNode, leftDepth, topDepth)
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { key, value, children, ...others } = topNode
       return {
         columnType: 'data',
@@ -157,19 +160,19 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
         getValue: columnGetValue,
         name: value,
         children: null,
-        render(value: any, row: CrossTableRenderRow) {
+        render(val: any, row: CrossTableRenderRow) {
           if (options.render) {
             const leftDepth = row.nodes.length - 1
             const leftNode = row.nodes[leftDepth]
-            return options.render(value, leftNode, topNode, leftDepth, topDepth)
+            return options.render(val, leftNode, topNode, leftDepth, topDepth)
           }
-          return value
+          return val
         },
-        getCellProps(value, row: CrossTableRenderRow) {
+        getCellProps(val, row: CrossTableRenderRow) {
           if (options.getCellProps) {
             const leftDepth = row.nodes.length - 1
             const leftNode = row.nodes[leftDepth]
-            return options.getCellProps(value, leftNode, topNode, leftDepth, topDepth)
+            return options.getCellProps(val, leftNode, topNode, leftDepth, topDepth)
           }
         },
       }
@@ -195,7 +198,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
 
     return flatRows
 
-    function dfs(nodes: LeftCrossTreeNode[], ctx: DfsCtx): { count: number } {
+    function dfs(nodes: LeftCrossTreeNode[], dfsCtx: DfsCtx): { count: number } {
       let count = 0
 
       for (const node of nodes) {
@@ -205,15 +208,15 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
         }
 
         const rect: SpanRect = {
-          top: ctx.rowIndex + count,
+          top: dfsCtx.rowIndex + count,
           bottom: -1, // 会在 dfs 之后算出结果
-          left: ctx.depth,
+          left: dfsCtx.depth,
           right: -1, // 会在 dfs 之后算出结果
         }
         const row: CrossTableRenderRow = {
           [ROW_KEY]: node.key,
-          rects: [...ctx.rects, rect],
-          nodes: [...ctx.nodes, node],
+          rects: [...dfsCtx.rects, rect],
+          nodes: [...dfsCtx.nodes, node],
         }
 
         if (isLeafNode(node)) {
@@ -222,16 +225,16 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
           flatRows.push(row)
           count += 1
         } else {
-          ctx.rects.push(rect)
-          ctx.nodes.push(node)
+          dfsCtx.rects.push(rect)
+          dfsCtx.nodes.push(node)
           const ret = dfs(node.children, {
-            nodes: ctx.nodes,
-            rects: ctx.rects,
-            depth: ctx.depth + 1,
-            rowIndex: ctx.rowIndex + count,
+            nodes: dfsCtx.nodes,
+            rects: dfsCtx.rects,
+            depth: dfsCtx.depth + 1,
+            rowIndex: dfsCtx.rowIndex + count,
           })
-          ctx.rects.pop()
-          ctx.nodes.pop()
+          dfsCtx.rects.pop()
+          dfsCtx.nodes.pop()
 
           count += ret.count
 

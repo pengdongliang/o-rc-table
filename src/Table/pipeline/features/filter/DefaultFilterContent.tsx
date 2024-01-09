@@ -88,7 +88,7 @@ function DefaultFilterContent({ setFilterModel, filterModel, hidePanel, localeTe
   const [selectedValue, setSelectedValue] = React.useState(filterModel?.filterCondition || 'contain')
   const [innerValue, setInnerValue] = React.useState(filterModel?.filter || [])
   const inputRef = useRef<HTMLInputElement>()
-  const handleClick = React.useCallback((option) => {
+  const handleClick = React.useCallback((option: { key: React.SetStateAction<string> }) => {
     setSelectedValue(option.key)
   }, [])
   const reset = () => {
@@ -103,7 +103,7 @@ function DefaultFilterContent({ setFilterModel, filterModel, hidePanel, localeTe
     })
   }
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: { keyCode: number }) => {
     if (e.keyCode === KeyCode.ENTER) {
       confirm()
     }
@@ -125,8 +125,7 @@ function DefaultFilterContent({ setFilterModel, filterModel, hidePanel, localeTe
     <DefaultFilterContentStyle>
       <div className="filter-option-list">
         <ul>
-          {DEFAULT_FILTER_OPTIONS.map((option, index) => (
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+          {DEFAULT_FILTER_OPTIONS.map((option) => (
             <li
               key={option.key}
               className={option.key === selectedValue ? 'active' : ''}

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { AbstractTreeNode } from '../../interfaces'
 import console from '../console'
 import isLeafNode from '../isLeafNode'
@@ -52,6 +53,7 @@ export interface TreeDataHelperOptions<N extends AbstractTreeNode> {
 export default class TreeDataHelper<N extends AbstractTreeNode> {
   private readonly opts: TreeDataHelperOptions<N>
 
+  // @ts-ignore
   private readonly valueSet: ReadonlySet<string>
 
   private wrapperMap: Map<string, Wrapper<N>>

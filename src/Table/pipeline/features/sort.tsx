@@ -86,7 +86,7 @@ export interface SortHeaderCellProps {
   sortOptions: Required<Omit<SortFeatureOptions, 'SortHeaderCell' | 'defaultSorts'>>
 
   /** 在添加排序相关的内容之前 表头原有的渲染内容 */
-  children: ReactNode
+  children?: ReactNode
 
   /** 当前排序 */
   sortOrder: SortOrder
@@ -176,7 +176,7 @@ export function sort(opts: SortFeatureOptions = {}) {
       sortIconHoverShow,
     }
 
-    const sortMap = new Map(sorts.map((sort, index) => [sort.code, { index, ...sort }]))
+    const sortMap = new Map(sorts.map((i, index) => [i.code, { index, ...i }]))
 
     const dataSource = pipeline.getDataSource()
     const columns = pipeline.getColumns()
@@ -192,13 +192,13 @@ export function sort(opts: SortFeatureOptions = {}) {
 
     return pipeline
 
-    function processDataSource(dataSource: any[]) {
+    function processDataSource(dataList: any[]) {
       if (keepDataSource) {
-        return dataSource
+        return dataList
       }
 
       if (sortMap.size === 0) {
-        return dataSource
+        return dataList
       }
 
       const sortColumnsMap = new Map(
@@ -207,7 +207,7 @@ export function sort(opts: SortFeatureOptions = {}) {
           .map((col) => [col.code, col])
       )
 
-      return layeredSort(dataSource, (x, y) => {
+      return layeredSort(dataList, (x, y) => {
         for (const { code, order } of sorts) {
           const column = sortColumnsMap.get(code)
           // 如果 code 对应的 column 不可排序，我们跳过该 code
@@ -229,15 +229,15 @@ export function sort(opts: SortFeatureOptions = {}) {
 
     // 在「升序 - 降序 - 不排序」之间不断切换
     function toggle(code: string) {
-      const sort = sortMap.get(code) as any
+      const sortType = sortMap.get(code) as any
       let currentSort: SortItem
-      if (sort == null) {
+      if (sortType == null) {
         currentSort = { code, order: orders[0] }
         onChangeSorts(sorts.concat([currentSort]), currentSort)
       } else {
         const index = sorts.findIndex((s) => s.code === code)
         const nextSorts = sorts.slice(0, index + 1)
-        const nextOrder = getNextOrder(sort.order)
+        const nextOrder = getNextOrder(sortType.order)
         currentSort = { code, order: nextOrder }
         if (nextOrder === 'none') {
           nextSorts.pop()
@@ -248,8 +248,8 @@ export function sort(opts: SortFeatureOptions = {}) {
       }
     }
 
-    function processColumns(columns: ArtColumn[]) {
-      return columns.map(dfs)
+    function processColumns(cols: ArtColumn[]) {
+      return cols.map(dfs)
 
       function dfs(col: ArtColumn): ArtColumn {
         const result = { ...col }

@@ -2,9 +2,13 @@
 title: 列分组
 order: 401
 ---
+
 在 `columns.children=[...]` 中添加子节点，`<Table />` 会绘制相应的嵌套表头结构。
 ```jsx
-;() => {
+import React from "react";
+import { Table, useTablePipeline, features, proto } from "o-rc-table";
+
+export default () => {
   const occupations = ['UED', '客服', '产品', '运营', '前端', '数据']
   const dataSource = occupations.map((occupation) => ({
     occupation,

@@ -7,13 +7,56 @@ order: 401
 footerDataSource与dataSource的格式一致
 
 ```jsx
-() => {
+import React from "react";
+import { Table, useTablePipeline, features } from "o-rc-table";
+
+export default () => {
   const dataSource = [
-    {id:"1","No":1,"order":"AP-202009-00001","from":"陕西环宇科技","to":"深圳环球科技","amount":"26,800.00","balance":"5,200.00"},
-    {id:"2","No":2,"order":"AP-202009-00002","from":"陕西环宇科技","to":"深圳环球科技","amount":"236,800.00","balance":"1,500.00"},
-    {id:"3","No":3,"order":"AP-202009-00003","from":"陕西环宇科技","to":"深圳环球科技","amount":"246,800.00","balance":"5,300.00"},
-    {id:"4","No":4,"order":"AP-202009-00004","from":"陕西环宇科技","to":"深圳环球科技","amount":"216,800.00","balance":"5,400.00"},
-    {id:"5","No":5,"order":"AP-202009-00005","from":"陕西环宇科技","to":"深圳环球科技","amount":"236,800.00","balance":"1,500.00"}
+    {
+      id: "1",
+      "No": 1,
+      "order": "HK-FDF-24785-01",
+      "from": "11111111",
+      "to": "2222222",
+      "amount": "29400.00",
+      "balance": "1000.00"
+    },
+    {
+      id: "2",
+      "No": 2,
+      "order": "HK-FDF-24785-02",
+      "from": "11111111",
+      "to": "2222222",
+      "amount": "239400.00",
+      "balance": "5000.00"
+    },
+    {
+      id: "3",
+      "No": 3,
+      "order": "AP-202009-00003",
+      "from": "11111111",
+      "to": "2222222",
+      "amount": "249400.00",
+      "balance": "3000.00"
+    },
+    {
+      id: "4",
+      "No": 4,
+      "order": "AP-202009-00004",
+      "from": "11111111",
+      "to": "2222222",
+      "amount": "219400.00",
+      "balance": "4000.00"
+    },
+    {
+      id: "5",
+      "No": 5,
+      "order": "AP-202009-00005",
+      "from": "11111111",
+      "to": "2222222",
+      "amount": "239400.00",
+      "balance": "5000.00"
+    }
   ]
 
   const columns = [
@@ -21,10 +64,10 @@ footerDataSource与dataSource的格式一致
     { code: 'order', name: '单据号', width: 200 },
     { code: 'from', name: '来户', width: 200 },
     { code: 'to', name: '往户', width: 200 },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right' , aggType: 'sum' },
-    { code: 'balance', name: '应收余额', width: 100, align: 'right' , aggType: 'avg' }
+    { code: 'amount', name: '应付金额', width: 100, align: 'right', aggType: 'sum' },
+    { code: 'balance', name: '应收余额', width: 100, align: 'right', aggType: 'avg' }
   ]
-    const pipeline = useTablePipeline({})
+  const pipeline = useTablePipeline({})
     .input({ dataSource: dataSource, columns: columns })
     .use(features.columnResize())
     .use(
@@ -45,13 +88,13 @@ footerDataSource与dataSource的格式一致
     })
     let footerDataSource = getCalculateData(dataSource, aggregateColumns)
     footerDataSource = Object.assign(footerDataSource, { [seqField]: '合计' })
-    return Object.keys(footerDataSource).length ===0 ?[]: [footerDataSource]
+    return Object.keys(footerDataSource).length === 0 ? [] : [footerDataSource]
   }
 
   const getFormatValue = (v) => {
     const reg = /(?=(\B\d{3})+$)/g //以三个数字结尾前面的空格
-     v = (v+'').replace(reg,',')
-     return v + '.00'
+    v = (v + '').replace(reg, ',')
+    return v + '.00'
   }
 
   const getCalculateData = (rowdatas, aggregateColumns) => {
@@ -62,8 +105,8 @@ footerDataSource与dataSource的格式一致
         let colNaNValCount = 0
         rowdatas.forEach((row, i) => {
           let v
-          const temporaryVal = parseFloat(row[l.code].replace(',',''))
-          if (isNaN(temporaryVal)) { 
+          const temporaryVal = parseFloat(row[l.code].replace(',', ''))
+          if (isNaN(temporaryVal)) {
             v = 0
             if (!['avg', 'count'].includes(l.aggType)) {
               return
@@ -108,8 +151,8 @@ footerDataSource与dataSource的格式一致
     }
     return data
   }
-  
-  const footerDataSource = getFooterDataSource(dataSource,columns,'seq')
-  return <Table {...pipeline.getProps()} footerDataSource={footerDataSource}/>
+
+  const footerDataSource = getFooterDataSource(dataSource, columns, 'seq')
+  return <Table {...pipeline.getProps()} footerDataSource={footerDataSource} />
 }
 ```

@@ -20,7 +20,7 @@ function executeOnTempElement(callback) {
   try {
     callback(eTempInput)
   } catch (err) {
-    console.warn('Browser does not support document.execCommand(\'copy\') for clipboard operations')
+    console.warn('"Browser does not support document.execCommand(\'copy\') for clipboard operations"')
   }
 }
 
