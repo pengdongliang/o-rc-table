@@ -1,0 +1,15 @@
+{
+  "extends": "@ocloud/admin-ts-config/react-library.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@@/*": [".dumi/tmp/*"],
+      "o-rc-table": ["src"],
+      "o-rc-table/*": ["src/*", "*"],
+      "@src/*": ["src/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "../../types"],
+  "exclude": ["dist", "build", "node_modules"]
+}
