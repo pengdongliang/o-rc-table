@@ -65,7 +65,7 @@ export default () => {
   ];
 
   const columns = [
-    { code: 'No', name: '序号', width: 60, align: 'center' },
+    { code: 'No', name: '序号', width: 80, align: 'center' },
     { code: 'order', name: '单据号', width: 200 },
     { code: 'from', name: '来户', width: 200 },
     { code: 'to', name: '往户', width: 200 },
@@ -78,59 +78,113 @@ export default () => {
   return <AntdBaseTable {...pipeline.getProps()} />
 }
 ```
+
 ## 基本用法
+
 <embed src="demo/basic.md"></embed>
+
 ## 虚拟列表
+
 <embed src="demo/virtual.md"></embed>
+
 ## 双向虚拟列表
+
 <embed src="demo/sticky.md"></embed>
+
 ## 行高自适应
+
 <embed src="demo/autoHeight.md"></embed>
+
 ## 自动合并多行
+
 <embed src="demo/autoRowSpan.md"></embed>
+
 ## 单元格合并
+
 <embed src="demo/cellSpan.md"></embed>
+
 ## 拖拽列排序
+
 <embed src="demo/columnDrag.md"></embed>
+
 ## 列宽充满
+
 <embed src="demo/columnFlex.md"></embed>
+
 ## 列分组
+
 <embed src="demo/columnGroup.md"></embed>
+
 ## 列锁定
+
 <embed src="demo/columnLock.md"></embed>
+
 ## 列宽拖拽
+
 <embed src="demo/columnResize.md"></embed>
+
 ## 拖拽列排序
+
 <embed src="demo/columnSort.md"></embed>
+
 ## 右键菜单
+
 <embed src="demo/contextMenu.md"></embed>
+
 ## 可编辑表格
+
 <embed src="demo/editTable.md"></embed>
+
 ## 过滤和排序
+
 <embed src="demo/filterAndSort.md"></embed>
+
 ## 受控的过滤和排序
+
 <embed src="demo/filterAndSortWithControl.md"></embed>
+
 ## 自定义过滤菜单
+
 <embed src="demo/filterWithCustomPanel.md"></embed>
+
 ## 数据加载中
+
 <embed src="demo/loadding.md"></embed>
+
 ## 多列排序
+
 <embed src="demo/multiSort.md"></embed>
+
 ## 嵌套子表格
+
 <embed src="demo/nestedTable.md"></embed>
+
 ## 数据为空
+
 <embed src="demo/noData.md"></embed>
+
 ## 合计行
+
 <embed src="demo/pinnedRow.md"></embed>
+
 ## 范围选中
+
 <embed src="demo/rangeSelection.md"></embed>
+
 ## 行展开
+
 <embed src="demo/rowDetail.md"></embed>
+
 ## 行拖拽
+
 <embed src="demo/rowDrag.md"></embed>
+
 ## 行选择
+
 <embed src="demo/select.md"></embed>
+
 ## 树形数据展示
+
 <embed src="demo/tree.md"></embed>
 
 ## API

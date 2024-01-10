@@ -19,12 +19,12 @@ export default () => {
   ]
 
   const initColumns = [
-    { code: 'No', name: '序号', width: 60, align: 'center' },
-    { code: 'order', name: '单据号', width: 200 },
-    { code: 'from', name: '来户', width: 200 },
-    { code: 'to', name: '往户', width: 200 },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right' },
-    { code: 'balance', name: '应收余额', width: 100, align: 'right' }
+    { code: 'No', name: '序号', width: 60, align: 'center'},
+    { code: 'order', name: '单据号', width: 200, editable: true },
+    { code: 'from', name: '来户', width: 200, editable: true  },
+    { code: 'to', name: '往户', width: 200 , editable: true },
+    { code: 'amount', name: '应付金额', width: 100, align: 'right'},
+    { code: 'balance', name: '应收余额', width: 100, align: 'right'}
   ]
 
   const [dataSource, setDataSource] = React.useState(initDataSource)
@@ -33,7 +33,7 @@ export default () => {
   const getCellProps = (col) => (value, record, rowIndex) => {
     return {
       style: {},
-      onClick(event) {
+      onClick (event) {
         const { row: preRow, col: preCol } = activeCell
         if (preRow !== rowIndex || preCol !== col) {
           setActiveCell({ row: rowIndex, col })
@@ -43,11 +43,11 @@ export default () => {
   };
 
   const style = {
-    width: '100%',
-    height: '30px',
+    width:'100%',
+    height:'30px',
     padding: '2px 10px',
     border: '1px solid #cccccc',
-    borderRadius: '2px'
+    borderRadius:'2px'
   }
 
   const Editor = ({ value, colIndex, rowIndex }) => {
@@ -62,14 +62,14 @@ export default () => {
     const onBlur = () => {
       const code = initColumns[colIndex].code
       const newData = [...dataSource]
-      newData.splice(rowIndex, 1, { ...dataSource[rowIndex], [code]: cellValue })
+      newData.splice(rowIndex,1,{ ...dataSource[rowIndex],[code]:cellValue })
       setDataSource(newData)
-      setActiveCell({ row: -1, col: -1 })
+      setActiveCell({ row: -1, col:-1 })
     };
 
     return (
       <input
-        style={{ ...style, fontSize: 12 }}
+        style={{...style, fontSize: 12}}
         value={cellValue}
         autoFocus
         onChange={onChange}
@@ -85,13 +85,13 @@ export default () => {
     }
     col.render = (value, record, rowIndex) => {
       if (activeCell.row === rowIndex && activeCell.col === colIndex) {
-        return <Editor
+        return  <Editor
           colIndex={colIndex}
           rowIndex={rowIndex}
           value={value}
         />
       } else {
-        return <div style={{ ...style, display: 'flex', 'alignItems': 'center' }}>{value}</div>;
+        return <div style={{...style, display: 'flex' , 'alignItems': 'center'}}>{value}</div>;
       }
     };
     return col;
@@ -99,6 +99,6 @@ export default () => {
   const columns = initColumns.map(transAction)
 
   const pipeline = useTablePipeline().input({ dataSource: dataSource, columns: columns })
-  return <Table {...pipeline.getProps()} />
+  return <Table {...pipeline.getProps()}  />
 }
 ```

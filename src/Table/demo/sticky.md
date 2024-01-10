@@ -46,6 +46,7 @@ export default () => {
   return (
     <div>
       <Table
+        bordered
         isLoading={false}
         useVirtual={true}
         style={{ height: 600, width: 800, overflow: 'auto' }}

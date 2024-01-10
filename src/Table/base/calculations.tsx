@@ -227,20 +227,6 @@ export function calculateRenderInfo(table: BaseTable): RenderInfo {
   ]
   const visibleColumnDescriptors = unfilteredVisibleColumnDescriptors.filter(Boolean)
 
-  // const totalWidth = visibleColumnDescriptors.reduce((pre, cur) => {
-  //   if (cur.type === 'blank') {
-  //     return cur.width + pre
-  //   } else {
-  //     return cur.col.width + pre
-  //   }
-  // }, 0)
-  // if (totalWidth < maxRenderWidth) {
-  //   visibleColumnDescriptors.push({
-  //     type: 'blank',
-  //     blankSide: 'left',
-  //     width: `width: calc(100% - ${totalWidth}px)`
-  //   } as VisibleColumnDescriptor)
-  // }
   const fullFlatCount = flat.full.length
   const leftFlatCount = flat.left.length
   const rightFlatCount = flat.right.length
@@ -254,7 +240,6 @@ export function calculateRenderInfo(table: BaseTable): RenderInfo {
 
   const stickyRightMap = new Map<number, number>()
   let stickyRight = 0
-
   for (let i = 0; i < rightFlatCount; i++) {
     stickyRightMap.set(fullFlatCount - 1 - i, stickyRight)
     stickyRight += flat.full[fullFlatCount - 1 - i].width

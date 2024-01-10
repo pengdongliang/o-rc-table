@@ -62,6 +62,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
       const newFillColumns = {
         name: '',
         code: FILL_COLUMN_CODE,
+        key: FILL_COLUMN_CODE,
         width,
         features: {
           resizeable: false,

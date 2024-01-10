@@ -8,7 +8,6 @@ const StyledBaseTable = styled(Table)`
   --font-size: 14px;
   --row-height: 32px;
   --header-row-height: 36px;
-  --cell-padding: 16px;
 
   --lock-shadow: rgba(0, 0, 0, 0.2) 0 0 10px 0px;
   --border-color: #f0f0f0;
@@ -52,7 +51,7 @@ const StyledBaseTable = styled(Table)`
     }
   }
 
-  &:not(.bordered) {
+  &:not(.${Classes.artTableBordered}) {
     --cell-border-vertical: none;
     --header-cell-border-vertical: none;
 
@@ -106,6 +105,7 @@ function BlockSpin() {
 export const AntdBaseTable = React.forwardRef<Table, TableProps>((props, ref) => (
   <StyledBaseTable
     ref={ref}
+    bordered
     {...props}
     components={{
       EmptyContent: AntEmptyContent,

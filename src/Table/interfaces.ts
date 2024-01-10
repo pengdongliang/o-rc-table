@@ -11,7 +11,7 @@ export interface ArtColumnStaticPart {
   name: string
 
   /** 列的唯一标识 */
-  // key?: string
+  key?: string
 
   /** 在数据中的字段 code */
   code?: string

@@ -655,15 +655,15 @@ export const StyledArtTableWrapper = styled.div`
   }
 
   .${Classes.horizontalScrollLeftSpacer} {
-    height: 1px;
-    flex-shrink: 0;
-    border-top: 1px solid var(--border-color);
+    //height: 1px;
+    //flex-shrink: 0;
+    //border-top: 1px solid var(--border-color);
   }
 
   .${Classes.horizontalScrollRightSpacer} {
-    height: 1px;
-    flex-shrink: 0;
-    border-top: 1px solid var(--border-color);
+    //height: 1px;
+    //flex-shrink: 0;
+    //border-top: 1px solid var(--border-color);
   }
 
   .${Classes.stickyScroll} {

@@ -1,7 +1,7 @@
 import cx from 'classnames'
 import { CSSProperties } from 'styled-components'
 
-import { ArtColumn } from '../interfaces'
+import type { ArtColumn } from '../interfaces'
 import { getTreeDepth, isLeafNode } from '../utils'
 import { HorizontalRenderRange, RenderInfo } from './interfaces'
 import { Classes } from './styles'
@@ -212,7 +212,7 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
 
         const cell = (
           <th
-            key={colIndex}
+            key={col.key}
             {...headerCellProps}
             className={cx(Classes.tableHeaderCell, headerCellProps.className, {
               [Classes.first]: colIndex === 0,

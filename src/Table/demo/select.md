@@ -17,10 +17,7 @@ order: 10
 ```jsx 
 import React from 'react'
 import { Table, useTablePipeline, features } from 'o-rc-table'
-
-const Radio = (props)=> {
-  return <input type="radio" {...props}/>
-}
+import { Checkbox, Radio } from "antd"
 
 export default () => {
   const [selected, setSelected] = React.useState([])
@@ -103,14 +100,10 @@ export default () => {
     { code: 'balance', name: '应收余额', width: 100, align: 'right' },
   ]
 
-  const CustomCheckbox = (props) => <Checkbox {...props} />
-  const CustomRadio = (props) => <Radio {...props} />
-
-
   const pipeline = useTablePipeline({
     components: {
-      Checkbox: CustomCheckbox,
-      Radio: CustomRadio,
+      Checkbox: Checkbox,
+      Radio: Radio,
     },
   })
     .input({ dataSource: dataSource, columns: columns })
