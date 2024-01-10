@@ -17,7 +17,8 @@ subtitle: 表格
 指定表格的数据源 `dataSource` 和列的定义 `columns` ，二者均为一个数组。
 
 ```tsx
-import { useTablePipeline, Table } from "o-rc-table";
+import { useTablePipeline } from "o-rc-table";
+import { AntdBaseTable } from "demo/AntdBaseTable";
 
 export default () => {
   const dataSource = [
@@ -74,7 +75,7 @@ export default () => {
 
   const pipeline = useTablePipeline().input({ dataSource: dataSource, columns: columns });
 
-  return <Table {...pipeline.getProps()} />
+  return <AntdBaseTable {...pipeline.getProps()} />
 }
 ```
 ## 基本用法

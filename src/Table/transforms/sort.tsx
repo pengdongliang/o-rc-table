@@ -42,7 +42,7 @@ function DefaultSortHeaderCell({ children, column, onToggle, sortOrder, sortInde
     <TableHeaderCell onClick={onToggle} style={{ justifyContent }}>
       {children}
       <SortIcon style={{ userSelect: 'none', marginLeft: 2, flexShrink: 0 }} size={16} order={sortOrder} />
-      {sortOptions.mode === 'multiple' && sortIndex != -1 && (
+      {sortOptions.mode === 'multiple' && sortIndex !== -1 && (
         <div
           style={{
             userSelect: 'none',
@@ -163,7 +163,7 @@ export function makeSortTransform({
       if (!hasAnySortableColumns(columns)) {
         // eslint-disable-next-line no-console
         console.warn(
-          '[ali-react-table] commonTransform.sort 缺少可排序的列，请通过 column.features.sortable 来指定哪些列可排序',
+          '[o-rc-table] commonTransform.sort 缺少可排序的列，请通过 column.features.sortable 来指定哪些列可排序',
           columns
         )
       }

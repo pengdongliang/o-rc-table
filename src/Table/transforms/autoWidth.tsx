@@ -70,6 +70,7 @@ export function useAutoWidthTransform(
     if (!isSameArray(preferredWidthList, widthList)) {
       setWidthList(preferredWidthList)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 
   let i = 0

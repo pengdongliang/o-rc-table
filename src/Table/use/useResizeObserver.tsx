@@ -13,6 +13,7 @@ const useResizeObserver = (callbck: Function, [element]: Array<HTMLElement>) => 
     return () => {
       resizeObserver.disconnect()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 }
 

@@ -46,7 +46,8 @@
     "styled-components": "^5.2.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "xlsx": "^0.16.0"
+    "xlsx": "^0.16.0",
+    "antd": "^5.6.4"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",

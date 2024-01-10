@@ -57,7 +57,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
       const leftPartColumns: CrossTableLeftColumn[] = []
       for (let index = 0; index < leftHeaderWidth; index++) {
         const metaCol = leftMetaColumns[index] ?? ({} as CrossTableLeftMetaColumn)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars
         const { getCellProps, render, ...staticMetaColConfig } = metaCol
         leftPartColumns.push({
           columnType: 'left',
@@ -82,7 +82,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
       }
 
       function leftHeaderGetSpanRectFactory(
-        metaCol: CrossTableLeftMetaColumn,
+        _metaCol: CrossTableLeftMetaColumn,
         colIndex: number
       ): ArtColumn['getSpanRect'] {
         return (_value: any, row: CrossTableRenderRow) => row.rects[colIndex]
@@ -96,7 +96,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
       }
 
       function leftHeaderRenderFactory(metaCol: CrossTableLeftMetaColumn, colIndex: number) {
-        return (v: any, row: CrossTableRenderRow) => {
+        return (_v: any, row: CrossTableRenderRow) => {
           const node = row.nodes[colIndex]
           if (metaCol.render) {
             return metaCol.render(node, colIndex)
@@ -128,7 +128,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
             // 叶子节点
             result.push(getDataColumn(node, ctx.depth))
           } else {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars
             const { key, value, children, ...others } = node
             // 强制展开的节点
             result.push({
@@ -152,7 +152,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
         const leftNode = row.nodes[leftDepth]
         return options.getValue(leftNode, topNode, leftDepth, topDepth)
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars
       const { key, value, children, ...others } = topNode
       return {
         columnType: 'data',

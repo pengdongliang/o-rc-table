@@ -191,6 +191,7 @@ function Menu(props) {
       menuRef.current.style.left = `${_x}px`
       menuRef.current.style.top = `${_y}px`
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [position])
 
   return (

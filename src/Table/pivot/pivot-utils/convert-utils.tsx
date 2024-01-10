@@ -75,7 +75,7 @@ export function convertDrillTreeToCrossTree<T extends CrossTreeNode = CrossTreeN
   const totalKey = encode([])
   if (supportsExpand && expandKeys == null) {
     throw new Error(
-      '[ali-react-table] convertDrillTreeToCrossTree(...) 设置 supportsExpand=true 时，expandKeys 不能为 null/undefined.'
+      '[o-rc-table] convertDrillTreeToCrossTree(...) 设置 supportsExpand=true 时，expandKeys 不能为 null/undefined.'
     )
   }
   const expandKeySet = new Set(expandKeys)

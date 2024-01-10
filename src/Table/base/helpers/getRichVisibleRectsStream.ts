@@ -182,7 +182,7 @@ export function getRichVisibleRectsStream(
     op.tap((structure) => {
       if (virtualDebugLabel) {
         console.info(
-          `%c[ali-react-table STRUCTURE ${virtualDebugLabel}]`,
+          `%c[o-rc-table STRUCTURE ${virtualDebugLabel}]`,
           'color: #4f9052; font-weight: bold',
           '\ntarget:',
           target,
@@ -220,7 +220,7 @@ export function getRichVisibleRectsStream(
     op.tap((rects) => {
       if (virtualDebugLabel) {
         console.info(
-          `%c[ali-react-table RECTS ${virtualDebugLabel}]`,
+          `%c[o-rc-table RECTS ${virtualDebugLabel}]`,
           'color: #4f9052; font-weight: bold',
           '\noffsetY:',
           rects.offsetY,

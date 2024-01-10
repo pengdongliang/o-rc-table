@@ -1,4 +1,4 @@
-export function flatMap<T, U>(array: T[], callback: (value: T, index: number, array: T[]) => U[]): U[] {
+export function flatMap<T, U>(array: T[], callback: (value: T, index: number, arr: T[]) => U[]): U[] {
   const result: U[] = []
 
   array.forEach((value, index) => {
@@ -28,8 +28,7 @@ export const arrayUtils = {
 } as const
 
 export function always<T>(value: T) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  return (...args: any[]) => value
+  return () => value
 }
 
 interface treeItem {
@@ -37,8 +36,7 @@ interface treeItem {
   code?: string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function findByTree<T extends treeItem, U>(array: T[], condition: (item: T, index: number) => boolean): T {
+export function findByTree<T extends treeItem>(array: T[], condition: (item: T, index: number) => boolean): T {
   let index = 0
   const len = array.length
   const stack = []

@@ -519,7 +519,6 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
   }
 
   render() {
-    // console.log('render table')
     const info = calculateRenderInfo(this)
     this.lastInfo = info
 

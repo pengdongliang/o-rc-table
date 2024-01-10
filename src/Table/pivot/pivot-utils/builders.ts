@@ -49,7 +49,7 @@ export function buildRecordMatrix({
     record: any
   }
 
-  const ctx: BuildingCtx = {
+  const context: BuildingCtx = {
     peculiarity: new Set(),
   }
 
@@ -68,7 +68,7 @@ export function buildRecordMatrix({
       isExpand: isTopExpand,
     })
 
-  const transientMatrixRow = buildByLeft(ctx, data, leftRootDrillNode, 0)
+  const transientMatrixRow = buildByLeft(context, data, leftRootDrillNode, 0)
 
   return makeMatrix(transientMatrixRow)
 
@@ -137,8 +137,8 @@ export function buildRecordMatrix({
     }
   }
 
-  function mergeColsByTopTree(ctx: BuildingCtx, colsToMerge: TransientMatrixCol[]): TransientMatrixCol {
-    return dfs(ctx, colsToMerge, topRootDrillNode, 0)
+  function mergeColsByTopTree(ctxs: BuildingCtx, colsToMerge: TransientMatrixCol[]): TransientMatrixCol {
+    return dfs(ctxs, colsToMerge, topRootDrillNode, 0)
 
     function dfs(
       ctx: BuildingCtx,

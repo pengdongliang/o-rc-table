@@ -169,10 +169,10 @@ export type BaseTableCSSVariables = Partial<{
   '--border-color': string
   /** 单元格边框，默认为 1px solid #dfe3e8 */
   '--cell-border': string
-  /** 单元格上下边框，默认为 none ，默认值为 1px solid #dfe3e8 */
-  '--cell-border-horizontal': string
-  /** 单元格左右边框，默认为 #dfe3e8 */
+  /** 单元格上下边框，默认为 1px solid #dfe3e8 */
   '--cell-border-vertical': string
+  /** 单元格左右边框，默认为 1px solid #dfe3e8 */
+  '--cell-border-horizontal': string
   /** 表头单元格边框，默认为 1px solid #dfe3e8 */
   '--header-cell-border': string
   /** 表头单元格上下边框，默认为 none ，默认值为 1px solid #dfe3e8 */
@@ -205,14 +205,14 @@ const outerBorderStyleMixin = css`
     border-bottom: none;
   }
   td.${Classes.rowSpan}:not(.${Classes.first}) {
-    border-left: var(---cell-border-vertical);
+    border-left: var(--cell-border-horizontal);
   }
   td.${Classes.rowSpan}:not(.${Classes.last}) {
-    border-right: var(---cell-border-vertical);
+    border-right: var(--cell-border-horizontal);
   }
 `
 
-export const defaultCSSVariables = {
+export const defaultCSSVariables: BaseTableCSSVariables = {
   '--row-height': '48px',
   '--color': '#333',
   '--bgcolor': 'white',
@@ -237,10 +237,9 @@ export const defaultCSSVariables = {
 
   '--border-color': '#dfe3e8',
   '--cell-border': '1px solid #dfe3e8',
-  '--cell-border-horizontal': '1px solid #dfe3e8',
-  '---cell-border-vertical': '1px solid #dfe3e8',
-  '--header-cell-border': '1px solid #dfe3e8',
   '--cell-border-vertical': '1px solid #dfe3e8',
+  '--cell-border-horizontal': '1px solid #dfe3e8',
+  '--header-cell-border': '1px solid #dfe3e8',
   '--header-cell-border-horizontal': '1px solid #dfe3e8',
   '--header-cell-border-vertical': '1px solid #dfe3e8',
 }
@@ -248,7 +247,7 @@ export const defaultCSSVariables = {
 export const variableConst = getCssVariableText(defaultCSSVariables)
 
 const notBorderedStyleMixin = css`
-  --cell-border-vertical: none;
+  --cell-border-horizontal: none;
   --header-cell-border-vertical: none;
 `
 const borderedStyleMixin = css`
@@ -504,17 +503,17 @@ export const StyledArtTableWrapper = styled.div`
     background: var(--bgcolor);
     height: var(--row-height);
     border: 1px solid transparent;
-    border-right: var(--cell-border-vertical);
-    border-bottom: var(--cell-border-horizontal);
+    border-right: var(--cell-border-horizontal);
+    border-bottom: var(--cell-border-vertical);
     word-break: break-all;
   }
 
   td.${Classes.first} {
-    border-left: var(--cell-border-vertical);
+    border-left: var(--cell-border-horizontal);
   }
 
   tr.${Classes.first} td {
-    border-top: var(--cell-border-horizontal);
+    border-top: var(--cell-border-vertical);
   }
 
   &.has-header tbody tr.${Classes.first} td {
@@ -549,7 +548,7 @@ export const StyledArtTableWrapper = styled.div`
 
       &.show-shadow {
         box-shadow: var(--lock-shadow);
-        border-right: var(--cell-border-vertical);
+        border-right: var(--cell-border-horizontal);
       }
     }
 
@@ -559,7 +558,7 @@ export const StyledArtTableWrapper = styled.div`
 
       &.show-shadow {
         box-shadow: var(--lock-shadow);
-        border-left: var(--cell-border-vertical);
+        border-left: var(--cell-border-horizontal);
       }
     }
   }
@@ -770,7 +769,7 @@ export const StyledArtTableWrapper = styled.div`
   }
 
   .${Classes.tableFooter} .${Classes.verticalScrollPlaceholder} {
-    border-top: var(--cell-border-horizontal);
+    border-top: var(--cell-border-vertical);
   }
 
   //#endregion

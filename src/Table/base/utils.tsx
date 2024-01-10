@@ -11,7 +11,7 @@ import mergeCellProps from '../utils/mergeCellProps'
 import { TableDOMHelper } from './helpers/TableDOMUtils'
 import { defaultCSSVariables } from './styles'
 
-/** styled-components 类库的版本，ali-react-table 同时支持 v3 和 v5 */
+/** styled-components 类库的版本，o-rc-table 同时支持 v3 和 v5 */
 export const STYLED_VERSION = (styledComponents as any).createGlobalStyle != null ? 'v5' : 'v3'
 
 export const STYLED_REF_PROP = STYLED_VERSION === 'v3' ? 'innerRef' : 'ref'

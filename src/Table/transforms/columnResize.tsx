@@ -62,8 +62,8 @@ export function makeColumnResizeTransform({
 
     const nextSizes$ = fromEvent<MouseEvent>(window, 'mousemove').pipe(
       op.takeUntil(fromEvent(window, 'mouseup')),
-      op.map((e) => {
-        const movingX = e.clientX
+      op.map((ne) => {
+        const movingX = ne.clientX
         const nextSizes = sizes.slice()
         nextSizes[colIndex] = clamp(minSize, startSize + (movingX - startX), maxSize)
         return nextSizes
