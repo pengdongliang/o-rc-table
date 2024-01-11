@@ -7,11 +7,11 @@ export default defineConfig({
     name: 'o-rc-table',
   },
   resolve: {
-    atomDirs: [{ type: 'component', dir: 'src/Table' }],
+    atomDirs: [{ type: 'component', dir: 'src' }],
   },
   alias: {
     'o-rc-table': resolve(__dirname, 'src'),
-    'demo': resolve(__dirname, 'src/Table/demo'),
+    'demo': resolve(__dirname, 'src/demo'),
   },
   locales: [
     { id: 'zh-CN', name: '中文' },

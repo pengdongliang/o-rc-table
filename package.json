@@ -37,9 +37,8 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.9.1",
-    "classnames": "^2.2.6",
+    "classnames": "^2.5.1",
     "css-vars-ponyfill": "^2.4.3",
-    "lodash": "^4.17.20",
     "regenerator-runtime": "^0.13.9",
     "resize-observer-polyfill": "^1.5.1",
     "rxjs": "^6.6.3",
@@ -47,7 +46,9 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "xlsx": "^0.16.0",
-    "antd": "^5.6.4"
+    "antd": "^5.6.4",
+    "@ant-design/cssinjs": "^1.18.2",
+    "lodash-es": "^4.17.21"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
@@ -56,7 +57,6 @@
     "@types/node": "^20.5.0",
     "@types/react": "^18.2.12",
     "@types/react-dom": "^18.2.5",
-    "@types/classnames": "^2.2.10",
     "@types/styled-components": "^5.1.26",
     "@umijs/lint": "^4.0.0",
     "@ocloud/admin-eslint-config": "^1.0.0",
