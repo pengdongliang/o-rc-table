@@ -5,8 +5,10 @@
     "baseUrl": ".",
     "paths": {
       "@@/*": [".dumi/tmp/*"],
-      "o-rc-table": ["src"],
-      "o-rc-table/*": ["src/*", "*"],
+      "o-rc-table": ["src/BaseTable"],
+      "o-rc-table/*": ["src/BaseTable/*", "*"],
+      "@table": ["src/Table"],
+      "@table/*": ["src/Table/*"],
       "@src/*": ["src/*"]
     }
   },

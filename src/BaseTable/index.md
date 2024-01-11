@@ -1,8 +1,8 @@
 ---
 category: Components
-type: 通用
-title: Table
-subtitle: 表格
+group: 组件
+title: 基础表格
+order: 1
 ---
 
 表格是一种提供了一个排列成列和行的有序的字段组合的用户界面元素。
@@ -17,8 +17,7 @@ subtitle: 表格
 指定表格的数据源 `dataSource` 和列的定义 `columns` ，二者均为一个数组。
 
 ```tsx
-import { useTablePipeline } from "o-rc-table";
-import { AntdBaseTable } from "demo/AntdBaseTable";
+import { Table, useTablePipeline } from "o-rc-table";
 
 export default () => {
   const dataSource = [
@@ -75,117 +74,117 @@ export default () => {
 
   const pipeline = useTablePipeline().input({ dataSource: dataSource, columns: columns });
 
-  return <AntdBaseTable {...pipeline.getProps()} />
+  return <Table {...pipeline.getProps()} />
 }
 ```
 
 ## 基本用法
 
-<embed src="demo/basic.md"></embed>
+<embed src="baseTableDemo/basic.md"></embed>
 
 ## 虚拟列表
 
-<embed src="demo/virtual.md"></embed>
+<embed src="baseTableDemo/virtual.md"></embed>
 
 ## 双向虚拟列表
 
-<embed src="demo/sticky.md"></embed>
+<embed src="baseTableDemo/sticky.md"></embed>
 
 ## 行高自适应
 
-<embed src="demo/autoHeight.md"></embed>
+<embed src="baseTableDemo/autoHeight.md"></embed>
 
 ## 自动合并多行
 
-<embed src="demo/autoRowSpan.md"></embed>
+<embed src="baseTableDemo/autoRowSpan.md"></embed>
 
 ## 单元格合并
 
-<embed src="demo/cellSpan.md"></embed>
+<embed src="baseTableDemo/cellSpan.md"></embed>
 
 ## 拖拽列排序
 
-<embed src="demo/columnDrag.md"></embed>
+<embed src="baseTableDemo/columnDrag.md"></embed>
 
 ## 列宽充满
 
-<embed src="demo/columnFlex.md"></embed>
+<embed src="baseTableDemo/columnFlex.md"></embed>
 
 ## 列分组
 
-<embed src="demo/columnGroup.md"></embed>
+<embed src="baseTableDemo/columnGroup.md"></embed>
 
 ## 列锁定
 
-<embed src="demo/columnLock.md"></embed>
+<embed src="baseTableDemo/columnLock.md"></embed>
 
 ## 列宽拖拽
 
-<embed src="demo/columnResize.md"></embed>
+<embed src="baseTableDemo/columnResize.md"></embed>
 
 ## 拖拽列排序
 
-<embed src="demo/columnSort.md"></embed>
+<embed src="baseTableDemo/columnSort.md"></embed>
 
 ## 右键菜单
 
-<embed src="demo/contextMenu.md"></embed>
+<embed src="baseTableDemo/contextMenu.md"></embed>
 
 ## 可编辑表格
 
-<embed src="demo/editTable.md"></embed>
+<embed src="baseTableDemo/editTable.md"></embed>
 
 ## 过滤和排序
 
-<embed src="demo/filterAndSort.md"></embed>
+<embed src="baseTableDemo/filterAndSort.md"></embed>
 
 ## 受控的过滤和排序
 
-<embed src="demo/filterAndSortWithControl.md"></embed>
+<embed src="baseTableDemo/filterAndSortWithControl.md"></embed>
 
 ## 自定义过滤菜单
 
-<embed src="demo/filterWithCustomPanel.md"></embed>
+<embed src="baseTableDemo/filterWithCustomPanel.md"></embed>
 
 ## 数据加载中
 
-<embed src="demo/loadding.md"></embed>
+<embed src="baseTableDemo/loadding.md"></embed>
 
 ## 多列排序
 
-<embed src="demo/multiSort.md"></embed>
+<embed src="baseTableDemo/multiSort.md"></embed>
 
 ## 嵌套子表格
 
-<embed src="demo/nestedTable.md"></embed>
+<embed src="baseTableDemo/nestedTable.md"></embed>
 
 ## 数据为空
 
-<embed src="demo/noData.md"></embed>
+<embed src="baseTableDemo/noData.md"></embed>
 
 ## 合计行
 
-<embed src="demo/pinnedRow.md"></embed>
+<embed src="baseTableDemo/pinnedRow.md"></embed>
 
 ## 范围选中
 
-<embed src="demo/rangeSelection.md"></embed>
+<embed src="baseTableDemo/rangeSelection.md"></embed>
 
 ## 行展开
 
-<embed src="demo/rowDetail.md"></embed>
+<embed src="baseTableDemo/rowDetail.md"></embed>
 
 ## 行拖拽
 
-<embed src="demo/rowDrag.md"></embed>
+<embed src="baseTableDemo/rowDrag.md"></embed>
 
 ## 行选择
 
-<embed src="demo/select.md"></embed>
+<embed src="baseTableDemo/select.md"></embed>
 
 ## 树形数据展示
 
-<embed src="demo/tree.md"></embed>
+<embed src="baseTableDemo/tree.md"></embed>
 
 ## API
 
