@@ -26,8 +26,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
   props: InternalTableProps<RecordType>,
   ref: React.Ref<TableRef>
 ) => {
-  const { prefixCls: customizePrefixCls, className, style, dataSource, columns } = props
-  console.log(1111111, dataSource, columns)
+  const { prefixCls: customizePrefixCls, className, style, dataSource, columns, ...rest } = props
 
   const { getPrefixCls } = React.useContext<ConfigConsumerProps>(ConfigContext)
 
@@ -42,11 +41,9 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
 
   React.useImperativeHandle(ref, () => pipeline)
 
-  console.log(22222222, wrapCSSVar(<div className={wrapperClassNames} style={style} />))
-
   return wrapCSSVar(
     <div className={wrapperClassNames} style={style}>
-      <Table className={classNames(cssVarCls, rootCls, hashId)} {...pipeline.getProps()} />
+      <Table style={style} {...rest} className={classNames(cssVarCls, rootCls, hashId)} {...pipeline.getProps()} />
     </div>
   )
 }

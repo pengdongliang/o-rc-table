@@ -50,7 +50,7 @@ export function HtmlTable({
   return (
     <table>
       <Colgroup descriptors={hozInfo.visible} />
-      {React.createElement(tbodyHtmlTag, null, data.map(renderRow))}
+      {React.createElement(tbodyHtmlTag, { className: Classes.tableBodyTbody }, data.map(renderRow))}
     </table>
   )
 

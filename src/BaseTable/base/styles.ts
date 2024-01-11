@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components'
 
 export const LOCK_SHADOW_PADDING = 20
 
+// TODO 取基础表格上下文
 const prefix = 'ocloud-'
 
 export const Classes = {
@@ -13,12 +14,15 @@ export const Classes = {
   tableHeaderMain: `${prefix}table-header-main`,
   tableHeader: `${prefix}table-header`,
   tableBody: `${prefix}table-body`,
+  tableBodyTbody: `${prefix}table-tbody`,
   virtual: `${prefix}virtual`,
   tableFooter: `${prefix}table-footer`,
   tableFooterMain: `${prefix}table-footer-main`,
 
   /** 表格行 */
   tableRow: `${prefix}table-row`,
+  /** 表头thead */
+  tableHeaderThead: `${prefix}table-thead`,
   /** 表头行 */
   tableHeaderRow: `${prefix}table-header-row`,
   /** 单元格 */

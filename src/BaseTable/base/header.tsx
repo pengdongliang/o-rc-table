@@ -272,7 +272,7 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
   return (
     <table>
       <colgroup>{colgroup}</colgroup>
-      <thead>{thead}</thead>
+      <thead className={Classes.tableHeaderThead}>{thead}</thead>
     </table>
   )
 }

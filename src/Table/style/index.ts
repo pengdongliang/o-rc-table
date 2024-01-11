@@ -314,6 +314,7 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
           borderBottom: tableBorder,
           transition: `background ${motionDurationMid} ease`,
 
+          // eslint-disable-next-line quotes
           "&[colspan]:not([colspan='1'])": {
             textAlign: 'center',
           },
