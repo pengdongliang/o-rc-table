@@ -47,7 +47,7 @@ export default () => {
   return (
     <Table
       style={{ height: 600, width: 800, overflow: 'auto' }}
-      isLoading={false}
+      loading={false}
       dataSource={data}
       columns={columns}
     />

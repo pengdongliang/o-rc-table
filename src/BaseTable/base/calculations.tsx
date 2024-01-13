@@ -149,7 +149,7 @@ function getHorizontalRenderRange({
   }
 }
 
-// 一顿计算，将表格本次渲染所需要的数据都给算出来（代码写得有点乱，有较大优化空间）
+// 表格本次渲染所需要的数据都给算出来
 // todo 可以考虑下将 header 部分的计算逻辑也放到这个文件中，目前应该有一些重复的计算逻辑
 export function calculateRenderInfo(table: BaseTable): RenderInfo {
   const { offsetX, maxRenderWidth } = table.state

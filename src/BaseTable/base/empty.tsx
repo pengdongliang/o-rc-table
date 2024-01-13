@@ -18,18 +18,18 @@ const DefaultEmptyContent = React.memo(() => (
 
 export interface EmptyTableProps {
   descriptors: VisibleColumnDescriptor[]
-  isLoading: boolean
+  loading: boolean
   emptyCellHeight?: number
   EmptyContent?: React.ComponentType
 }
 
 export function EmptyHtmlTable({
   descriptors,
-  isLoading,
+  loading,
   emptyCellHeight,
   EmptyContent = DefaultEmptyContent,
 }: EmptyTableProps) {
-  const show = !isLoading
+  const show = !loading
 
   return (
     <>

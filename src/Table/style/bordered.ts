@@ -47,20 +47,19 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
         },
 
         // ============================ Content ============================
-        [`> .${Classes.loadingWrapper} > .${Classes.loadingContentWrapper} > ${componentCls}-container, > ${componentCls}-container`]:
-          {
-            borderInlineStart: tableBorder,
-            borderTop: tableBorder,
+        [`> ${componentCls}-container`]: {
+          // borderInlineStart: tableBorder,
+          // borderTop: tableBorder,
 
-            [`
+          [`
             > ${componentCls}-content,
             > ${componentCls}-header,
             > ${componentCls}-body,
             > ${componentCls}-summary
           `]: {
-              [`> .${Classes.virtual} > table, > table`]: {
-                // ============================= Cell =============================
-                [`
+            [`> .${Classes.virtual} > table, > table`]: {
+              // ============================= Cell =============================
+              [`
                 > thead > tr > th,
                 > thead > tr > td,
                 > tbody > tr > th,
@@ -68,53 +67,53 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
                 > tfoot > tr > th,
                 > tfoot > tr > td
               `]: {
-                  borderInlineEnd: tableBorder,
+                borderInlineEnd: tableBorder,
+              },
+
+              // ============================ Header ============================
+              '> thead': {
+                '> tr:not(:last-child) > th': {
+                  borderBottom: tableBorder,
                 },
 
-                // ============================ Header ============================
-                '> thead': {
-                  '> tr:not(:last-child) > th': {
-                    borderBottom: tableBorder,
-                  },
-
-                  '> tr > th::before': {
-                    backgroundColor: 'transparent !important',
-                  },
+                '> tr > th::before': {
+                  backgroundColor: 'transparent !important',
                 },
+              },
 
-                // Fixed right should provides additional border
-                [`
+              // Fixed right should provides additional border
+              [`
                 > thead > tr,
                 > tbody > tr,
                 > tfoot > tr
               `]: {
-                  [`> ${componentCls}-cell-fix-right-first::after`]: {
-                    borderInlineEnd: tableBorder,
-                  },
+                [`> ${componentCls}-cell-fix-right-first::after`]: {
+                  borderInlineEnd: tableBorder,
                 },
+              },
 
-                // ========================== Expandable ==========================
-                [`
+              // ========================== Expandable ==========================
+              [`
                 > tbody > tr > th,
                 > tbody > tr > td
               `]: {
-                  [`> ${componentCls}-expanded-row-fixed`]: {
-                    margin: `${unit(calc(tablePaddingVertical).mul(-1).equal())} ${unit(
-                      calc(calc(tablePaddingHorizontal).add(lineWidth)).mul(-1).equal()
-                    )}`,
-                    '&::after': {
-                      position: 'absolute',
-                      top: 0,
-                      insetInlineEnd: lineWidth,
-                      bottom: 0,
-                      borderInlineEnd: tableBorder,
-                      content: '""',
-                    },
+                [`> ${componentCls}-expanded-row-fixed`]: {
+                  margin: `${unit(calc(tablePaddingVertical).mul(-1).equal())} ${unit(
+                    calc(calc(tablePaddingHorizontal).add(lineWidth)).mul(-1).equal()
+                  )}`,
+                  '&::after': {
+                    position: 'absolute',
+                    top: 0,
+                    insetInlineEnd: lineWidth,
+                    bottom: 0,
+                    borderInlineEnd: tableBorder,
+                    content: '""',
                   },
                 },
               },
             },
           },
+        },
 
         // ============================ Scroll ============================
         [`&${componentCls}-scroll-horizontal`]: {

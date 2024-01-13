@@ -15,9 +15,8 @@ import { getFullRenderRange, makeRowHeightManager } from './helpers/rowHeightMan
 import { TableDOMHelper } from './helpers/TableDOMUtils'
 import { HtmlTable } from './html-table'
 import { RenderInfo, ResolvedUseVirtual, VerticalRenderRange, VirtualEnum } from './interfaces'
-import Loading, { LoadingContentWrapperProps } from './loading'
 import getTableRenderTemplate from './renderTemplates'
-import { BaseTableCSSVariables, Classes, LOCK_SHADOW_PADDING, prefix } from './styles'
+import { BaseTableCSSVariables, Classes, LOCK_SHADOW_PADDING, prefix, StyledArtTableWrapper } from './styles'
 import {
   addResizeObserver,
   // cssPolifill,
@@ -32,15 +31,6 @@ import {
   throttledWindowResize$,
 } from './utils'
 
-let propsDotEmptyContentDeprecatedWarned = false
-function warnPropsDotEmptyContentIsDeprecated() {
-  if (!propsDotEmptyContentDeprecatedWarned) {
-    propsDotEmptyContentDeprecatedWarned = true
-    console.warn(
-      'BaseTable props.emptyContent 已经过时，请使用 props.components.EmptyContent 来自定义数据为空时的表格表现'
-    )
-  }
-}
 export type PrimaryKey = string | ((record: any) => string)
 
 export interface BaseTableProps {
@@ -57,9 +47,6 @@ export interface BaseTableProps {
   useVirtual?: VirtualEnum | { horizontal?: VirtualEnum; vertical?: VirtualEnum; header?: VirtualEnum }
   /** 虚拟滚动开启情况下，表格中每一行的预估高度 */
   estimatedRowHeight?: number
-
-  /** @deprecated 表格头部是否置顶，默认为 true。请使用 isStickyHeader 代替 */
-  isStickyHead?: boolean
   /** 表格头部是否置顶，默认为 true */
   isStickyHeader?: boolean
   /** 表格置顶后，距离顶部的距离 */
@@ -86,7 +73,7 @@ export interface BaseTableProps {
   bordered?: boolean
 
   /** 表格是否在加载中 */
-  isLoading?: boolean
+  loading?: boolean
   /** 数据为空时，单元格的高度 */
   emptyCellHeight?: number
   /** @deprecated 数据为空时，表格的展示内容。请使用 components.EmptyContent 代替 */
@@ -94,10 +81,6 @@ export interface BaseTableProps {
 
   /** 覆盖表格内部用到的组件 */
   components?: {
-    /** 表格加载时，表格内容的父组件 */
-    LoadingContentWrapper?: React.ComponentType<LoadingContentWrapperProps>
-    /** 表格加载时的加载图标 */
-    LoadingIcon?: React.ComponentType
     /** 数据为空时，表格的展示内容。 */
     EmptyContent?: React.ComponentType
   }
@@ -171,7 +154,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     useVirtual: 'auto',
     estimatedRowHeight: 48,
 
-    isLoading: false,
+    loading: false,
     components: {},
     getTableProps: noop,
     getRowProps: noop,
@@ -251,28 +234,16 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
       this.setState({ hasScroll: true })
     }
     if (this.domHelper.virtual.offsetHeight > this.domHelper.tableBody.offsetHeight) {
-      //   if (!this.state.hasScroll) {
-      //     this.setState({
-      //       hasScrollY: true
-      //     })
-      //   }
       this.hasScrollY = true
     } else {
-      stickyScroll.style.paddingRight = `${stickyScrollHeight}px`
-      //   this.setState({
-      //     hasScrollY: false
-      //   })
       this.hasScrollY = false
     }
     if (_lastHasScrollY !== this.hasScrollY) {
       this.props.setTableWidth?.(this.domHelper.tableBody.clientWidth)
     }
-
-    const { leftLockTotalWidth, rightLockTotalWidth } = this.lastInfo
-    const lockTotalWidth = leftLockTotalWidth + rightLockTotalWidth
-
+    console.log(111111, this.state.hasScroll, this.hasScrollY,this.getScrollBarWidth())
     // 设置子节点宽度
-    stickyScrollItem.style.width = `${innerTableWidth - lockTotalWidth}px`
+    stickyScrollItem.style.width = `${innerTableWidth + (this.hasScrollY ? this.getScrollBarWidth() : 0)}px`
   }
 
   private renderTableHeader(info: RenderInfo) {
@@ -283,7 +254,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     }
     return (
       <div
-        className={cx(Classes.tableHeader, 'no-scrollbar')}
+        className={cx(Classes.tableHeader, Classes.tableHeaderNoScrollbar)}
         style={{
           top: stickyTop === 0 ? undefined : stickyTop,
           display: hasHeader ? undefined : 'none',
@@ -353,40 +324,36 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
   private handleRowMouseEnter = (e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
     const nodeList = this.domHelper.getRowNodeListByEvent(e)
     nodeList &&
-      nodeList.forEach((node) => {
-        node.classList.add('row-hover')
-      })
+    nodeList.forEach((node) => {
+      node.classList.add('row-hover')
+    })
   }
 
   private handleRowMouseLeave = (e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
     const nodeList = this.domHelper.getRowNodeListByEvent(e)
     nodeList &&
-      nodeList.forEach((node) => {
-        node.classList.remove('row-hover')
-      })
+    nodeList.forEach((node) => {
+      node.classList.remove('row-hover')
+    })
   }
 
   private renderTableBody = (info: RenderInfo) => {
-    const { dataSource, getRowProps, primaryKey, isLoading, emptyCellHeight } = this.props
+    const { dataSource, getRowProps, primaryKey, loading, emptyCellHeight } = this.props
     const tableBodyClassName = cx(Classes.tableBody, Classes.horizontalScrollContainer)
 
     // 低版本Edge浏览器下也会出现双滚动条，这里设置overflow: 'hidden'，先去掉edge的方向键控制滚动条的功能
     const virtualStyle = browserType.isIE || browserType.isEdge ? { overflow: 'hidden' } : {}
 
     if (dataSource.length === 0) {
-      const { components, emptyContent } = this.props
+      const { components } = this.props
       let { EmptyContent } = components
-      if (EmptyContent == null && emptyContent != null) {
-        warnPropsDotEmptyContentIsDeprecated()
-        EmptyContent = (() => emptyContent) as unknown as React.ComponentType
-      }
 
       return (
-        <div className={cx(tableBodyClassName, 'empty')}>
+        <div className={cx(tableBodyClassName, Classes.tableBodyEmpty)}>
           <div className={Classes.virtual} tabIndex={-1} style={virtualStyle}>
             <EmptyHtmlTable
               descriptors={info.visible}
-              isLoading={isLoading}
+              loading={loading}
               EmptyContent={EmptyContent}
               emptyCellHeight={emptyCellHeight}
             />
@@ -435,7 +402,6 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
   }
 
   private renderTableFooter(info: RenderInfo) {
-    // console.log('render footer')
     const { footerDataSource = [], getRowProps, primaryKey, stickyBottom } = this.props
 
     const renderFooter = getTableRenderTemplate('footer')
@@ -499,7 +465,6 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     const { hasScroll } = this.state
     return (
       <div className={cx(Classes.horizontalScrollContainer, Classes.horizontalStickyScrollContainer)}>
-        <div className={cx(Classes.horizontalScrollLeftSpacer)} style={{ width: info.leftLockTotalWidth }} />
         <div
           className={cx(Classes.stickyScroll)}
           style={{
@@ -509,7 +474,6 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
         >
           <div className={Classes.stickyScrollItem} />
         </div>
-        <div className={cx(Classes.horizontalScrollRightSpacer)} style={{ width: info.rightLockTotalWidth }} />
       </div>
     )
   }
@@ -523,35 +487,30 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     this.lastInfo = info
 
     const {
-      dataSource,
       className,
       style,
       hasHeader,
       useOuterBorder,
-      isStickyHead,
       isStickyHeader,
       isStickyFooter,
-      isLoading,
       getTableProps,
       footerDataSource,
-      components,
       bordered,
     } = this.props
 
     const artTableWrapperClassName = cx(
-      prefix + 'table',
+      prefix,
       {
-        'use-outer-border': useOuterBorder,
-        empty: dataSource.length === 0,
-        lock: info.hasLockColumn,
-        'has-header': hasHeader,
-        'sticky-header': isStickyHeader ?? isStickyHead,
-        'has-footer': footerDataSource.length > 0,
-        'sticky-footer': isStickyFooter,
+        [Classes.outerBorder]: useOuterBorder,
+        [Classes.lockWrapper]: info.hasLockColumn,
+        [Classes.hasHeader]: hasHeader,
+        [Classes.stickyHeader]: isStickyHeader,
+        [Classes.hasFooter]: footerDataSource.length > 0,
+        [Classes.stickyFooter]: isStickyFooter,
         [Classes.artTableBordered]: bordered,
-        'ie-polyfill-wrapper': browserType.isIE,
+        [Classes.iePolyfillWrapper]: browserType.isIE,
       },
-      className
+      className,
     )
 
     const artTableWrapperProps = {
@@ -563,22 +522,15 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     const tableProps = getTableProps() || {}
 
     return (
-      <div {...artTableWrapperProps}>
-        {/* TODO loading放在包装组件里使用Spin, 注意要不要采用antd样式问题 */}
-        <Loading
-          visible={isLoading}
-          LoadingIcon={components.LoadingIcon}
-          LoadingContentWrapper={components.LoadingContentWrapper}
-        >
-          <div {...tableProps} className={cx(Classes.artTable, tableProps.className)}>
-            {this.renderTableHeader(info)}
-            {this.renderTableBody(info)}
-            {this.renderTableFooter(info)}
-            {this.renderLockShadows(info)}
-          </div>
-          {this.renderStickyScroll(info)}
-        </Loading>
-      </div>
+      <StyledArtTableWrapper {...artTableWrapperProps}>
+        <div {...tableProps} className={cx(Classes.artTable, tableProps.className)}>
+          {this.renderTableHeader(info)}
+          {this.renderTableBody(info)}
+          {footerDataSource?.length > 0 && this.renderTableFooter(info)}
+          {this.renderLockShadows(info)}
+        </div>
+        {this.renderStickyScroll(info)}
+      </StyledArtTableWrapper>
     )
   }
 
@@ -617,7 +569,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
 
   private updateScrollLeftWhenLayoutChanged(
     prevProps?: Readonly<BaseTableProps>,
-    prevState?: Readonly<BaseTableState>
+    prevState?: Readonly<BaseTableState>,
   ) {
     if (prevState != null) {
       if (!prevState.hasScroll && this.state.hasScroll) {
@@ -640,7 +592,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
       throttledWindowResize$.subscribe(() => {
         this.updateStickyScroll()
         this.adjustNeedRenderLock()
-      })
+      }),
     )
 
     this.resizeSubject.pipe(op.debounceTime(100)).subscribe(() => {
@@ -659,14 +611,14 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
         [getTableScrollHeaderDOM(this.domHelper), virtual, getTableScrollFooterDOM(this.domHelper), stickyScroll],
         (scrollLeft) => {
           this.syncHorizontalScroll(scrollLeft)
-        }
-      )
+        },
+      ),
     )
 
     const richVisibleRects$ = getRichVisibleRectsStream(
       this.domHelper.virtual,
       this.props$.pipe(op.skip(1), op.mapTo('structure-may-change')),
-      this.props.virtualDebugLabel
+      this.props.virtualDebugLabel,
     ).pipe(op.shareReplay())
 
     // 每当可见部分发生变化的时候，调整 loading icon 的未知（如果 loading icon 存在的话）
@@ -674,12 +626,12 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
       combineLatest([
         richVisibleRects$.pipe(
           op.map((p) => p.clipRect),
-          op.distinctUntilChanged(shallowEqual)
+          op.distinctUntilChanged(shallowEqual),
         ),
         this.props$.pipe(
           op.startWith(null),
           op.pairwise(),
-          op.filter(([prevProps, props]) => prevProps == null || (!prevProps.isLoading && props.isLoading))
+          op.filter(([prevProps, props]) => prevProps == null || (!prevProps.loading && props.loading)),
         ),
       ]).subscribe(([clipRect]) => {
         const loadingIndicator = this.domHelper.getLoadingIndicator()
@@ -687,10 +639,10 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
           return
         }
         const height = clipRect.bottom - clipRect.top
-        // fixme 这里的定位在有些特殊情况下可能会出错 see #132
+        // fixme 这里的定位在有些特殊情况下可能会出错
         loadingIndicator.style.top = `${height / 2}px`
         loadingIndicator.style.marginTop = `${height / 2}px`
-      })
+      }),
     )
 
     // 每当可见部分发生变化的时候，如果开启了虚拟滚动，则重新触发 render
@@ -717,11 +669,11 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
               Math.abs(x.maxRenderHeight - y.maxRenderHeight) < OVERSCAN_SIZE / 2 &&
               Math.abs(x.offsetY - y.offsetY) < OVERSCAN_SIZE / 2
             )
-          })
+          }),
         )
         .subscribe((sizeAndOffset) => {
           this.setState(sizeAndOffset)
-        })
+        }),
     )
 
     this.rootSubscription.add(
@@ -760,11 +712,11 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
             return event$.pipe(op.map((startIndex) => startIndex))
           }),
           // 过滤掉重复掉值
-          op.distinctUntilChanged()
+          op.distinctUntilChanged(),
         )
         .subscribe((startIndex) => {
           this.props.scrollLoad?.callback(startIndex)
-        })
+        }),
     )
   }
 

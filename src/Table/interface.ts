@@ -1,12 +1,19 @@
-import { InternalTableProps, TableProps, TableRef } from '@table/InternalTable'
-import * as React from 'react'
-
-import { AnyObject } from '../theme/interface'
-
-export type RefTable = <RecordType extends AnyObject = AnyObject>(
-  props: React.PropsWithChildren<TableProps<RecordType>>
-) => React.ReactElement
-
-export type RefInternalTable = <RecordType extends AnyObject = AnyObject>(
-  props: React.PropsWithChildren<InternalTableProps<RecordType>> & React.Ref<TableRef>
-) => React.ReactElement
+export interface TableLocale {
+  filterTitle?: string
+  filterConfirm?: React.ReactNode
+  filterReset?: React.ReactNode
+  filterEmptyText?: React.ReactNode
+  filterCheckall?: React.ReactNode
+  filterSearchPlaceholder?: string
+  emptyText?: React.ReactNode | (() => React.ReactNode)
+  selectAll?: React.ReactNode
+  selectNone?: React.ReactNode
+  selectInvert?: React.ReactNode
+  selectionAll?: React.ReactNode
+  sortTitle?: string
+  expand?: string
+  collapse?: string
+  triggerDesc?: string
+  triggerAsc?: string
+  cancelSort?: string
+}

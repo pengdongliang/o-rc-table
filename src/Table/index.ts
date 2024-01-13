@@ -1,7 +1,7 @@
-import { type TablePaginationConfig, type TableProps } from './InternalTable'
+import { type TableProps } from './InternalTable'
 import Table from './Table'
 
-export type { Reference as TableRef } from 'rc-table'
-export type { TablePaginationConfig, TableProps }
+export type { TableRef } from './InternalTable'
+export type { TableProps }
 
 export default Table

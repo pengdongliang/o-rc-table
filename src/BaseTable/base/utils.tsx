@@ -98,32 +98,36 @@ export function syncScrollLeft(elements: HTMLElement[], callback: (scrollLeft: n
   function publishScrollLeft(origin: HTMLElement, scrollLeft: number) {
     bypassSet.clear()
     for (const elem of elements) {
-      if (elem === origin) {
-        continue
+      if (elem) {
+        if (elem === origin) {
+          continue
+        }
+        elem.scrollLeft = scrollLeft
+        bypassSet.add(elem)
       }
-      elem.scrollLeft = scrollLeft
-      bypassSet.add(elem)
     }
   }
 
   const subscription = new Subscription()
 
   for (const ele of elements) {
-    const listener = () => {
-      if (bypassSet.has(ele)) {
-        bypassSet.delete(ele)
-        return
+    if (ele) {
+      const listener = () => {
+        if (bypassSet.has(ele)) {
+          bypassSet.delete(ele)
+          return
+        }
+        const { scrollLeft } = ele
+        // 某一元素当滚动条消失时会触发scroll事件（scrolLeft重置为0），不同步其他其他元素的scrollLeft
+        if (scrollLeft === 0 && !hasScroll(ele)) {
+          return
+        }
+        publishScrollLeft(ele, scrollLeft)
+        callback(scrollLeft)
       }
-      const { scrollLeft } = ele
-      // 某一元素当滚动条消失时会触发scroll事件（scrolLeft重置为0），不同步其他其他元素的scrollLeft
-      if (scrollLeft === 0 && !hasScroll(ele)) {
-        return
-      }
-      publishScrollLeft(ele, scrollLeft)
-      callback(scrollLeft)
+      ele.addEventListener('scroll', listener, { passive: true })
+      subscription.add(() => ele.removeEventListener('scroll', listener))
     }
-    ele.addEventListener('scroll', listener, { passive: true })
-    subscription.add(() => ele.removeEventListener('scroll', listener))
   }
 
   return subscription

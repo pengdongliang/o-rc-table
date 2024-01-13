@@ -3,7 +3,7 @@ title: 数据加载中
 order: 30
 ---
 
-可以通过指定表格参数`isLoading`来显示加载中效果。
+可以通过指定表格参数`loading`来显示加载中效果。
 
 ```jsx
 import React from "react";
@@ -11,7 +11,7 @@ import { Table, useTablePipeline, features } from "o-rc-table";
 
 export default () => {
 
-  const [ isLoading, setIsLoadding ] = React.useState(false)
+  const [ loading, setIsLoadding ] = React.useState(false)
   const [dataSource,setDataSource] = React.useState([])
 
   const columns = [
@@ -62,7 +62,7 @@ export default () => {
     <button  onClick={hideLoadding} style={{marginLeft:'5px'}}>隐藏加载动画</button>
     <br/>
     <br/>
-    <Table {...pipeline.getProps()} isLoading={isLoading}/>
+    <Table {...pipeline.getProps()} loading={loading}/>
   </div>
 }
 ```

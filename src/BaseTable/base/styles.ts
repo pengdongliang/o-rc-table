@@ -3,117 +3,135 @@ import styled, { css } from 'styled-components'
 export const LOCK_SHADOW_PADDING = 20
 
 // TODO 取基础表格上下文
-export const prefix = 'ocloud-'
+export const prefix = 'ocloud-table'
 
 export const Classes = {
+  // ============================= wrapper =============================
   /** BaseTable 表格组件的外层包裹 div */
-  artTableWrapper: `${prefix}table-wrapper`,
-  artTableBordered: `${prefix}table-bordered`,
+  artTableWrapper: `${prefix}-wrapper`,
+  /** 单元格边框 */
+  artTableBordered: `${prefix}-bordered`,
+  /** 有表头 */
+  hasHeader: `${prefix}-has-header`,
+  /** 具有sticky头部 */
+  stickyHeader: `${prefix}-sticky-header`,
+  /** 有表尾 */
+  hasFooter: `${prefix}-has-footer`,
+  /** sticky表尾 */
+  stickyFooter: `${prefix}-sticky-footer`,
+  /** 是IE */
+  iePolyfillWrapper: `${prefix}-ie-polyfill-wrapper`,
+  /** 使用来自外层 div 的边框代替单元格的外边框 */
+  outerBorder: `${prefix}-use-outer-border`,
+  /** 包含有效的锁列 */
+  lockWrapper: `${prefix}-lock-wrapper`,
+  // ============================= wrapper =============================
 
-  artTable: `${prefix}table-container`,
-  tableHeaderMain: `${prefix}table-header-main`,
-  tableHeader: `${prefix}table-header`,
-  tableBody: `${prefix}table-body`,
-  tableBodyTbody: `${prefix}table-tbody`,
-  virtual: `${prefix}table-virtual`,
-  tableFooter: `${prefix}table-footer`,
-  tableFooterMain: `${prefix}table-footer-main`,
+  artTable: `${prefix}-container`,
+  tableHeaderMain: `${prefix}-header-main`,
+  tableHeader: `${prefix}-header`,
+  /** 表格标题无滚动条 */
+  tableHeaderNoScrollbar: `${prefix}-header-no-scrollbar`,
+  tableBody: `${prefix}-body`,
+  tableBodyEmpty: `${prefix}-body-empty`,
+  tableBodyTbody: `${prefix}-tbody`,
+  virtual: `${prefix}-virtual`,
+  tableFooter: `${prefix}-footer`,
+  tableFooterMain: `${prefix}-footer-main`,
 
   /** 表格行 */
-  tableRow: `${prefix}table-row`,
+  tableRow: `${prefix}-row`,
   /** 表头thead */
-  tableHeaderThead: `${prefix}table-thead`,
+  tableHeaderThead: `${prefix}-thead`,
   /** 表头行 */
-  tableHeaderRow: `${prefix}table-header-row`,
+  tableHeaderRow: `${prefix}-header-row`,
   /** 单元格 */
-  tableCell: `${prefix}table-cell`,
+  tableCell: `${prefix}-cell`,
   /** 表头的单元格 */
-  tableHeaderCell: `${prefix}table-header-cell`,
-  tableHeaderCellContent: `${prefix}table-header-cell-content`,
-  tableHeaderCellResize: `${prefix}table-header-cell-resize`,
-  virtualBlank: `${prefix}virtual-blank`,
+  tableHeaderCell: `${prefix}-header-cell`,
+  tableHeaderCellContent: `${prefix}-header-cell-content`,
+  tableHeaderCellResize: `${prefix}-header-cell-resize`,
+  virtualBlank: `${prefix}-virtual-blank`,
 
-  stickyScroll: `${prefix}sticky-scroll`,
-  stickyScrollItem: `${prefix}sticky-scroll-item`,
-  horizontalScrollContainer: `${prefix}horizontal-scroll-container`,
-  verticalScrollPlaceholder: `${prefix}vertical-scroll-placeholder`,
-  horizontalStickyScrollContainer: `${prefix}horizontal-sticky-scroll-container`,
-  horizontalScrollLeftSpacer: `${prefix}horizontal-scroll-left-spacer`,
-  horizontalScrollRightSpacer: `${prefix}horizontal-scroll-right-spacer`,
+  stickyScroll: `${prefix}-sticky-scroll`,
+  stickyScrollItem: `${prefix}-sticky-scroll-item`,
+  horizontalScrollContainer: `${prefix}-horizontal-scroll-container`,
+  verticalScrollPlaceholder: `${prefix}-vertical-scroll-placeholder`,
+  horizontalStickyScrollContainer: `${prefix}-horizontal-sticky-scroll-container`,
 
-  lockShadowMask: `${prefix}lock-shadow-mask`,
-  lockShadow: `${prefix}lock-shadow`,
-  leftLockShadow: `${prefix}left-lock-shadow`,
-  rightLockShadow: `${prefix}right-lock-shadow`,
+  lockShadowMask: `${prefix}-lock-shadow-mask`,
+  lockShadow: `${prefix}-lock-shadow`,
+  leftLockShadow: `${prefix}-left-lock-shadow`,
+  rightLockShadow: `${prefix}-right-lock-shadow`,
 
   /** 数据为空时表格内容的外层 div */
-  emptyWrapper: `${prefix}empty-wrapper`,
+  emptyWrapper: `${prefix}-empty-wrapper`,
 
-  loadingWrapper: `${prefix}loading-wrapper`,
-  loadingContentWrapper: `${prefix}loading-content-wrapper`,
-  loadingIndicatorWrapper: `${prefix}loading-indicator-wrapper`,
-  loadingIndicator: `${prefix}loading-indicator`,
+  loadingWrapper: `${prefix}-loading-wrapper`,
+  loadingContentWrapper: `${prefix}-loading-content-wrapper`,
+  loadingIndicatorWrapper: `${prefix}-loading-indicator-wrapper`,
+  loadingIndicator: `${prefix}-loading-indicator`,
 
-  tableHeaderCellLine: `${prefix}table-header-cell-line`,
+  tableHeaderCellLine: `${prefix}-table-header-cell-line`,
 
-  tableFilterTrigger: `${prefix}filter-trigger`,
-  tableSortIcon: `${prefix}sort-icon`,
-  tableExtendIcon: `${prefix}extend-icon`,
+  tableFilterTrigger: `${prefix}-filter-trigger`,
+  tableSortIcon: `${prefix}-sort-icon`,
+  tableExtendIcon: `${prefix}-extend-icon`,
 
-  button: `${prefix}btn`,
-  buttonPrimary: `${prefix}btn-primary`,
-  filterIcon: `${prefix}filter-icon`,
+  button: `${prefix}-btn`,
+  buttonPrimary: `${prefix}-btn-primary`,
+  filterIcon: `${prefix}-filter-icon`,
 
-  rangeSelection: `${prefix}range-selection`,
-  tableCellRangeSingleCell: `${prefix}table-cell-range-single-cell`,
-  tableCellRangeSelected: `${prefix}table-cell-range-selected`,
-  tableCellRangeTop: `${prefix}table-cell-range-top`,
-  tableCellRangeLeft: `${prefix}table-cell-range-left`,
-  tableCellRangeBottom: `${prefix}table-cell-range-bottom`,
-  tableCellRangeRight: `${prefix}table-cell-range-right`,
+  rangeSelection: `${prefix}-range-selection`,
+  tableCellRangeSingleCell: `${prefix}-cell-range-single-cell`,
+  tableCellRangeSelected: `${prefix}-cell-range-selected`,
+  tableCellRangeTop: `${prefix}-cell-range-top`,
+  tableCellRangeLeft: `${prefix}-cell-range-left`,
+  tableCellRangeBottom: `${prefix}-cell-range-bottom`,
+  tableCellRangeRight: `${prefix}-cell-range-right`,
 
-  fixedLeft: `${prefix}fixed-left`,
-  fixedRight: `${prefix}fixed-right`,
+  fixedLeft: `${prefix}-fixed-left`,
+  fixedRight: `${prefix}-fixed-right`,
 
-  rowDetailContainer: `${prefix}row-detail-container`,
-  rowDetailItem: `${prefix}row-detail-item`,
+  rowDetailContainer: `${prefix}-row-detail-container`,
+  rowDetailItem: `${prefix}-row-detail-item`,
 
-  emptyColCell: `${prefix}empty-col-cell`,
+  emptyColCell: `${prefix}-empty-col-cell`,
 
-  first: `${prefix}first`,
-  last: `${prefix}last`,
-  even: `${prefix}even`,
-  odd: `${prefix}odd`,
+  first: `${prefix}-first`,
+  last: `${prefix}-last`,
+  even: `${prefix}-even`,
+  odd: `${prefix}-odd`,
 
-  lockLeft: `${prefix}lock-left`,
-  lockRight: `${prefix}lock-right`,
-  rowSpan: `${prefix}row-span`,
-  leaf: `${prefix}leaf`,
+  lockLeft: `${prefix}-lock-left`,
+  lockRight: `${prefix}-lock-right`,
+  rowSpan: `${prefix}-row-span`,
+  leaf: `${prefix}-leaf`,
 
-  expanded: `${prefix}expanded`,
-  collapsed: `${prefix}collapsed`,
+  expanded: `${prefix}-expanded`,
+  collapsed: `${prefix}-collapsed`,
 
-  popup: `${prefix}popup`,
-  popupHeader: `${prefix}popup-header`,
-  popupBody: `${prefix}popup-body`,
+  popup: `${prefix}-popup`,
+  popupHeader: `${prefix}-popup-header`,
+  popupBody: `${prefix}-popup-body`,
 
-  rowDragging: `${prefix}row-dragging`,
+  rowDragging: `${prefix}-row-dragging`,
 
-  rowDragStart: `${prefix}row-drag-start`,
-  rowDragEnd: `${prefix}row-drag-end`,
-  rowDragEndToTop: `${prefix}row-drag-end-to-top`,
-  rowDragEndToBottom: `${prefix}row-drag-end-to-bottom`,
-  rowDragElement: `${prefix}row-drag-element`,
-  rowDragCell: `${prefix}row-drag-cell`,
+  rowDragStart: `${prefix}-row-drag-start`,
+  rowDragEnd: `${prefix}-row-drag-end`,
+  rowDragEndToTop: `${prefix}-row-drag-end-to-top`,
+  rowDragEndToBottom: `${prefix}-row-drag-end-to-bottom`,
+  rowDragElement: `${prefix}-row-drag-element`,
+  rowDragCell: `${prefix}-row-drag-cell`,
 } as const
 
 export const MenuClasses = {
-  menu: `${prefix}table-menu`,
-  menuList: `${prefix}table-menu-list`,
-  menuOption: `${prefix}table-menu-option`,
-  menuOptionActive: `${prefix}table-menu-option-active`,
-  menuOptionDisable: `${prefix}table-menu-option-disable`,
-  menuOptionText: `${prefix}table-menu-option-text`,
+  menu: `${prefix}-menu`,
+  menuList: `${prefix}-menu-list`,
+  menuOption: `${prefix}-menu-option`,
+  menuOptionActive: `${prefix}-menu-option-active`,
+  menuOptionDisable: `${prefix}-menu-option-disable`,
+  menuOptionText: `${prefix}-menu-option-text`,
 }
 
 const Z = {
@@ -204,11 +222,11 @@ const outerBorderStyleMixin = css`
     border-top: none;
   }
 
-  &.has-footer tfoot tr.${Classes.last} td {
+  &${Classes.hasFooter} tfoot tr.${Classes.last} td {
     border-bottom: none;
   }
 
-  &:not(.has-footer) tbody tr.${Classes.last} td {
+  &:not(${Classes.hasFooter}) tbody tr.${Classes.last} td {
     border-bottom: none;
   }
 
@@ -256,30 +274,26 @@ export const defaultCSSVariables: BaseTableCSSVariables = {
 export const variableConst = getCssVariableText(defaultCSSVariables)
 
 export const StyledArtTableWrapper = styled.div`
-  :root {
-    ${variableConst}
-  }
-
   ${variableConst}
 
   * {
     box-sizing: border-box;
   }
 
-  box-sizing: border-box;
-  cursor: default;
-  color: var(--color);
-  //font-size: var(--font-size);
-  line-height: var(--line-height);
   position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
 
   // 表格外边框由 o-rc-table-wrapper 提供，而不是由单元格提供
 
-  &.use-outer-border {
+  &.${Classes.outerBorder} {
     ${outerBorderStyleMixin};
   }
 
-  .no-scrollbar {
+  .${Classes.tableHeaderNoScrollbar} {
     ::-webkit-scrollbar {
       display: none;
     }
@@ -642,18 +656,6 @@ export const StyledArtTableWrapper = styled.div`
     background: var(--bgcolor);
   }
 
-  .${Classes.horizontalScrollLeftSpacer} {
-    //height: 1px;
-    //flex-shrink: 0;
-    //border-top: 1px solid var(--border-color);
-  }
-
-  .${Classes.horizontalScrollRightSpacer} {
-    //height: 1px;
-    //flex-shrink: 0;
-    //border-top: 1px solid var(--border-color);
-  }
-
   .${Classes.stickyScroll} {
     overflow-y: hidden;
     overflow-x: auto;
@@ -667,42 +669,6 @@ export const StyledArtTableWrapper = styled.div`
     // 必须有高度才能出现滚动条
     height: 1px;
     visibility: hidden;
-  }
-
-  //#endregion
-
-  //#region 加载样式
-
-  .${Classes.loadingWrapper} {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-
-    .${Classes.loadingContentWrapper} {
-      filter: none;
-      width: 100%;
-      height: 100%;
-      overflow: hidden; //列全部固定时，存在双横向滚动条
-      display: flex;
-      position: relative;
-      flex-direction: column;
-    }
-
-    .${Classes.loadingIndicatorWrapper} {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      pointer-events: none;
-    }
-
-    .${Classes.loadingIndicator} {
-      position: sticky;
-      z-index: ${Z.loadingIndicator};
-      transform: translateY(-50%);
-    }
   }
 
   //#endregion

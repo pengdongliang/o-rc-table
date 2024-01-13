@@ -47,7 +47,7 @@ export default () => {
     <div>
       <Table
         bordered
-        isLoading={false}
+        loading={false}
         useVirtual={true}
         style={{ height: 600, width: 800, overflow: 'auto' }}
         {...pipeline.getProps()}

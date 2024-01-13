@@ -16,9 +16,7 @@ import genRtlStyle from './rtl'
 import genSelectionStyle from './selection'
 import genSizeStyle from './size'
 import genSorterStyle from './sorter'
-import genStickyStyle from './sticky'
 import genSummaryStyle from './summary'
-import genVirtualStyle from './virtual'
 
 export interface ComponentToken {
   /**
@@ -574,11 +572,11 @@ export default genStyleHooks(
       genEmptyStyle(tableToken),
       genSelectionStyle(tableToken),
       genFixedStyle(tableToken),
-      genStickyStyle(tableToken),
+      // genStickyStyle(tableToken),
       genEllipsisStyle(tableToken),
       genSizeStyle(tableToken),
       genRtlStyle(tableToken),
-      genVirtualStyle(tableToken),
+      // genVirtualStyle(tableToken),
     ]
   },
   prepareComponentToken,

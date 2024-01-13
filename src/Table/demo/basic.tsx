@@ -15,6 +15,7 @@ export default () => {
         to: '2222222',
         amount: '29400.00',
         balance: '1000.00',
+        opt: `操作${index}`,
       })),
     []
   )
@@ -28,15 +29,17 @@ export default () => {
       { code: 'balance', name: '应收余额', width: 100, align: 'right' },
     ]
 
-    return Array.from(Array(2000)).reduce(
-      (acc, _cur, index) =>
-        acc.concat(
-          baseColumns.map((item) => {
-            return { ...item, name: item.name + index }
-          })
-        ),
-      [{ code: 'No', name: '序号', width: 60, align: 'center', lock: true }]
-    )
+    return Array.from(Array(2000))
+      .reduce(
+        (acc, _cur, index) =>
+          acc.concat(
+            baseColumns.map((item) => {
+              return { ...item, name: item.name + index }
+            })
+          ),
+        [{ code: 'No', name: '序号', width: 80, align: 'center', lock: true }]
+      )
+      .concat({ code: 'opt', name: '操作', width: 80, align: 'center', lock: true })
   }, [])
 
   // TODO 主题未应用需要看看ConfigProvider
