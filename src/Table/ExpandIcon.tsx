@@ -25,7 +25,7 @@ function renderExpandIcon(locale: TableLocale) {
       <button
         type="button"
         onClick={(e) => {
-          onExpand(record, e!)
+          onExpand(record, e)
           e.stopPropagation()
         }}
         className={classNames(iconPrefix, {

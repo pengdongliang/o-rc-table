@@ -212,6 +212,7 @@ export default function genComponentStyleHook<C extends OverrideComponent>(
         },
         cssVar ? defaultComponentToken : componentToken
       )
+      console.log('mergedToken', { ...mergedToken })
 
       const styleInterpolation = styleFn(mergedToken as unknown as FullToken<C>, {
         hashId,

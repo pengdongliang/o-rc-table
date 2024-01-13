@@ -3,19 +3,19 @@ import styled, { css } from 'styled-components'
 export const LOCK_SHADOW_PADDING = 20
 
 // TODO 取基础表格上下文
-const prefix = 'ocloud-'
+export const prefix = 'ocloud-'
 
 export const Classes = {
   /** BaseTable 表格组件的外层包裹 div */
   artTableWrapper: `${prefix}table-wrapper`,
   artTableBordered: `${prefix}table-bordered`,
 
-  artTable: `${prefix}table`,
+  artTable: `${prefix}table-container`,
   tableHeaderMain: `${prefix}table-header-main`,
   tableHeader: `${prefix}table-header`,
   tableBody: `${prefix}table-body`,
   tableBodyTbody: `${prefix}table-tbody`,
-  virtual: `${prefix}virtual`,
+  virtual: `${prefix}table-virtual`,
   tableFooter: `${prefix}table-footer`,
   tableFooterMain: `${prefix}table-footer-main`,
 
@@ -256,6 +256,12 @@ export const defaultCSSVariables: BaseTableCSSVariables = {
 export const variableConst = getCssVariableText(defaultCSSVariables)
 
 export const StyledArtTableWrapper = styled.div`
+  :root {
+    ${variableConst}
+  }
+
+  ${variableConst}
+
   * {
     box-sizing: border-box;
   }
@@ -263,7 +269,7 @@ export const StyledArtTableWrapper = styled.div`
   box-sizing: border-box;
   cursor: default;
   color: var(--color);
-  font-size: var(--font-size);
+  //font-size: var(--font-size);
   line-height: var(--line-height);
   position: relative;
 

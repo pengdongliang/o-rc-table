@@ -16,6 +16,8 @@ export interface TableProps<RecordType> extends BaseTableProps {
   prefixCls?: string
   className?: string
   style?: React.CSSProperties
+  // TODO 临时使用, 后续删除
+  TEST?: RecordType
 }
 
 /** Same as `TableProps` but we need record parent render times */

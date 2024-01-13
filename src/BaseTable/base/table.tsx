@@ -17,7 +17,7 @@ import { HtmlTable } from './html-table'
 import { RenderInfo, ResolvedUseVirtual, VerticalRenderRange, VirtualEnum } from './interfaces'
 import Loading, { LoadingContentWrapperProps } from './loading'
 import getTableRenderTemplate from './renderTemplates'
-import { BaseTableCSSVariables, Classes, LOCK_SHADOW_PADDING, StyledArtTableWrapper } from './styles'
+import { BaseTableCSSVariables, Classes, LOCK_SHADOW_PADDING, prefix } from './styles'
 import {
   addResizeObserver,
   // cssPolifill,
@@ -539,7 +539,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     } = this.props
 
     const artTableWrapperClassName = cx(
-      Classes.artTableWrapper,
+      prefix + 'table',
       {
         'use-outer-border': useOuterBorder,
         empty: dataSource.length === 0,
@@ -561,9 +561,10 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     }
 
     const tableProps = getTableProps() || {}
-    // TODO 样式不生效antdTheme
+
     return (
-      <StyledArtTableWrapper {...artTableWrapperProps}>
+      <div {...artTableWrapperProps}>
+        {/* TODO loading放在包装组件里使用Spin, 注意要不要采用antd样式问题 */}
         <Loading
           visible={isLoading}
           LoadingIcon={components.LoadingIcon}
@@ -577,7 +578,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
           </div>
           {this.renderStickyScroll(info)}
         </Loading>
-      </StyledArtTableWrapper>
+      </div>
     )
   }
 

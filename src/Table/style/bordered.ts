@@ -1,4 +1,5 @@
 import { type CSSObject, unit } from '@ant-design/cssinjs'
+import { Classes } from 'o-rc-table'
 
 import type { GenerateStyle } from '../../theme/internal'
 import type { TableToken } from './index'
@@ -20,13 +21,15 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
     [`&${componentCls}-${size}`]: {
       [`> ${componentCls}-container`]: {
         [`> ${componentCls}-content, > ${componentCls}-body`]: {
-          [`
-            > table > tbody > tr > th,
-            > table > tbody > tr > td
-          `]: {
-            [`> ${componentCls}-expanded-row-fixed`]: {
-              margin: `${unit(calc(paddingVertical).mul(-1).equal())}
-              ${unit(calc(calc(paddingHorizontal).add(lineWidth)).mul(-1).equal())}`,
+          [`> .${Classes.virtual} > table, > table`]: {
+            [`
+              > tbody > tr > th,
+              > tbody > tr > td
+            `]: {
+              [`> ${componentCls}-expanded-row-fixed`]: {
+                margin: `${unit(calc(paddingVertical).mul(-1).equal())}
+                ${unit(calc(calc(paddingHorizontal).add(lineWidth)).mul(-1).equal())}`,
+              },
             },
           },
         },
@@ -36,7 +39,7 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
 
   return {
     [`${componentCls}-wrapper`]: {
-      [`${componentCls}${componentCls}-bordered`]: {
+      [`${componentCls}-bordered`]: {
         // ============================ Title =============================
         [`> ${componentCls}-title`]: {
           border: tableBorder,
@@ -44,19 +47,20 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
         },
 
         // ============================ Content ============================
-        [`> ${componentCls}-container`]: {
-          borderInlineStart: tableBorder,
-          borderTop: tableBorder,
+        [`> .${Classes.loadingWrapper} > .${Classes.loadingContentWrapper} > ${componentCls}-container, > ${componentCls}-container`]:
+          {
+            borderInlineStart: tableBorder,
+            borderTop: tableBorder,
 
-          [`
+            [`
             > ${componentCls}-content,
             > ${componentCls}-header,
             > ${componentCls}-body,
             > ${componentCls}-summary
           `]: {
-            '> table': {
-              // ============================= Cell =============================
-              [`
+              [`> .${Classes.virtual} > table, > table`]: {
+                // ============================= Cell =============================
+                [`
                 > thead > tr > th,
                 > thead > tr > td,
                 > tbody > tr > th,
@@ -64,64 +68,66 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
                 > tfoot > tr > th,
                 > tfoot > tr > td
               `]: {
-                borderInlineEnd: tableBorder,
-              },
-
-              // ============================ Header ============================
-              '> thead': {
-                '> tr:not(:last-child) > th': {
-                  borderBottom: tableBorder,
+                  borderInlineEnd: tableBorder,
                 },
 
-                '> tr > th::before': {
-                  backgroundColor: 'transparent !important',
-                },
-              },
+                // ============================ Header ============================
+                '> thead': {
+                  '> tr:not(:last-child) > th': {
+                    borderBottom: tableBorder,
+                  },
 
-              // Fixed right should provides additional border
-              [`
+                  '> tr > th::before': {
+                    backgroundColor: 'transparent !important',
+                  },
+                },
+
+                // Fixed right should provides additional border
+                [`
                 > thead > tr,
                 > tbody > tr,
                 > tfoot > tr
               `]: {
-                [`> ${componentCls}-cell-fix-right-first::after`]: {
-                  borderInlineEnd: tableBorder,
+                  [`> ${componentCls}-cell-fix-right-first::after`]: {
+                    borderInlineEnd: tableBorder,
+                  },
                 },
-              },
 
-              // ========================== Expandable ==========================
-              [`
+                // ========================== Expandable ==========================
+                [`
                 > tbody > tr > th,
                 > tbody > tr > td
               `]: {
-                [`> ${componentCls}-expanded-row-fixed`]: {
-                  margin: `${unit(calc(tablePaddingVertical).mul(-1).equal())} ${unit(
-                    calc(calc(tablePaddingHorizontal).add(lineWidth)).mul(-1).equal()
-                  )}`,
-                  '&::after': {
-                    position: 'absolute',
-                    top: 0,
-                    insetInlineEnd: lineWidth,
-                    bottom: 0,
-                    borderInlineEnd: tableBorder,
-                    content: '""',
+                  [`> ${componentCls}-expanded-row-fixed`]: {
+                    margin: `${unit(calc(tablePaddingVertical).mul(-1).equal())} ${unit(
+                      calc(calc(tablePaddingHorizontal).add(lineWidth)).mul(-1).equal()
+                    )}`,
+                    '&::after': {
+                      position: 'absolute',
+                      top: 0,
+                      insetInlineEnd: lineWidth,
+                      bottom: 0,
+                      borderInlineEnd: tableBorder,
+                      content: '""',
+                    },
                   },
                 },
               },
             },
           },
-        },
 
         // ============================ Scroll ============================
         [`&${componentCls}-scroll-horizontal`]: {
           [`> ${componentCls}-container > ${componentCls}-body`]: {
-            '> table > tbody': {
-              [`
+            [`.${Classes.virtual} > table, > table`]: {
+              '> tbody': {
+                [`
                 > tr${componentCls}-expanded-row,
                 > tr${componentCls}-placeholder
               `]: {
-                '> th, > td': {
-                  borderInlineEnd: 0,
+                  '> th, > td': {
+                    borderInlineEnd: 0,
+                  },
                 },
               },
             },

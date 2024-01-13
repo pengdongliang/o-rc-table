@@ -559,6 +559,7 @@ export default genStyleHooks(
       tableScrollThumbBgHover: colorTextHeading,
       tableScrollBg: colorSplit,
     })
+    console.log('tableToken', { ...tableToken })
 
     return [
       genTableStyle(tableToken),
