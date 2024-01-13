@@ -20,7 +20,7 @@ import getTableRenderTemplate from './renderTemplates'
 import { BaseTableCSSVariables, Classes, LOCK_SHADOW_PADDING, StyledArtTableWrapper } from './styles'
 import {
   addResizeObserver,
-  cssPolifill,
+  // cssPolifill,
   getScrollbarSize,
   getTableScrollFooterDOM,
   getTableScrollHeaderDOM,
@@ -203,7 +203,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
 
   /** @deprecated BaseTable.getDoms() 已经过时，请勿调用 */
   getDoms() {
-    console.warn('[ocloud-table] BaseTable.getDoms() 已经过时')
+    console.warn('[o-rc-table] BaseTable.getDoms() 已经过时')
     return this.domHelper
   }
 
@@ -561,6 +561,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     }
 
     const tableProps = getTableProps() || {}
+    // TODO 样式不生效antdTheme
     return (
       <StyledArtTableWrapper {...artTableWrapperProps}>
         <Loading
@@ -588,24 +589,21 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     this.props$ = new BehaviorSubject(this.props)
     this.initSubscriptions()
     this.didMountOrUpdate()
-    // console.log('did mount end')
-    const { cssVariables, enableCSSVariables, bordered } = this.props
-    cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
+    // const { cssVariables, enableCSSVariables, bordered } = this.props
+    // cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
     this.props.setTableWidth?.(this.domHelper.tableBody.clientWidth)
     this.props.setTableDomHelper?.(this.domHelper)
     this.props.setRowHeightManager?.(this.rowHeightManager)
   }
 
   componentDidUpdate(prevProps: Readonly<BaseTableProps>, prevState: Readonly<BaseTableState>) {
-    // console.log('did update start')
-    const { cssVariables, enableCSSVariables, bordered } = this.props
-    if (!shallowEqual(prevProps?.cssVariables, this.props?.cssVariables)) {
-      cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
-    }
+    // const { cssVariables, enableCSSVariables, bordered } = this.props
+    // if (!shallowEqual(prevProps?.cssVariables, this.props?.cssVariables)) {
+    //   cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
+    // }
     this.updateDOMHelper()
     this.props$.next(this.props)
     this.didMountOrUpdate(prevProps, prevState)
-    // console.log('did update end')
   }
 
   private didMountOrUpdate(prevProps?: Readonly<BaseTableProps>, prevState?: Readonly<BaseTableState>) {

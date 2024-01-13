@@ -201,8 +201,8 @@ export const cssPolifill = ({
 
   // 默认情况下存在td、th无左右边框，开启`bordered`属性后才开启，否则隐藏这两种属性
   if (!bordered) {
-    conditionCSSVariables['--cell-border-vertical'] = 'none'
-    conditionCSSVariables['--header-cell-border-vertical'] = 'none'
+    conditionCSSVariables['--cell-border-horizontal'] = 'none'
+    conditionCSSVariables['--header-cell-border-horizontal'] = 'none'
   }
 
   cssVars({

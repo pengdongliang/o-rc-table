@@ -46,7 +46,7 @@ export function contextMenu(opts: ContextMenuFeatureOptions = {}) {
 
     const addPopup = (menu) => {
       const ePopupDiv = document.createElement('div')
-      ePopupDiv.setAttribute('class', 'ocloud-table-popup')
+      ePopupDiv.setAttribute('class', 'o-rc-table-popup')
       popupParent.appendChild(ePopupDiv)
 
       let popupHidden = false

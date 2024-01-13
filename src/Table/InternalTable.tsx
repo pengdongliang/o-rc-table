@@ -1,9 +1,10 @@
+import { ConfigContext } from 'antd/es/config-provider'
 import classNames from 'classnames'
 import { Table, useTablePipeline } from 'o-rc-table'
 import type { BaseTableProps } from 'o-rc-table/base/table'
 import * as React from 'react'
 
-import { type ConfigConsumerProps, ConfigContext } from '../ConfigProvider'
+import { type ConfigConsumerProps } from '../ConfigProvider'
 import useCSSVarCls from '../ConfigProvider/hooks/useCSSVarCls'
 import { AnyObject } from '../theme/interface'
 import { RefInternalTable } from './interface'

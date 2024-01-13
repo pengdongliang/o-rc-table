@@ -38,9 +38,9 @@ export default () => {
       [{ code: 'No', name: '序号', width: 60, align: 'center', lock: true }]
     )
   }, [])
-  // TODO theme 未生效
+
   return (
-    <ConfigProvider theme={antdTheme}>
+    <ConfigProvider theme={antdTheme} prefixCls="ocloud">
       <Table
         dataSource={dataSource}
         columns={columns}

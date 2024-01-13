@@ -1,27 +1,27 @@
 import { Classes } from '../styles'
 
 // 表格 DOM 结构
-// div.art-table-wrapper
+// div.o-rc-table-wrapper
 // └── div.art-loading-wrapper
 //     ├── div.art-loading-indicator-wrapper
 //     │   └── div.art-loading-indicator
 //     │
 //     └── div.art-loading-content-wrapper
-//         ├── div.art-table
+//         ├── div.o-rc-table
 //         │   │
-//         │   ├── div.art-table-header
+//         │   ├── div.o-rc-table-header
 //         │   │  └── table
 //         │   │      ├── colgroup
 //         │   │      └── thead  注意这里会出现自定义内容，可能存在嵌套表格
 //         │   │
-//         │   ├── div.art-table-body
+//         │   ├── div.o-rc-table-body
 //         │   │   ├── div.art-virtual-blank.top
 //         │   │   ├── table
 //         │   │   │   ├── colgroup
 //         │   │   │   └── tbody 注意这里会出现自定义内容，可能存在嵌套表格
 //         │   │   └── div.art-virtual-blank.bottom
 //         │   │
-//         │   ├── div.art-table-footer
+//         │   ├── div.o-rc-table-footer
 //         │   │  └── table
 //         │   │      ├── colgroup
 //         │   │      └── tfoot  注意这里会出现自定义内容，可能存在嵌套表格

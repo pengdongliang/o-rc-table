@@ -1,7 +1,7 @@
 import type { CSSInterpolation } from '@ant-design/cssinjs'
 import { token2CSSVar, useCSSVarRegister, useStyleRegister } from '@ant-design/cssinjs'
-import { ConfigContext } from '@src/ConfigProvider/context'
 import useToken, { ignore, unitless } from '@src/theme/useToken'
+import { ConfigContext } from 'antd/es/config-provider'
 import type { ComponentType, FC, ReactElement } from 'react'
 import { useContext } from 'react'
 
@@ -156,7 +156,7 @@ export default function genComponentStyleHook<C extends OverrideComponent>(
       theme,
       token,
       hashId,
-      nonce: () => csp?.nonce!,
+      nonce: () => csp?.nonce,
       clientOnly: options.clientOnly,
 
       // antd is always at top of styles
@@ -260,6 +260,7 @@ export const genSubStyleComponent: <C extends OverrideComponent>(
 
 export type CSSVarRegisterProps = {
   rootCls: string
+  // eslint-disable-next-line react/no-unused-prop-types
   component: string
   cssVar: {
     prefix?: string
@@ -297,7 +298,7 @@ const genCSSVarRegister = <C extends OverrideComponent>(
       {
         path: [component],
         prefix: cssVar.prefix,
-        key: cssVar?.key!,
+        key: cssVar?.key,
         unitless: {
           ...unitless,
           ...compUnitless,

@@ -29,7 +29,7 @@ export interface TablePipelineCtx {
 }
 
 /**
- * 表格数据处理流水线。TablePipeline 提供了表格数据处理过程中的一些上下方与工具方法，包括……
+ * 表格数据处理流水线。TablePipeline 提供了表格数据处理过程中的一些上下文与工具方法，包括……
  *
  * 1. ctx：上下文环境对象，step（流水线上的一步）可以对 ctx 中的字段进行读写。
  * ctx 中部分字段名称有特定的含义（例如 primaryKey 表示行的主键），使用自定义的上下文信息时注意避开这些名称。
@@ -89,7 +89,9 @@ export class TablePipeline {
     Object.assign(this.ctx, ctx)
   }
 
-  // Generate a pseudo-GUID by concatenating random hexadecimal.
+  /**
+   * 通过连接随机十六进制生成伪GUID
+   */
   guid() {
     function S4() {
       return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
@@ -128,23 +130,29 @@ export class TablePipeline {
     return this.state[stateKey] ?? defaultValue
   }
 
-  /** 将 stateKey 对应的状态设置为 partialState  */
+  /**
+   * 将 stateKey 对应的状态设置为 partialState
+   */
   setStateAtKey(stateKey: string, partialState: any, extraInfo?: any) {
     this.setState((prev: any) => ({ ...prev, [stateKey]: partialState }), stateKey, partialState, extraInfo)
   }
 
-  /** 确保 primaryKey 已被设置，并返回 primaryKey  */
+  /**
+   * 确保 primaryKey 已被设置，并返回 primaryKey
+   */
   ensurePrimaryKey(hint?: string): PrimaryKey {
     if (this.ctx.primaryKey == null) {
-      throw new Error(hint ? `使用 ${hint} 之前必须先设置 primaryKey` : '必须先设置 primaryKey')
+      throw new Error(hint ? `PrimaryKey must be set before using ${hint}` : 'Must be set first `primaryKey`')
     }
     return this.ctx.primaryKey
   }
 
-  /** 设置流水线的输入数据 */
+  /**
+   * 设置流水线的输入数据
+   */
   input(input: { dataSource: any[]; columns: ArtColumn[] }) {
     if (this._dataSource != null || this._columns != null) {
-      throw new Error('input 不能调用两次')
+      throw new Error('Input cannot be called twice')
     }
 
     this._dataSource = input.dataSource
@@ -155,31 +163,41 @@ export class TablePipeline {
     return this
   }
 
-  /** 设置 dataSource */
+  /**
+   * 设置 dataSource
+   */
   dataSource(rows: any[]) {
     this._dataSource = rows
     return this
   }
 
-  /** 设置 columns */
+  /**
+   * 设置 columns
+   */
   columns(cols: ArtColumn[]) {
     this._columns = cols
     return this
   }
 
-  /** 设置主键 */
+  /**
+   * 设置主键
+   */
   primaryKey(key: PrimaryKey) {
     this.ctx.primaryKey = key
     return this
   }
 
-  /** 设置页脚数据 */
+  /**
+   * 设置页脚数据
+   */
   footerDataSource(rows: any[]) {
     this._footerDataSource = rows
     return this
   }
 
-  /** 保存快照 */
+  /**
+   * 保存快照
+   */
   snapshot(name: string) {
     this._snapshots[name] = {
       dataSource: this._dataSource,
@@ -189,8 +207,10 @@ export class TablePipeline {
     return this
   }
 
-  /** @deprecated
-   *  应用一个 ocloud-table Table transform */
+  /**
+   * 应用一个 o-rc-table Table transform
+   * @deprecated
+   */
   useTransform(transform: TableTransform) {
     const next = transform({
       dataSource: this.getDataSource(),
@@ -199,32 +219,44 @@ export class TablePipeline {
     return this.dataSource(next.dataSource).columns(next.columns)
   }
 
-  /** 使用 pipeline 功能拓展 */
+  /**
+   * 使用 pipeline 功能拓展
+   */
   use(step: (pipeline: this) => this) {
     return step(this)
   }
 
-  /** 转换 dataSource */
+  /**
+   * 转换 dataSource
+   */
   mapDataSource(mapper: Transform<any[]>) {
     return this.dataSource(mapper(this.getDataSource()))
   }
 
-  /** 转换 columns */
+  /**
+   * 转换 columns
+   */
   mapColumns(mapper: Transform<ArtColumn[]>) {
     return this.columns(mapper(this.getColumns()))
   }
 
-  /** 获取featureOptions 内容 */
+  /**
+   * 获取featureOptions 内容
+   */
   getFeatureOptions(optionKey: string) {
     return this.ref.current.featureOptions?.[optionKey]
   }
 
-  /** 设置pipelineOptions 内容 */
+  /**
+   * 设置pipelineOptions 内容
+   */
   setFeatureOptions(optionKey: string, value: any) {
     this.ref.current.featureOptions[optionKey] = value
   }
 
-  /** 获取 BaseTable 的 props，结果中包含 dataSource/columns/primaryKey/getRowProps 四个字段 */
+  /**
+   * 获取 BaseTable 的 props，结果中包含 dataSource/columns/primaryKey/getRowProps 四个字段
+   */
   getProps(this: TablePipeline) {
     this.use(autoFillTableWidth())
     const result: TableProps = {

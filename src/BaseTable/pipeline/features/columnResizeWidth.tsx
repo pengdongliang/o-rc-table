@@ -16,7 +16,7 @@ const TableHeaderCellResize = styled.div`
   right: -5px;
   height: 100%;
   width: 10px;
-  cursor: ew-resize;
+  cursor: col-resize;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,10 +26,11 @@ const TableHeaderCellResize = styled.div`
     content: '';
     position: absolute;
     display: block;
-    left: calc(50% - 1px);
+    left: 50%;
     width: 1px;
-    height: calc(100% - 14px);
-    top: 7px;
+    height: 60%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 `
 
@@ -48,6 +49,7 @@ interface ChangedColumnSize {
   code: string
   width: number
 }
+
 export interface ColumnResizeOptions {
   columnSize?: ColumnSize
   /** 列的最小宽度，默认为 60 */
@@ -150,7 +152,7 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
           }
           recordColumnSize = nextColumnSize
           return nextColumnSize
-        })
+        }),
       )
 
       nextSize$.subscribe({
@@ -208,7 +210,7 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
             className: 'resizeable',
           }),
         }
-      })
+      }),
     )
   }
 }

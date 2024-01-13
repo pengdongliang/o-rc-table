@@ -27,8 +27,10 @@ function isHtmlOrBody(arg: Node) {
   return isHtml(arg) || isBody(arg)
 }
 
-// 计算从 start（子元素）到 stop（祖先元素）之间所有元素的 scrollTop 或 scrollLeft 的和
-// 注意 start 和 stop 都是 INCLUSIVE 的，即两者的 scrollTop 或 scrollLeft 都会统计在内
+/**
+ * 计算从 start（子元素）到 stop（祖先元素）之间所有元素的 scrollTop 或 scrollLeft 的和
+ * 注意 start 和 stop 都是 INCLUSIVE 的，即两者的 scrollTop 或 scrollLeft 都会统计在内
+ */
 function accumulateScrollOffset(
   start: HTMLElement,
   stop: Window | HTMLElement,

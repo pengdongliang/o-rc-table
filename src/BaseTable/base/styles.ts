@@ -179,9 +179,9 @@ export type BaseTableCSSVariables = Partial<{
   '--cell-border-horizontal': string
   /** 表头单元格边框，默认为 1px solid #dfe3e8 */
   '--header-cell-border': string
-  /** 表头单元格上下边框，默认为 none ，默认值为 1px solid #dfe3e8 */
-  '--header-cell-border-horizontal': string
   /** 表头单元格左右边框，默认为 1px solid #dfe3e8 */
+  '--header-cell-border-horizontal': string
+  /** 表头单元格上下边框，默认为 none ，默认值为 1px solid #dfe3e8 */
   '--header-cell-border-vertical': string
 }>
 
@@ -194,6 +194,7 @@ const outerBorderStyleMixin = css`
   td.${Classes.first}, th.${Classes.first} {
     border-left: none;
   }
+
   td.${Classes.last}, th.${Classes.last} {
     border-right: none;
   }
@@ -202,15 +203,19 @@ const outerBorderStyleMixin = css`
   tbody tr.${Classes.first} td {
     border-top: none;
   }
+
   &.has-footer tfoot tr.${Classes.last} td {
     border-bottom: none;
   }
+
   &:not(.has-footer) tbody tr.${Classes.last} td {
     border-bottom: none;
   }
+
   td.${Classes.rowSpan}:not(.${Classes.first}) {
     border-left: var(--cell-border-horizontal);
   }
+
   td.${Classes.rowSpan}:not(.${Classes.last}) {
     border-right: var(--cell-border-horizontal);
   }
@@ -250,24 +255,7 @@ export const defaultCSSVariables: BaseTableCSSVariables = {
 
 export const variableConst = getCssVariableText(defaultCSSVariables)
 
-const notBorderedStyleMixin = css`
-  --cell-border-horizontal: none;
-  --header-cell-border-vertical: none;
-`
-const borderedStyleMixin = css`
-  //th隐藏列宽拖拽的背景色，使用th的右边框代替
-  .${Classes.tableHeaderCellResize}::after {
-    background-color: inherit;
-  }
-`
-
 export const StyledArtTableWrapper = styled.div`
-  :root {
-    ${variableConst}
-  }
-
-  ${variableConst}
-
   * {
     box-sizing: border-box;
   }
@@ -279,20 +267,10 @@ export const StyledArtTableWrapper = styled.div`
   line-height: var(--line-height);
   position: relative;
 
-  // 表格外边框由 art-table-wrapper 提供，而不是由单元格提供
+  // 表格外边框由 o-rc-table-wrapper 提供，而不是由单元格提供
 
   &.use-outer-border {
     ${outerBorderStyleMixin};
-  }
-
-  // 表格不启用边框线，隐藏th、td的单元格左右边框线
-
-  &:not(.${Classes.artTableBordered}) {
-    ${notBorderedStyleMixin}
-  }
-
-  &.${Classes.artTableBordered} {
-    ${borderedStyleMixin}
   }
 
   .no-scrollbar {
@@ -314,7 +292,7 @@ export const StyledArtTableWrapper = styled.div`
     background: var(--header-bgcolor);
     display: flex;
     flex-shrink: 0;
-    border-bottom: var(--header-cell-border-horizontal);
+    border-bottom: var(--header-cell-border-vertical);
   }
 
   .${Classes.tableHeaderCellContent} {
@@ -480,26 +458,26 @@ export const StyledArtTableWrapper = styled.div`
     color: var(--header-color);
     background: var(--header-bgcolor);
     border: 1px solid transparent;
-    border-right: var(--header-cell-border-vertical);
-    border-bottom: var(--header-cell-border-horizontal);
+    border-right: var(--header-cell-border-horizontal);
+    border-bottom: var(--header-cell-border-vertical);
     position: relative;
   }
 
   th.resizeable {
-    border-right: var(--header-cell-border-vertical);
+    border-right: var(--header-cell-border-horizontal);
   }
 
   th.${Classes.leaf} {
-    border-right: var(--header-cell-border-vertical);
+    border-right: var(--header-cell-border-horizontal);
     border-bottom: none;
   }
 
   tr.${Classes.first} th {
-    border-top: var(--header-cell-border-horizontal);
+    border-top: var(--header-cell-border-vertical);
   }
 
   th.${Classes.first} {
-    border-left: var(--header-cell-border-vertical);
+    border-left: var(--header-cell-border-horizontal);
   }
 
   td {
@@ -780,8 +758,10 @@ export const StyledArtTableWrapper = styled.div`
 
   //#region 拖拽列宽大小
 
-  .${Classes.tableHeaderCellResize}::after {
-    background-color: var(--border-color);
+  &:not(.${Classes.artTableBordered}) {
+    .${Classes.tableHeaderCellResize}::after {
+      background-color: var(--border-color);
+    }
   }
 
   //解决部分浏览器(chrome109)最后一个单元格的列宽拖拽区域绝对定位超出表格，导致表格竖分割线无法对齐
@@ -806,26 +786,32 @@ export const ButtonCSS = css`
     border: 1px solid var(--strong-border-color);
     border-radius: 2px;
     cursor: pointer;
+
     &:hover {
       color: var(--primary-color);
       border: 1px solid var(--primary-color);
     }
   }
+
   .${Classes.buttonPrimary} {
     color: #ffffff;
     background-color: var(--primary-color);
     border: none;
+
     &:hover {
       color: #ffffff;
       background-color: var(--primary-color-level2);
       border: none;
     }
   }
+
   //#endregion
 `
+
 interface VariableObj {
   [key: string]: string | number
 }
+
 function getCssVariableText(obj: VariableObj) {
   return Object.keys(obj).reduce((acc, key) => {
     acc += `${key}:${obj[key]};`
