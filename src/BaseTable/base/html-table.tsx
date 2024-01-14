@@ -1,6 +1,6 @@
 import cx from 'classnames'
+import type { CSSProperties } from 'react'
 import React, { ReactNode } from 'react'
-import { CSSProperties } from 'styled-components'
 
 import { ArtColumn } from '../interfaces'
 import { internals } from '../internals'

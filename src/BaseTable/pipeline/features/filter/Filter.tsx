@@ -1,7 +1,7 @@
+import styled from '@emotion/styled'
 import cx from 'classnames'
 import React, { CSSProperties, ReactNode, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import styled from 'styled-components'
 
 import { Classes } from '../../../base/styles'
 import { addResizeObserver } from '../../../base/utils'

@@ -2,7 +2,7 @@
 import React from 'react'
 import { fromEvent } from 'rxjs'
 import * as op from 'rxjs/operators'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 import { Classes } from '../../base/styles'
 import { ArtColumn } from '../../interfaces'

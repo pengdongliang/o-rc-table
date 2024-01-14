@@ -1,5 +1,5 @@
+import styled from '@emotion/styled'
 import React, { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
 
 import { Classes } from '../../../base/styles'
 import { isElementInEventPath, keepWithinBounds } from '../../../utils'

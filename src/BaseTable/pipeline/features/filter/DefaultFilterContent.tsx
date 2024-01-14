@@ -1,6 +1,6 @@
+import styled from '@emotion/styled'
 import cx from 'classnames'
 import React, { useEffect, useRef } from 'react'
-import styled from 'styled-components'
 
 import { ButtonCSS, Classes } from '../../../base/styles'
 import { DefaultFilterPanelProps } from '../../../interfaces'

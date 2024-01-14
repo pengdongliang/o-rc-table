@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import { CSSProperties } from 'styled-components'
+import type { CSSProperties } from 'react'
 
 import type { ArtColumn } from '../interfaces'
 import { getTreeDepth, isLeafNode } from '../utils'

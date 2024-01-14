@@ -1,6 +1,6 @@
+import styled from '@emotion/styled'
 import cx from 'classnames'
 import { noop } from 'rxjs'
-import styled from 'styled-components'
 
 import { Classes } from '../../base/styles'
 import { icons } from '../../common-views'
