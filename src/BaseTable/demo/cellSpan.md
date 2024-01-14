@@ -20,8 +20,8 @@ export default () => {
   ]
 
   const columns = [
-    { code: 'No', name: '序号', width: 60, align: 'center'},
-    { code: 'order', name: '单据号', width: 200,       
+    { dataIndex: 'No', name: '序号', width: 60, align: 'center'},
+    { dataIndex: 'order', name: '物流编码', width: 200,       
       getCellProps(value, record, rowIndex) {
         if (rowIndex === 1) {
           return {
@@ -32,10 +32,10 @@ export default () => {
         }
       },
     },
-    { code: 'from', name: '来户', width: 200 },
-    { code: 'to', name: '往户', width: 200 },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right' },
-    { code: 'balance', name: '应收余额', width: 100, align: 'right' }
+    { dataIndex: 'from', name: '发货地', width: 200 },
+    { dataIndex: 'to', name: '收货地', width: 200 },
+    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right' },
+    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right' }
   ]
 
   return <Table dataSource={dataSource} columns={columns} />

@@ -33,7 +33,7 @@ export function always<T>(value: T) {
 
 interface treeItem {
   children?: any[]
-  code?: string
+  dataIndex?: string
 }
 
 export function findByTree<T extends treeItem>(array: T[], condition: (item: T, index: number) => boolean): T {

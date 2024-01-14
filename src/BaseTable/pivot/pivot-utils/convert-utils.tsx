@@ -85,7 +85,7 @@ export function convertDrillTreeToCrossTree<T extends CrossTreeNode = CrossTreeN
   /** 在 indicators 非空的情况下获取指标对应的 CrossTreeNode */
   function getIndicators(node: DrillNode, nodeData: any) {
     return indicators.map((indicator) => ({
-      key: encode(node.path.concat([indicator.code])),
+      key: encode(node.path.concat([indicator.dataIndex])),
       value: indicator.name,
       data: { ...nodeData, indicator },
       ...indicator,

@@ -62,12 +62,12 @@ export default () => {
   ]
 
   const mockColumns = [
-    { code: 'No', name: '序号', width: 60, align: 'center' },
-    { code: 'order', name: '单据号', width: 200, features: { sortable: true } },
-    { code: 'from', name: '来户', width: 200, features: { sortable: true } },
-    { code: 'to', name: '往户', width: 200, features: { sortable: true } },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right', features: { sortable: true } },
-    { code: 'balance', name: '应收余额', width: 100, align: 'right', features: { sortable: true } }
+    { dataIndex: 'No', name: '序号', width: 60, align: 'center' },
+    { dataIndex: 'order', name: '物流编码', width: 200, features: { sortable: true } },
+    { dataIndex: 'from', name: '发货地', width: 200, features: { sortable: true } },
+    { dataIndex: 'to', name: '收货地', width: 200, features: { sortable: true } },
+    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right', features: { sortable: true } },
+    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right', features: { sortable: true } }
   ]
   const [columns, setColumns] = React.useState(mockColumns)
 
@@ -91,13 +91,13 @@ export default () => {
 
   const handleColumnDragStopped = (columnMoved, newColumns) => {
     if (columnMoved) {
-      const columnSort = newColumns.reduce((columnSort, { code }, index) => {
-        columnSort[code] = index
+      const columnSort = newColumns.reduce((columnSort, { dataIndex }, index) => {
+        columnSort[dataIndex] = index
         return columnSort
       }, {})
       const columnAfterSort = columns.reduce((sortColumns, column) => {
-        const { code } = column
-        sortColumns[columnSort[code]] = column
+        const { dataIndex } = column
+        sortColumns[columnSort[dataIndex]] = column
         return sortColumns
       }, new Array(columns.length))
       if (columnAfterSort.filter(Boolean).length !== columns.length) return

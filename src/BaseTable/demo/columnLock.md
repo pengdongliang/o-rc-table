@@ -3,7 +3,7 @@ title: 列锁定
 order: 5
 ---
 
-设置 column.lock=true 即可锁列,锁定方向 取决于该列在 columns 中的下标：
+设置 column.fixed=true 即可锁列,锁定方向 取决于该列在 columns 中的下标：
 - 下标为 0, 1, 2, ... 左侧锁定
 - 下标为 n-1, n-2, n-3, ... 右侧锁定
 
@@ -25,12 +25,12 @@ export default () => {
   ]
 
   const columns = [
-    { code: 'No', name: '序号', width: 60, align: 'center', lock: true, },
-    { code: 'order', name: '单据号', width: 200},
-    { code: 'from', name: '来户', width: 200},
-    { code: 'to', name: '往户', width: 200},
-    { code: 'amount', name: '应付金额', width: 100, align: 'right'},
-    { code: 'balance', name: '应收余额', width: 100, align: 'right', lock: true, }
+    { dataIndex: 'No', name: '序号', width: 60, align: 'center', fixed: true, },
+    { dataIndex: 'order', name: '单据号', width: 200},
+    { dataIndex: 'from', name: '发货地', width: 200},
+    { dataIndex: 'to', name: '收货地', width: 200},
+    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right'},
+    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right', fixed: true, }
   ]
 
   const pipeline = useTablePipeline().input({ dataSource: dataSource, columns: columns })

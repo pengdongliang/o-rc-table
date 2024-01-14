@@ -5,7 +5,7 @@ order: 10
 
 行选择：在每一行的左侧或右侧 渲染一个选择框，表示当前行是否被选中。
 
-- 启用行多选功能之前，pipeline 必须已经设置了 `primaryKey`
+- 启用行多选功能之前，pipeline 必须已经设置了 `rowKey`
 - 行多选依赖复选框组件，使用之前需要先设置 `pipeline.ctx.components.Checkbox`
 - 行单选依赖单选组件，使用之前需要先设置 `pipeline.ctx.components.Radio`
 
@@ -92,12 +92,12 @@ export default () => {
   ]
 
   const columns = [
-    { code: 'No', name: '序号', width: 60, align: 'center' },
-    { code: 'order', name: '单据号', width: 200 },
-    { code: 'from', name: '来户', width: 200 },
-    { code: 'to', name: '往户', width: 200 },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right' },
-    { code: 'balance', name: '应收余额', width: 100, align: 'right' },
+    { dataIndex: 'No', name: '序号', width: 60, align: 'center' },
+    { dataIndex: 'order', name: '物流编码', width: 200 },
+    { dataIndex: 'from', name: '发货地', width: 200 },
+    { dataIndex: 'to', name: '收货地', width: 200 },
+    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right' },
+    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right' },
   ]
 
   const pipeline = useTablePipeline({
@@ -107,7 +107,7 @@ export default () => {
     },
   })
     .input({ dataSource: dataSource, columns: columns })
-    .primaryKey('id')
+    .rowKey('id')
 
   pipeline.use(features.footerDataSource({ dataSource: footerDataSource }))
 
@@ -119,7 +119,7 @@ export default () => {
         highlightRowWhenSelected: true,
         clickArea: 'row',
         checkboxPlacement: 'start',
-        checkboxColumn: { lock: true },
+        checkboxColumn: { fixed: true },
       }),
     )
   } else {
@@ -129,7 +129,7 @@ export default () => {
         onChange: v => setSelected([v]),
         highlightRowWhenSelected: true,
         radioPlacement: 'start',
-        radioColumn: { lock: true },
+        radioColumn: { fixed: true },
       }),
     )
   }

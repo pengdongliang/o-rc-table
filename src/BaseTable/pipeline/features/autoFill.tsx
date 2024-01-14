@@ -28,7 +28,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
         makeRecursiveMapper((col, recursiveFlatMapInfo) => {
           const { isLeaf } = recursiveFlatMapInfo
           if (isLeaf && isValidFlexColumn(col, pipeline)) {
-            const { code, features = {} } = col
+            const { dataIndex, features = {} } = col
             const { flex, minWidth = 0, maxWidth = Number.MAX_SAFE_INTEGER } = features
             const usedRemainingWidth = Math.floor((remainingWidth * flex) / flexCount)
             const preColWidth = col.width
@@ -41,7 +41,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
             residualFlexCount -= flex
             residualFlexWidth -= col.width - preColWidth
             if (enableColumnResizeWidthFeature) {
-              columnSize[code] = col.width
+              columnSize[dataIndex] = col.width
             }
           }
           return col
@@ -52,7 +52,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
   } else {
     // 未设置了flex宽度，创建占位列
     const columns = pipeline.getColumns()
-    const fillColumns = columns.find((col) => col.code === FILL_COLUMN_CODE)
+    const fillColumns = columns.find((col) => col.dataIndex === FILL_COLUMN_CODE)
     const width = getTableRemainingWidth(pipeline) || 0
     if (fillColumns) {
       fillColumns.width = width
@@ -61,7 +61,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
       const spliceIndex = columns.length - rightNestedLockCount
       const newFillColumns = {
         name: '',
-        code: FILL_COLUMN_CODE,
+        dataIndex: FILL_COLUMN_CODE,
         key: FILL_COLUMN_CODE,
         width,
         features: {
@@ -102,10 +102,10 @@ function getColumnWidthSum(pipeline: TablePipeline) {
   return dfs(pipeline.getColumns())
   function dfs(columns: ArtColumn[]) {
     return columns.reduce((acc, col) => {
-      const { width, code } = col
-      if (isLeafNode(col) && code !== FILL_COLUMN_CODE) {
+      const { width, dataIndex } = col
+      if (isLeafNode(col) && dataIndex !== FILL_COLUMN_CODE) {
         const resizeColumn = pipeline.getFeatureOptions(COLUMN_SIZE_KEY)
-        return acc + ((resizeColumn && resizeColumn[code]) || width)
+        return acc + ((resizeColumn && resizeColumn[dataIndex]) || width)
       }
       return acc + dfs(col.children)
     }, 0)
@@ -122,15 +122,15 @@ function getTableRemainingWidth(pipeline: TablePipeline) {
 function isAfterLastResizeCol(column: ArtColumn, pipeline: TablePipeline) {
   const lastResizedColumnCode = pipeline.getFeatureOptions(LAST_RESIZED_COLUMN_KEY)
   if (lastResizedColumnCode === undefined) return true
-  const lastResizedColumnIndex = pipeline.getColumns().findIndex((col) => col.code === lastResizedColumnCode)
-  const colIndex = pipeline.getColumns().findIndex((col) => col.code === column.code)
+  const lastResizedColumnIndex = pipeline.getColumns().findIndex((col) => col.dataIndex === lastResizedColumnCode)
+  const colIndex = pipeline.getColumns().findIndex((col) => col.dataIndex === column.dataIndex)
   return colIndex > lastResizedColumnIndex
 }
 
 function isValidFlexColumn(col: ArtColumn, pipeline: TablePipeline) {
   const resizeColumn = pipeline.getFeatureOptions(RESIZED_COLUMN_KEY)
   // 拖拽列自动禁止flex
-  if (resizeColumn?.has(col.code)) {
+  if (resizeColumn?.has(col.dataIndex)) {
     return false
   }
   const flex = col.features?.flex

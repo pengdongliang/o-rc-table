@@ -21,7 +21,7 @@ export interface BuildDrillTreeOptions {
   enforceExpandTotalNode?: boolean
 }
 
-/** 根据指定的 code 序列计算下钻树 */
+/** 根据指定的 dataIndex 序列计算下钻树 */
 export default function buildDrillTree(
   data: any[],
   codes: string[],
@@ -77,8 +77,8 @@ export default function buildDrillTree(
   function dfs(slice: any[], path: string[]): DrillNode[] {
     const depth = path.length
     const list: DrillNode[] = []
-    const code = codes[depth]
-    const groups = groupBy(slice, (row) => row[code])
+    const dataIndex = codes[depth]
+    const groups = groupBy(slice, (row) => row[dataIndex])
     for (const groupKey of Object.keys(groups)) {
       path.push(groupKey)
 

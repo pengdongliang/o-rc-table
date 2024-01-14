@@ -6,7 +6,7 @@ import buildCrossTable from './buildCrossTable'
 import { ROW_KEY } from './constants'
 import { CrossTableLeftMetaColumn, LeftCrossTreeNode, TopCrossTreeNode } from './interfaces'
 
-export interface CrossTableProps extends Omit<TableProps, 'dataSource' | 'columns' | 'primaryKey'> {
+export interface CrossTableProps extends Omit<TableProps, 'dataSource' | 'columns' | 'rowKey'> {
   BaseTableComponent?: any
   baseTableRef?: React.Ref<Table>
   leftTree: LeftCrossTreeNode[]
@@ -58,6 +58,6 @@ export default (function CrossTable({
   })
 
   return (
-    <BaseTableComponent ref={baseTableRef} {...others} primaryKey={ROW_KEY} dataSource={dataSource} columns={columns} />
+    <BaseTableComponent ref={baseTableRef} {...others} rowKey={ROW_KEY} dataSource={dataSource} columns={columns} />
   )
 })

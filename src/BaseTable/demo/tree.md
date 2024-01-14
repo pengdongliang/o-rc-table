@@ -82,16 +82,16 @@ export default () => {
     { id: '5', title: '一级标题', dept: '云苍穹-运营', dest: 'East Karl', guide: 'Herbert Patton' }
   ]
   const columns = [
-    { code: 'title', name: '标题', width: 200 },
-    { code: 'dept', name: '部门名称', width: 180 },
-    { code: 'dest', name: '团建目的地', width: 160 },
-    { code: 'guide', name: '当地导游', width: 160 },
-    { lock: true, name: '操作', render: renderOptions, width: 200 }
+    { dataIndex: 'title', name: '标题', width: 200 },
+    { dataIndex: 'dept', name: '部门名称', width: 180 },
+    { dataIndex: 'dest', name: '团建目的地', width: 160 },
+    { dataIndex: 'guide', name: '当地导游', width: 160 },
+    { fixed: true, name: '操作', render: renderOptions, width: 200 }
   ]
   const [openKeys, onChangeOpenKeys] = React.useState(['4', '4-2'])
   const pipeline = useTablePipeline({ })
     .input({ dataSource: dataSource, columns: columns })
-    .primaryKey('id')
+    .rowKey('id')
     .use(features.treeMode({ openKeys, onChangeOpenKeys }))
 
   const allParentKeys = collectNodes(dataSource, 'pre')

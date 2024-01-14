@@ -51,14 +51,14 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
     const { indents } = pipeline.ctx
     const textOffset = indents.iconIndent + indents.iconWidth + indents.iconGap
 
-    const primaryKey = pipeline.ensurePrimaryKey('rowGrouping') as string
-    if (typeof primaryKey !== 'string') {
-      throw new Error('rowGrouping 仅支持字符串作为 primaryKey')
+    const rowKey = pipeline.ensurePrimaryKey('rowGrouping') as string
+    if (typeof rowKey !== 'string') {
+      throw new Error('rowGrouping 仅支持字符串作为 rowKey')
     }
     const openKeys: string[] =
       opts.openKeys ??
       pipeline.getStateAtKey(stateKey) ??
-      (opts.defaultOpenAll ? pipeline.getDataSource().map((row) => row[primaryKey]) : opts.defaultOpenKeys) ??
+      (opts.defaultOpenAll ? pipeline.getDataSource().map((row) => row[rowKey]) : opts.defaultOpenKeys) ??
       []
     const openKeySet = new Set(openKeys)
 
@@ -76,7 +76,7 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
       return flatMap(input, (row) => {
         let result = [attachGroupingMeta(row)]
 
-        const expanded = openKeySet.has(row[primaryKey])
+        const expanded = openKeySet.has(row[rowKey])
         if (expanded) {
           if (Array.isArray(row.children)) {
             result = result.concat(row.children)
@@ -106,7 +106,7 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
           )
         }
 
-        const expanded = openKeySet.has(row[primaryKey])
+        const expanded = openKeySet.has(row[rowKey])
         const expandCls = expanded ? Classes.expanded : Classes.collapsed
         return (
           <ExpansionCell className={cx('expansion-cell', expandCls)}>
@@ -127,8 +127,8 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
 
         const { expandable } = meta
 
-        const rowKey = row[primaryKey]
-        const expanded = openKeySet.has(rowKey)
+        const currentRowKey = row[rowKey]
+        const expanded = openKeySet.has(currentRowKey)
 
         let onClick: any
         if (expandable) {
@@ -138,12 +138,12 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
             }
             if (expanded) {
               onChangeOpenKeys(
-                openKeys.filter((key) => key !== rowKey),
-                rowKey,
+                openKeys.filter((key) => key !== currentRowKey),
+                currentRowKey,
                 'collapse'
               )
             } else {
-              onChangeOpenKeys([...openKeys, rowKey], rowKey, 'expand')
+              onChangeOpenKeys([...openKeys, currentRowKey], currentRowKey, 'expand')
             }
           }
         }

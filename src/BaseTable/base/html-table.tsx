@@ -10,7 +10,7 @@ import { RenderInfo } from './interfaces'
 import { Classes } from './styles'
 import { BaseTableProps } from './table'
 
-export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'getRowProps' | 'primaryKey'>> {
+export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'getRowProps' | 'rowKey'>> {
   tbodyHtmlTag: 'tbody' | 'tfoot'
   data: any[]
   stickyRightOffset?: number
@@ -33,7 +33,7 @@ export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'getRowPro
 export function HtmlTable({
   tbodyHtmlTag,
   getRowProps,
-  primaryKey,
+  rowKey,
   stickyRightOffset,
   data,
   verticalRenderInfo: verInfo,
@@ -86,7 +86,7 @@ export function HtmlTable({
         key={
           rowProps?.['data-row-detail-key']
             ? rowProps['data-row-detail-key']
-            : internals.safeGetRowKey(primaryKey, record, rowIndex)
+            : internals.safeGetRowKey(rowKey, record, rowIndex)
         }
         data-rowindex={rowIndex}
         data-role="table-row"
@@ -177,7 +177,7 @@ export function HtmlTable({
         },
         'data-role': 'table-cell',
         'data-rowindex': rowIndex,
-        'data-code': column.code,
+        'data-index': column.dataIndex,
       },
       tbodyPosition === 'center' && positionStyle.position === 'sticky' ? null : cellContent
     )

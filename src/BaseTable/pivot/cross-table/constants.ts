@@ -1,1 +1,1 @@
-export const ROW_KEY = 'rowKey'
+export const ROW_KEY = 'id'

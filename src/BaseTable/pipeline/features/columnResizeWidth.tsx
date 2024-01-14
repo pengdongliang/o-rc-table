@@ -46,7 +46,7 @@ interface ColumnSize {
 }
 
 interface ChangedColumnSize {
-  code: string
+  dataIndex: string
   width: number
 }
 
@@ -85,12 +85,12 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
   return function columnResizeFeature(pipeline: TablePipeline) {
     const columnSize: ColumnSize = opts.columnSize ?? pipeline.getStateAtKey(stateKey) ?? {}
     const leafColumns = collectNodes(pipeline.getColumns(), 'leaf-only')
-    leafColumns.forEach(({ code, width }) => {
-      if (columnSize[code] === undefined) {
+    leafColumns.forEach(({ dataIndex, width }) => {
+      if (columnSize[dataIndex] === undefined) {
         if (typeof width === 'number') {
-          columnSize[code] = width
+          columnSize[dataIndex] = width
         } else {
-          columnSize[code] = fallbackSize
+          columnSize[dataIndex] = fallbackSize
         }
       }
     })
@@ -114,7 +114,7 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
       window.addEventListener('selectstart', disableSelect)
       const changedColumnSize = {}
       const startX = e.clientX
-      const { children, code, features = {} } = col
+      const { children, dataIndex, features = {} } = col
       const { minWidth, maxWidth } = features
       const realMinSize = typeof minWidth === 'number' ? minWidth : minSize
       const realMaxSize = typeof maxWidth === 'number' ? maxWidth : maxSize
@@ -130,25 +130,25 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
           let deltaRemaining = deltaSum
           if (children?.length > 0) {
             const leafChildColumns = collectNodes(children, 'leaf-only')
-            const childrenWidthSum = leafChildColumns.reduce((sum, { code }) => {
-              return sum + columnSize[code]
+            const childrenWidthSum = leafChildColumns.reduce((sum, { dataIndex }) => {
+              return sum + columnSize[dataIndex]
             }, 0)
-            leafChildColumns.forEach(({ code }, index) => {
-              const startSize = columnSize[code]
+            leafChildColumns.forEach(({ dataIndex }, index) => {
+              const startSize = columnSize[dataIndex]
               const currentDeltaWidth = Math.round((deltaSum * startSize) / childrenWidthSum)
               if (index < leafChildColumns.length - 1) {
-                nextColumnSize[code] = clamp(realMinSize, startSize + currentDeltaWidth, realMaxSize)
-                changedColumnSize[code] = nextColumnSize[code]
+                nextColumnSize[dataIndex] = clamp(realMinSize, startSize + currentDeltaWidth, realMaxSize)
+                changedColumnSize[dataIndex] = nextColumnSize[dataIndex]
                 deltaRemaining -= currentDeltaWidth
               } else {
-                nextColumnSize[code] = clamp(realMinSize, startSize + deltaRemaining, realMaxSize)
-                changedColumnSize[code] = nextColumnSize[code]
+                nextColumnSize[dataIndex] = clamp(realMinSize, startSize + deltaRemaining, realMaxSize)
+                changedColumnSize[dataIndex] = nextColumnSize[dataIndex]
               }
             })
           } else {
-            const startSize = columnSize[code]
-            nextColumnSize[code] = clamp(realMinSize, startSize + deltaSum, realMaxSize)
-            changedColumnSize[code] = nextColumnSize[code]
+            const startSize = columnSize[dataIndex]
+            nextColumnSize[dataIndex] = clamp(realMinSize, startSize + deltaSum, realMaxSize)
+            changedColumnSize[dataIndex] = nextColumnSize[dataIndex]
           }
           recordColumnSize = nextColumnSize
           return nextColumnSize
@@ -160,15 +160,15 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
           onChangeSize(nextColumnSize)
           // 由于COLUMN_RESIZE_KEY记录的是全量的列宽，此处记录被改变过的列宽
           const resizedColumnSet = pipeline.getFeatureOptions(RESIZED_COLUMN_KEY) || new Set()
-          Object.keys(changedColumnSize).forEach((code) => {
-            resizedColumnSet.add(code, changedColumnSize[code])
+          Object.keys(changedColumnSize).forEach((dataIndex) => {
+            resizedColumnSet.add(dataIndex, changedColumnSize[dataIndex])
           })
           pipeline.setFeatureOptions(RESIZED_COLUMN_KEY, resizedColumnSet)
-          pipeline.setFeatureOptions(LAST_RESIZED_COLUMN_KEY, code)
+          pipeline.setFeatureOptions(LAST_RESIZED_COLUMN_KEY, dataIndex)
         },
         complete() {
-          const changedColumnSizes = Object.keys(changedColumnSize).map((code) => {
-            return { code, width: changedColumnSize[code] }
+          const changedColumnSizes = Object.keys(changedColumnSize).map((dataIndex) => {
+            return { dataIndex, width: changedColumnSize[dataIndex] }
           })
           window.requestAnimationFrame(() => {
             opts?.afterChangeSize?.(recordColumnSize, changedColumnSizes)
@@ -183,10 +183,10 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
     return pipeline.mapColumns(
       makeRecursiveMapper((col) => {
         const prevTitle = internals.safeRenderHeader(col)
-        const { code, features, width } = col
+        const { dataIndex, features, width } = col
         return {
           ...col,
-          width: columnSize[code] ?? width,
+          width: columnSize[dataIndex] ?? width,
           title: (
             <>
               {prevTitle}

@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import { ArtColumnStaticPart, CellProps } from '../../interfaces'
 
 export interface CrossTableIndicator extends ArtColumnStaticPart {
-  code: string
+  dataIndex: string
   expression?: string
 }
 

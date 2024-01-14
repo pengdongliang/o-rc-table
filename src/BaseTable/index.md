@@ -64,12 +64,12 @@ export default () => {
   ];
 
   const columns = [
-    { code: 'No', name: '序号', width: 80, align: 'center' },
-    { code: 'order', name: '单据号', width: 200 },
-    { code: 'from', name: '来户', width: 200 },
-    { code: 'to', name: '往户', width: 200 },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right' },
-    { code: 'balance', name: '应收余额', width: 100, align: 'right' }
+    { dataIndex: 'No', name: '序号', width: 80, align: 'center' },
+    { dataIndex: 'order', name: '物流编码', width: 200 },
+    { dataIndex: 'from', name: '发货地', width: 200 },
+    { dataIndex: 'to', name: '收货地', width: 200 },
+    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right' },
+    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right' }
   ];
 
   const pipeline = useTablePipeline().input({ dataSource: dataSource, columns: columns });
@@ -197,7 +197,7 @@ export default () => {
 | dataSource         | 数据数组                  | any[]         | -       | -                     | -  |
 | loading            | 表格是否在加载中              | boolean       | `false` | `true` `false`        | -  |
 | style              | 自定义内联样式               | CSSProperties | `-`     | `-`                   | -  |
-| primaryKey         | 主键                    | string        | -       | -                     | -  |
+| rowKey         | 主键                    | string        | -       | -                     | -  |
 | hasHeader          | 表格是否具有头部              | boolean       | `true`  | `true` `false`        | -  |
 | emptyCellHeight    | 数据为空时，单元格的高度          | number        | -       | -                     | -  |
 | useVirtual         | 是否开启虚拟滚动              | boolean auto  | `auto`  | `true` `false` `auto` | -  |
@@ -208,13 +208,13 @@ export default () => {
 | 属性                 | 说明                                | 类型                      | 默认值      | 可选值                     | 版本 |
 |--------------------|-----------------------------------|-------------------------|----------|-------------------------|----|
 | name               | 列的名称                              | string                  | -        | -                       | -  |
-| code               | 在数据中的字段                           | string                  | -        | -                       | -  |
+| dataIndex               | 在数据中的字段                           | string                  | -        | -                       | -  |
 | title              | 列标题的展示名称；在页面中进行展示时，该字段将覆盖 name 字段 | string                  | -        | -                       | -  |
 | width              | 列的宽度，如果该列是锁定的，则宽度为必传项             | number                  | -        | -                       | -  |
 | align              | 单元格中的文本或内容的 对其方向                  | `center`                | `-`      | `left` `center` `right` | -  |
 | verticalAlign      | 单元格中的文本或内容的 垂直水平轴对其方向             | string                  | `middle` | `top` `bottom` `middle` | -  |
 | hidden             | 是否隐藏                              | boolean                 | `false`  | `true` `false`          | -  |
-| lock               | 是否锁列                              | boolean                 | -        | `HTMLTableCellElement`  | -  |
+| fixed               | 是否锁列                              | boolean                 | -        | `HTMLTableCellElement`  | -  |
 | headerCellProps    | 表头单元格的 props                      | number                  | -        | -                       | -  |
 | features           | 功能开关, 具体项见下表                      | 	{ [key: string]: any } | -        | -                       | -  |
 | estimatedRowHeight | 虚拟滚动开启情况下，表格中每一行的预估高度             | number                  | `48`     | -                       | -  |
@@ -238,7 +238,7 @@ export default () => {
 
 行多选配置项
 
-- 启用行多选功能之前，pipeline 必须已经设置了 primaryKey
+- 启用行多选功能之前，pipeline 必须已经设置了 rowKey
 - 行多选依赖复选框组件，使用之前需要先设置 pipeline.ctx.components.Checkbox
 
 | 属性                        | 说明                                                           | 类型                                  | 默认值        | 可选值                     | 版本 |
@@ -247,7 +247,7 @@ export default () => {
 | value                     | 受控用法：当前选中的 keys                                              | string[]                            | `-`        | `-`                     | -  |
 | onChange                  | 受控用法：状态改变回调                                                  | (nextValue,key,keys,action) => void | `-`        | `-`                     | -  |
 | checkboxPlacement         | 复选框所在列的位置                                                    | string                              | `start`    | `start` `end`           | -  |
-| checkboxColumn            | 复选框所在列的 column 配置，可指定 width，lock, title, align, features 等属性 | `Partial<ArtColumnStaticPart>`      | `-`        | `-`                     | -  |
+| checkboxColumn            | 复选框所在列的 column 配置，可指定 width，fixed, title, align, features 等属性 | `Partial<ArtColumnStaticPart>`      | `-`        | `-`                     | -  |
 | highlightRowWhenSelected  | 是否高亮被选中的行                                                    | boolean                             | `true`     | `true` `false`          | -  |
 | isDisabled                | 判断一行中的 checkbox 是否要禁用                                        | (row, rowIndex) => boolean          | `-`        | `-`                     | -  |
 | clickArea                 | 点击事件的响应区域                                                    | string                              | `checkbox` | `checkbox` `cell` `row` | -  |
@@ -272,7 +272,7 @@ export default () => {
 
 行单选配置项
 
-- 启用行单选功能之前，pipeline 必须已经设置了 primaryKey。
+- 启用行单选功能之前，pipeline 必须已经设置了 rowKey。
 - 行单选依赖单选框组件，使用 singleSelect 之前需要通过 pipeline context 设置 components.Radio。
 
 | 属性                        | 说明                                                           | 类型                                 | 默认值        | 可选值                     | 版本 |
@@ -281,7 +281,7 @@ export default () => {
 | value                     | 受控用法：当前选中的 keys                                              | string                             | `-`        | `-`                     | -  |
 | onChange                  | 受控用法：状态改变回调                                                  | (nextValue) => void                | `-`        | `-`                     | -  |
 | radioPlacement            | 单选框所在列的位置                                                    | string                             | `start`    | `start` `end`           | -  |
-| radioColumn               | 单选框所在列的 column 配置，可指定 width，lock, title, align, features 等属性 | `Partial<ArtColumnStaticPart>`     | `-`        | `-`                     | -  |
+| radioColumn               | 单选框所在列的 column 配置，可指定 width，fixed, title, align, features 等属性 | `Partial<ArtColumnStaticPart>`     | `-`        | `-`                     | -  |
 | highlightRowWhenSelected  | 是否高亮被选中的行                                                    | boolean                            | `true`     | `true` `false`          | -  |
 | isDisabled                | 判断一行中的 checkbox 是否要禁用                                        | fucntion(row, rowIndex) => boolean | `-`        | `-`                     | -  |
 | clickArea                 | 点击事件的响应区域                                                    | string                             | `checkbox` | `checkbox` `cell` `row` | -  |
@@ -299,8 +299,8 @@ export default () => {
 
 | 属性                        | 说明                         | 类型                     | 默认值        | 可选值                 | 版本 |
 |---------------------------|----------------------------|------------------------|------------|---------------------|----|
-| defaultFilters            | (非受控用法) 默认的过滤字段列表          | object[]               | `-`        | `[{code,filter}]`   | -  |
-| filters                   | (受控用法) 过滤字段列表              | object[]               | `-`        | `[{code,filter}]`   | -  |
+| defaultFilters            | (非受控用法) 默认的过滤字段列表          | object[]               | `-`        | `[{dataIndex,filter}]`   | -  |
+| filters                   | (受控用法) 过滤字段列表              | object[]               | `-`        | `[{dataIndex,filter}]`   | -  |
 | onChangeFilters           | 更新过滤字段列表的回调函数              | (nextFilters: Filters) | `-`        | `-`                 | -  |
 | keepDataSource            | 是否保持 dataSource 不变         | boolean                | `false`    | `true` `false`      | -  |
 | mode                      | 过滤模式。单选 single，多选 multiple | string                 | `multiple` | `single` `multiple` | -  |
@@ -309,7 +309,7 @@ export default () => {
 ##### 更新排序字段列表的回调函数 onChangeFilters
 
 - `nextFilters` 即将被更新的过滤字段列表数组。
-    - `code` 列标识。
+    - `dataIndex` 列标识。
     - `filter` 过滤值数组。
     - `filterCondition` 过滤条件标识，默认过滤面板使用。
       <br/>
@@ -320,8 +320,8 @@ export default () => {
 
 | 属性                        | 说明                         | 类型                                         | 默认值       | 可选值                   | 版本 |
 |---------------------------|----------------------------|--------------------------------------------|-----------|-----------------------|----|
-| defaultSorts              | (非受控用法) 默认的排序字段列表          | object[]                                   | `-`       | `[{code,order}]`      | -  |
-| sorts                     | (受控用法) 排序字段列表              | object[]                                   | `-`       | `[{code,order}]`      | -  |
+| defaultSorts              | (非受控用法) 默认的排序字段列表          | object[]                                   | `-`       | `[{dataIndex,order}]`      | -  |
+| sorts                     | (受控用法) 排序字段列表              | object[]                                   | `-`       | `[{dataIndex,order}]`      | -  |
 | onChangeSorts             | 更新排序字段列表的回调函数              | (nextFilters: Filters)                     | `-`       | `-`                   | -  |
 | orders                    | 排序切换顺序                     | []                                         | `-`       | [`desc` `asc` `none`] | -  |
 | keepDataSource            | 是否保持 dataSource 不变         | boolean                                    | `false`   | `true` `false`        | -  |
@@ -334,7 +334,7 @@ export default () => {
 ##### 更新排序字段列表的回调函数 onChangeSorts
 
 - `nextSorts` 即将被更新的排序字段列表数组。
-    - `code` 列标识。
+    - `dataIndex` 列标识。
     - `order` 本次排序状态，值为：['desc', 'asc', 'none']。
 
 ##### 自定义排序顺序 orders
@@ -382,7 +382,7 @@ interface SortHeaderCellProps {
 | onChangeOpenKeys          | (受控用法) openKeys 改变的回调                                      | (nextKeys: string[], key: string, action: 'expand' &#124; 'collapse'):void | `-`                    | `-`                                         | -  |
 | renderDetail              | 详情单元格的渲染方法                                                 | (row: any, rowIndex: number): ReactNode                                    | `-`                    | `-`                                         | -  |
 | hasDetail                 | 是否包含详情单元格                                                  | (row: any, rowIndex: number): boolean                                      | `-`                    | `-`                                         | -  |
-| getDetailKey              | 获取详情单元格所在行的 key，默认为 `(row) => row[primaryKey] + '_detail'` | (row: any, rowIndex: number): string                                       | `-`                    | `-`                                         | -  |
+| getDetailKey              | 获取详情单元格所在行的 key，默认为 `(row) => row[rowKey] + '_detail'` | (row: any, rowIndex: number): string                                       | `-`                    | `-`                                         | -  |
 | detailCellStyle           | 详情单元格 td 的额外样式                                             | React.CSSProperties                                                        | `-`                    | `-`                                         | -  |
 | clickArea                 | 点击事件的响应区域                                                  | string                                                                     | `cell`                 | `'cell'` &#124; `'content'` &#124; `'icon'` | -  |
 | stopClickEventPropagation | 是否对触发展开/收拢的 click 事件调用 event.stopPropagation()             | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
@@ -412,7 +412,7 @@ interface SortHeaderCellProps {
 | defaultOpenKeys           | (非受控用法) 默认展开的 keys                                         | string[]                                                                             | `-`                        | `-`                                         | -  |
 | openKeys                  | (受控用法) 当前展开的 keys                                          | string[]                                                                             | `-`                        | `-`                                         | -  |
 | onChangeOpenKeys          | (受控用法) openKeys 改变的回调                                      | (nextKeys: string[], key: string, action: 'expand' &#124; 'collapse'):void           | `-`                        | `-`                                         | -  |
-| isLeafNode                | 自定义叶子节点的判定逻辑                                               | (node: any, nodeMeta: { depth: number; expanded: boolean; rowKey: string }): boolean | `-`                        | `-`                                         | -  |
+| isLeafNode                | 自定义叶子节点的判定逻辑                                               | (node: any, nodeMeta: { depth: number; expanded: boolean; currentRowKey: string }): boolean | `-`                        | `-`                                         | -  |
 | iconIndent                | icon 的缩进值。一般为负数，此时 icon 将向左偏移，默认从 pipeline.ctx.indents 中获取 | number                                                                               | `-`                        | `-`                                         | -  |
 | iconGap                   | icon 与右侧文本的距离，默认从 pipeline.ctx.indents 中获取                 | number                                                                               | `-`                        | `-`                                         | -  |
 | indentSize                | 每一级缩进产生的距离，默认从 pipeline.ctx.indents 中获取                    | number                                                                               | `-`                        | `-`                                         | -  |

@@ -24,7 +24,7 @@ export const Classes = {
   /** 使用来自外层 div 的边框代替单元格的外边框 */
   outerBorder: `${prefix}-use-outer-border`,
   /** 包含有效的锁列 */
-  lockWrapper: `${prefix}-lock-wrapper`,
+  lockWrapper: `${prefix}-fixed-wrapper`,
   // ============================= wrapper =============================
 
   artTable: `${prefix}-container`,
@@ -59,10 +59,10 @@ export const Classes = {
   verticalScrollPlaceholder: `${prefix}-vertical-scroll-placeholder`,
   horizontalStickyScrollContainer: `${prefix}-horizontal-sticky-scroll-container`,
 
-  lockShadowMask: `${prefix}-lock-shadow-mask`,
-  lockShadow: `${prefix}-lock-shadow`,
-  leftLockShadow: `${prefix}-left-lock-shadow`,
-  rightLockShadow: `${prefix}-right-lock-shadow`,
+  lockShadowMask: `${prefix}-fixed-shadow-mask`,
+  lockShadow: `${prefix}-fixed-shadow`,
+  leftLockShadow: `${prefix}-left-fixed-shadow`,
+  rightLockShadow: `${prefix}-right-fixed-shadow`,
 
   /** 数据为空时表格内容的外层 div */
   emptyWrapper: `${prefix}-empty-wrapper`,
@@ -103,8 +103,8 @@ export const Classes = {
   even: `${prefix}-even`,
   odd: `${prefix}-odd`,
 
-  lockLeft: `${prefix}-lock-left`,
-  lockRight: `${prefix}-lock-right`,
+  lockLeft: `${prefix}-fixed-left`,
+  lockRight: `${prefix}-fixed-right`,
   rowSpan: `${prefix}-row-span`,
   leaf: `${prefix}-leaf`,
 
@@ -135,7 +135,7 @@ export const MenuClasses = {
 }
 
 const Z = {
-  lock: 5,
+  fixed: 5,
   header: 15,
   footer: 10,
   lockShadow: 20,
@@ -185,7 +185,7 @@ export type BaseTableCSSVariables = Partial<{
   /** 表格内字体的行高 */
   '--line-height': string
   /** 锁列阴影，默认为 rgba(152, 152, 152, 0.5) 0 0 6px 2px */
-  '--lock-shadow': string
+  '--fixed-shadow': string
 
   /** 单元格的边框颜色 */
   '--border-color': string
@@ -260,7 +260,7 @@ export const defaultCSSVariables: BaseTableCSSVariables = {
   '--cell-padding': '8px 12px',
   '--font-size': '12px',
   '--line-height': '1.28571',
-  '--lock-shadow': 'rgba(152, 152, 152, 0.5) 0 0 6px 2px',
+  '--fixed-shadow': 'rgba(152, 152, 152, 0.5) 0 0 6px 2px',
 
   '--border-color': '#dfe3e8',
   '--cell-border': '1px solid #dfe3e8',
@@ -283,6 +283,7 @@ export const StyledArtTableWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  filter: none;
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -527,7 +528,7 @@ export const StyledArtTableWrapper = styled.div`
   }
 
   .${Classes.lockLeft}, .${Classes.lockRight} {
-    z-index: ${Z.lock};
+    z-index: ${Z.fixed};
   }
 
   //#region 锁列阴影
@@ -549,7 +550,7 @@ export const StyledArtTableWrapper = styled.div`
       box-shadow: none;
 
       &.show-shadow {
-        box-shadow: var(--lock-shadow);
+        box-shadow: var(--fixed-shadow);
         border-right: var(--cell-border-horizontal);
       }
     }
@@ -559,7 +560,7 @@ export const StyledArtTableWrapper = styled.div`
       box-shadow: none;
 
       &.show-shadow {
-        box-shadow: var(--lock-shadow);
+        box-shadow: var(--fixed-shadow);
         border-left: var(--cell-border-horizontal);
       }
     }
@@ -621,7 +622,7 @@ export const StyledArtTableWrapper = styled.div`
 
     .${Classes.fixedLeft}, .${Classes.fixedRight} {
       position: absolute;
-      z-index: ${Z.lock};
+      z-index: ${Z.fixed};
       top: 0;
     }
 

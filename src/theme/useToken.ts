@@ -1,10 +1,11 @@
 import type { Theme } from '@ant-design/cssinjs'
 import { useCacheToken } from '@ant-design/cssinjs'
+import { DesignTokenContext } from 'antd/es/theme/context'
 import React from 'react'
 
 import pkg from '../../package.json'
 import type { DesignTokenProviderProps } from './context'
-import { defaultTheme, DesignTokenContext } from './context'
+import { defaultTheme } from './context'
 import type { AliasToken, GlobalToken, MapToken, SeedToken } from './interface'
 import defaultSeedToken from './themes/seed'
 import formatToken from './util/alias'

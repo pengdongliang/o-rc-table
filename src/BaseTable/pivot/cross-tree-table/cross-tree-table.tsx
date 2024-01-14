@@ -7,7 +7,7 @@ import { CellProps } from '../../interfaces'
 import { CrossTableLeftMetaColumn, LeftCrossTreeNode, ROW_KEY, TopCrossTreeNode } from '../cross-table'
 import buildCrossTreeTable from './buildCrossTreeTable'
 
-export interface CrossTreeTableProps extends Omit<TableProps, 'dataSource' | 'columns' | 'primaryKey'> {
+export interface CrossTreeTableProps extends Omit<TableProps, 'dataSource' | 'columns' | 'rowKey'> {
   BaseTableComponent?: any
   baseTableRef?: React.Ref<Table>
   primaryColumn: CrossTableLeftMetaColumn
@@ -18,7 +18,7 @@ export interface CrossTreeTableProps extends Omit<TableProps, 'dataSource' | 'co
   openKeys?: string[]
   onChangeOpenKeys?(nextOpenKeys: string[]): void
   indentSize?: number
-  isLeafNode?(node: any, nodeMeta: { depth: number; expanded: boolean; rowKey: string }): boolean
+  isLeafNode?(node: any, nodeMeta: { depth: number; expanded: boolean; currentRowKey: string }): boolean
 
   getValue(leftNode: LeftCrossTreeNode, topNode: TopCrossTreeNode, leftDepth: number, topDepth: number): any
   render?(
@@ -104,7 +104,7 @@ export default class CrossTreeTable extends React.Component<CrossTreeTableProps,
       <BaseTableComponent
         ref={baseTableRef}
         {...others}
-        primaryKey={ROW_KEY}
+        rowKey={ROW_KEY}
         dataSource={dataSource}
         columns={columns}
       />

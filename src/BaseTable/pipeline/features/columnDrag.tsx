@@ -19,7 +19,7 @@ function sortColumns(columns: any[], sort: any) {
   const lastColumns = [...columns]
   while (columns.length) {
     const cloumn = columns.pop()
-    res[sort[cloumn.code]] = cloumn
+    res[sort[cloumn.dataIndex]] = cloumn
   }
   if (res.filter(Boolean).length !== lastColumns.length) {
     return lastColumns
@@ -48,12 +48,12 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
         const style: any = cloumnsTranslateData
           ? {
               transition: '.3s',
-              transform: `translate3d(${cloumnsTranslateData[col.code]}px, 0px, 0px)`,
+              transform: `translate3d(${cloumnsTranslateData[col.dataIndex]}px, 0px, 0px)`,
             }
           : {}
         const prevGetCellProps = col.getCellProps
-        // !col.code: 选择列 col.lock: 固定列 不允许拖拽
-        if (col.lock || !col.code) return col
+        // !col.dataIndex: 选择列 col.fixed: 固定列 不允许拖拽
+        if (col.fixed || !col.dataIndex) return col
         return {
           ...col,
           getCellProps(value: any, record: any, rowIndex: number): CellProps {
@@ -84,7 +84,7 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
                     let { cloumnsTranslateData } = pipeline.getStateAtKey(stateKey, {} as any)
                     const cloumnsSortData = {}
                     columns.forEach((item, index) => {
-                      cloumnsSortData[item.code] = index
+                      cloumnsSortData[item.dataIndex] = index
                     })
 
                     let currentTarget = e.currentTarget as HTMLElement
@@ -130,9 +130,9 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
                       //   const move = startIndex > replaceIndex ? 1 : -1
                       //   let index = Math.min(startIndex, replaceIndex)
                       //   while (index < Math.max(startIndex, replaceIndex)) {
-                      //     const code = columns[index].code
-                      //     cloumnsTranslateData[code] += move * optionColumn.width
-                      //     cloumnsTranslateData[optionColumn.code] -= move * optionColumn.width
+                      //     const dataIndex = columns[index].dataIndex
+                      //     cloumnsTranslateData[dataIndex] += move * optionColumn.width
+                      //     cloumnsTranslateData[optionColumn.dataIndex] -= move * optionColumn.width
                       //     index += move
                       //   }
                       // }
@@ -140,10 +140,10 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
                       // const opColumn = columns[startIndex]
                       // let index = Math.min(startIndex, replaceIndex)
                       // while (index <= Math.max(startIndex, replaceIndex)) {
-                      //   const code = columns[index].code
+                      //   const dataIndex = columns[index].dataIndex
                       //   if (index !== startIndex && index !== replaceIndex) {
-                      //     cloumnsTranslateData[code] += opColumn.width * (index > startIndex ? -1 : 1)
-                      //     cloumnsTranslateData[opColumn.code] += columns[index].width * (index < startIndex ? -1 : 1)
+                      //     cloumnsTranslateData[dataIndex] += opColumn.width * (index > startIndex ? -1 : 1)
+                      //     cloumnsTranslateData[opColumn.dataIndex] += columns[index].width * (index < startIndex ? -1 : 1)
                       //   }
                       //   index++
                       // }
@@ -151,7 +151,7 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
                       // 重置位置信息
                       cloumnsTranslateData = {}
                       allColumns.forEach((item) => {
-                        cloumnsTranslateData[item.code] = 0
+                        cloumnsTranslateData[item.dataIndex] = 0
                       })
 
                       // 计算平移位置
@@ -165,7 +165,7 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
                       // 需要取最新startIndex, 不能直接用makeRecursiveMapper提供的startIndex（因为map时还没添加选择列、充满列等后面use添加的列）
                       let startIndex
                       columns.forEach((column, index) => {
-                        if (column.code === col.code) {
+                        if (column.dataIndex === col.dataIndex) {
                           startIndex = index
                         }
                       })
@@ -175,13 +175,13 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
                       if (startIndex > replaceIndex) {
                         // 左移
                         while (index < startIndex) {
-                          const { code, lock, width, children } = columns[index]
-                          if (enableMove({ code, lock })) {
-                            cloumnsTranslateData[code] += optionColumn.width
+                          const { dataIndex, fixed, width, children } = columns[index]
+                          if (enableMove({ dataIndex, fixed })) {
+                            cloumnsTranslateData[dataIndex] += optionColumn.width
                             if (isLeafNode(columns[index])) {
-                              cloumnsTranslateData[optionColumn.code] -= width
+                              cloumnsTranslateData[optionColumn.dataIndex] -= width
                             } else {
-                              cloumnsTranslateData[optionColumn.code] -= getColumnWidth(columns[index])
+                              cloumnsTranslateData[optionColumn.dataIndex] -= getColumnWidth(columns[index])
                               moveAllChildren(children, cloumnsTranslateData, optionColumn.width)
                             }
                             columnMoved = true
@@ -191,13 +191,13 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
                       } else if (startIndex < replaceIndex) {
                         // 右移
                         while (startIndex < index) {
-                          const { code, lock, width, children } = columns[index]
-                          if (enableMove({ code, lock })) {
-                            cloumnsTranslateData[code] -= optionColumn.width
+                          const { dataIndex, fixed, width, children } = columns[index]
+                          if (enableMove({ dataIndex, fixed })) {
+                            cloumnsTranslateData[dataIndex] -= optionColumn.width
                             if (isLeafNode(columns[index])) {
-                              cloumnsTranslateData[optionColumn.code] += width
+                              cloumnsTranslateData[optionColumn.dataIndex] += width
                             } else {
-                              cloumnsTranslateData[optionColumn.code] += getColumnWidth(columns[index])
+                              cloumnsTranslateData[optionColumn.dataIndex] += getColumnWidth(columns[index])
                               moveAllChildren(children, cloumnsTranslateData, optionColumn.width, true)
                             }
                             columnMoved = true
@@ -231,19 +231,19 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
                         // const move = startIndex > replaceIndex ? 1 : -1
                         // let index = Math.min(startIndex, replaceIndex)
                         // while (index < Math.max(startIndex, replaceIndex) && index > 0) {
-                        //   const code = columns[index].code
-                        //   cloumnsSortData[optionColumn.code] -= move
-                        //   cloumnsSortData[code] += move
+                        //   const dataIndex = columns[index].dataIndex
+                        //   cloumnsSortData[optionColumn.dataIndex] -= move
+                        //   cloumnsSortData[dataIndex] += move
                         //   index += move
                         // }
                         let index = replaceIndex
                         if (startIndex > replaceIndex) {
                           // 左移
                           while (index < startIndex) {
-                            const { code, lock } = columns[index]
-                            if (enableMove({ code, lock })) {
-                              cloumnsSortData[code] += 1
-                              cloumnsSortData[optionColumn.code] -= 1
+                            const { dataIndex, fixed } = columns[index]
+                            if (enableMove({ dataIndex, fixed })) {
+                              cloumnsSortData[dataIndex] += 1
+                              cloumnsSortData[optionColumn.dataIndex] -= 1
                               columnMoved = true
                             }
                             index++
@@ -251,10 +251,10 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
                         } else if (startIndex < replaceIndex) {
                           // 右移
                           while (index > startIndex) {
-                            const { code, lock } = columns[index]
-                            if (enableMove({ code, lock })) {
-                              cloumnsSortData[code] -= 1
-                              cloumnsSortData[optionColumn.code] += 1
+                            const { dataIndex, fixed } = columns[index]
+                            if (enableMove({ dataIndex, fixed })) {
+                              cloumnsSortData[dataIndex] -= 1
+                              cloumnsSortData[optionColumn.dataIndex] += 1
                               columnMoved = true
                             }
                             index--
@@ -263,14 +263,14 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
                         const { onColumnDragStopped } = opts
                         // 拖拽结束返回列顺序
                         if (onColumnDragStopped) {
-                          const isRowDragColumn = (code) => {
+                          const isRowDragColumn = (dataIndex) => {
                             const rowDragColumnKey = pipeline.getFeatureOptions('rowDragColumnKey')
-                            return code === rowDragColumnKey
+                            return dataIndex === rowDragColumnKey
                           }
                           const newColumns = sortColumns(columns, cloumnsSortData).filter(
                             (column) =>
-                              column.code !== FILL_COLUMN_CODE &&
-                              !isRowDragColumn(column.code) &&
+                              column.dataIndex !== FILL_COLUMN_CODE &&
+                              !isRowDragColumn(column.dataIndex) &&
                               !isSelectColumn(column)
                           )
                           // TODO drag需要在resize之后use,否则这里返回的列对应的宽度不是拖拽后的
@@ -295,8 +295,8 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
   }
 }
 
-function enableMove({ lock, code }) {
-  return code && code !== FILL_COLUMN_CODE && !lock
+function enableMove({ fixed, dataIndex }) {
+  return dataIndex && dataIndex !== FILL_COLUMN_CODE && !fixed
 }
 
 function getColumnWidth(col: ArtColumn): number {
@@ -310,9 +310,9 @@ function getColumnWidth(col: ArtColumn): number {
 
 function moveAllChildren(cols: ArtColumn[], cloumnsTranslateData, width: number, isMinus?: boolean) {
   cols.forEach((col) => {
-    const { code, children } = col
-    const movedWidth = cloumnsTranslateData[code] ?? 0
-    cloumnsTranslateData[code] = movedWidth + (isMinus ? -width : width)
+    const { dataIndex, children } = col
+    const movedWidth = cloumnsTranslateData[dataIndex] ?? 0
+    cloumnsTranslateData[dataIndex] = movedWidth + (isMinus ? -width : width)
     if (!isLeafNode(col)) {
       moveAllChildren(children, cloumnsTranslateData, width)
     }

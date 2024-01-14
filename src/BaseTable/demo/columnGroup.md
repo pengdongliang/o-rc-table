@@ -32,41 +32,41 @@ export default () => {
     headerCellProps: { style: { textAlign: 'center', padding: 0 } },
   })
   const columns = col([
-    { lock: true, code: 'occupation', name: '职务', width: 120 },
+    { fixed: true, dataIndex: 'occupation', name: '职务', width: 120 },
     {
       name: '人数',
-      code: 'personTotal',
+      dataIndex: 'personTotal',
       features:{
          showExtendIcon:true,
       },
       children: col([
-        { code: 'hc_2014', name: '2014年' },
-        { code: 'hc_2015', name: '2015年' },
-        { code: 'hc_lfl', name: '同比增长'}])
+        { dataIndex: 'hc_2014', name: '2014年' },
+        { dataIndex: 'hc_2015', name: '2015年' },
+        { dataIndex: 'hc_lfl', name: '同比增长'}])
     },
     {
       name: '年龄',
-      code: 'age',
+      dataIndex: 'age',
       children: col([
-        { code: 'age_2014', name: '2014年' },
-        { code: 'age_2015', name: '2015年' },
-        { code: 'age_lfl', name: '同比增长' },
+        { dataIndex: 'age_2014', name: '2014年' },
+        { dataIndex: 'age_2015', name: '2015年' },
+        { dataIndex: 'age_lfl', name: '同比增长' },
       ]),
     },
     {
       name: '占比',
-      code: 'percent',
+      dataIndex: 'percent',
       children: col([
-        { code: 'rate_2014_0', name: '2014年' },
-        { code: 'rate_2015_0', name: '2015年' },
+        { dataIndex: 'rate_2014_0', name: '2014年' },
+        { dataIndex: 'rate_2015_0', name: '2015年' },
       ]),
     },
     {
       name: '占比2',
-      code: 'percent_02',
+      dataIndex: 'percent_02',
       children: col([
-        { code: 'rate_2014_1', name: '2014年' },
-        { code: 'rate_2015_1', name: '2015年' }
+        { dataIndex: 'rate_2014_1', name: '2014年' },
+        { dataIndex: 'rate_2015_1', name: '2015年' }
       ])
     }
   ])

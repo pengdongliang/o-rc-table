@@ -25,7 +25,7 @@ export interface SingleSelectFeatureOptions {
   /** 点击事件的响应区域 */
   clickArea?: 'radio' | 'cell' | 'row'
 
-  /** 单选框所在列的 column 配置，可指定 width，lock 等属性 */
+  /** 单选框所在列的 column 配置，可指定 width，fixed 等属性 */
   radioColumn?: Partial<ArtColumn>
 
   /** 单选框所在列的位置 */
@@ -46,11 +46,11 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
     const clickArea = opts.clickArea ?? 'radio'
     const isDisabled = opts.isDisabled ?? always(false)
 
-    const primaryKey = pipeline.ensurePrimaryKey('singleSelect')
+    const rowKey = pipeline.ensurePrimaryKey('singleSelect')
     const value = opts.value ?? pipeline.getStateAtKey(stateKey) ?? opts.defaultValue
-    const onChange = (rowKey: string) => {
-      opts.onChange?.(rowKey)
-      pipeline.setStateAtKey(stateKey, rowKey)
+    const onChange = (currentRowKey: string) => {
+      opts.onChange?.(currentRowKey)
+      pipeline.setStateAtKey(stateKey, currentRowKey)
     }
 
     const radioColumn: ArtColumn = {
@@ -61,7 +61,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
       getCellProps(val: any, row: any, rowIndex: number): CellProps {
         const preCellProps = opts.radioColumn?.getCellProps?.(val, row, rowIndex)
         if (clickArea === 'cell') {
-          const rowKey = internals.safeGetRowKey(primaryKey, row, rowIndex)
+          const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
           const disabled = isDisabled(row, rowIndex)
           return mergeCellProps(preCellProps, {
             style: { cursor: disabled ? 'not-allowed' : 'pointer' },
@@ -71,7 +71,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
                   if (opts.stopClickEventPropagation) {
                     e.stopPropagation()
                   }
-                  onChange(rowKey)
+                  onChange(currentRowKey)
                 },
           })
         }
@@ -81,10 +81,10 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
         if (row[pipeline.getFeatureOptions('footerRowMetaKey')]) {
           return null
         }
-        const rowKey = internals.safeGetRowKey(primaryKey, row, rowIndex)
+        const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
         return (
           <Radio
-            checked={value === rowKey}
+            checked={value === currentRowKey}
             disabled={isDisabled(row, rowIndex)}
             onChange={
               clickArea === 'radio'
@@ -93,7 +93,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
                     if (nativeEvent && opts.stopClickEventPropagation) {
                       nativeEvent.stopPropagation()
                     }
-                    onChange(rowKey)
+                    onChange(currentRowKey)
                   }
                 : undefined
             }
@@ -118,14 +118,14 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
     pipeline.columns(nextColumns)
 
     pipeline.appendRowPropsGetter((row, rowIndex) => {
-      const rowKey = internals.safeGetRowKey(primaryKey, row, rowIndex)
+      const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
 
       const style: any = {}
       let className: string
       let onClick: any
 
       if (opts.highlightRowWhenSelected) {
-        if (value === rowKey) {
+        if (value === currentRowKey) {
           className = 'highlight'
         }
       }
@@ -135,7 +135,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
           if (opts.stopClickEventPropagation) {
             e.stopPropagation()
           }
-          onChange(rowKey)
+          onChange(currentRowKey)
         }
       }
 

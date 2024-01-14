@@ -21,7 +21,7 @@ let lockColumnNeedSpecifiedWidthWarned = false
 function warnLockColumnNeedSpecifiedWidth(column: ArtColumn) {
   if (!lockColumnNeedSpecifiedWidthWarned) {
     lockColumnNeedSpecifiedWidthWarned = true
-    console.warn('lock=true 的列需要指定宽度', column)
+    console.warn('fixed=true 的列需要指定宽度', column)
   }
 }
 
@@ -48,7 +48,7 @@ function processColumns(columns: ArtColumn[], defaultColumnWidth: number) {
       if (column.width == null) {
         if (defaultColumnWidth != null) {
           column = { ...column, width: defaultColumnWidth }
-        } else if (process.env.NODE_ENV !== 'production' && isLeafNode(column) && column.lock) {
+        } else if (process.env.NODE_ENV !== 'production' && isLeafNode(column) && column.fixed) {
           warnLockColumnNeedSpecifiedWidth(column)
         }
       }
@@ -89,9 +89,9 @@ export function getLeftNestedLockCount(columns: ArtColumn[]) {
 
   function isLock(col: ArtColumn): boolean {
     if (isLeafNode(col)) {
-      return col.lock
+      return col.fixed
     }
-    return col.lock || col.children.some(isLock)
+    return col.fixed || col.children.some(isLock)
   }
 }
 

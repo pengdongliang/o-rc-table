@@ -26,16 +26,16 @@ import { Classes } from '../styles'
 //         │   │      ├── colgroup
 //         │   │      └── tfoot  注意这里会出现自定义内容，可能存在嵌套表格
 //         │   │
-//         │   ├── div.art-lock-shadow-mask
-//         │   │   └── div.art-left-lock-shadow
-//         │   └── div.art-lock-shadow-mask
-//         │       └── div.art-right-lock-shadow
+//         │   ├── div.art-fixed-shadow-mask
+//         │   │   └── div.art-left-fixed-shadow
+//         │   └── div.art-fixed-shadow-mask
+//         │       └── div.art-right-fixed-shadow
 //         │
 //         └── div.art-sticky-scroll
 //             └── div.art-sticky-scroll-item
 //
 // 在「可能存在嵌套表格」的情况下，我们可以采用以下的方式来避免「querySelector 不小心获取到了的嵌套表格上的元素」：
-//  artTable.querySelector('.art-lock-shadow-mask .art-left-lock-shadow')
+//  artTable.querySelector('.art-fixed-shadow-mask .art-left-fixed-shadow')
 
 // 表格 DOM 结构辅助工具
 export class TableDOMHelper {

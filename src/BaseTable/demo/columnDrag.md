@@ -22,25 +22,25 @@ export default () => {
   ]
 
   const _columns = [
-    { code: 'No', name: '序号', width: 60, align: 'center' },
-    { code: 'order', name: '单据号', width: 200, features: { sortable: true, filterable: true }},
-    { code: 'from', name: '来户', width: 200, features: { sortable: true, filterable: true } },
-    { code: 'to', name: '往户', width: 200, features: { sortable: true, filterable: true } },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right', features: { sortable: true, filterable: true } },
-    { code: 'balance', name: '应收余额', width: 100, align: 'right', features: { sortable: true, filterable: true } }
+    { dataIndex: 'No', name: '序号', width: 60, align: 'center' },
+    { dataIndex: 'order', name: '物流编码', width: 200, features: { sortable: true, filterable: true }},
+    { dataIndex: 'from', name: '发货地', width: 200, features: { sortable: true, filterable: true } },
+    { dataIndex: 'to', name: '收货地', width: 200, features: { sortable: true, filterable: true } },
+    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right', features: { sortable: true, filterable: true } },
+    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right', features: { sortable: true, filterable: true } }
   ]
 
   const [columns, setColumns] = React.useState(_columns)
 
   const handleColumnDragStopped = (columnMoved, nextColumns) => {
      const columnSeq = nextColumns.reduce((result, col, colIndex) => {
-        result[col.code] = colIndex
+        result[col.dataIndex] = colIndex
         return result
      }, {})
 
      setColumns(
        _columns.reduce((result, col) => {
-          result[columnSeq[col.code]] = { ...col }
+          result[columnSeq[col.dataIndex]] = { ...col }
           return result
        }, [])
      )
@@ -48,7 +48,7 @@ export default () => {
 
   const pipeline = useTablePipeline()
   .input({ dataSource: dataSource, columns: columns })
-  .primaryKey('id')
+  .rowKey('id')
   .use(features.columnDrag({ onColumnDragStopped: handleColumnDragStopped }))
 
   return (

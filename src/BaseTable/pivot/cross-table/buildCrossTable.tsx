@@ -61,7 +61,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
         const { getCellProps, render, ...staticMetaColConfig } = metaCol
         leftPartColumns.push({
           columnType: 'left',
-          lock: true,
+          fixed: true,
           ...staticMetaColConfig,
           getCellProps: leftHeaderGetCellPropsFactory(metaCol, index),
           getSpanRect: leftHeaderGetSpanRectFactory(metaCol, index),

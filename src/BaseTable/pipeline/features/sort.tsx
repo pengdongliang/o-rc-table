@@ -176,7 +176,7 @@ export function sort(opts: SortFeatureOptions = {}) {
       sortIconHoverShow,
     }
 
-    const sortMap = new Map(sorts.map((i, index) => [i.code, { index, ...i }]))
+    const sortMap = new Map(sorts.map((i, index) => [i.dataIndex, { index, ...i }]))
 
     const dataSource = pipeline.getDataSource()
     const columns = pipeline.getColumns()
@@ -204,13 +204,13 @@ export function sort(opts: SortFeatureOptions = {}) {
       const sortColumnsMap = new Map(
         collectNodes(columns, 'leaf-only')
           .filter((col) => col.features?.sortable !== false && col.features?.sortable != null)
-          .map((col) => [col.code, col])
+          .map((col) => [col.dataIndex, col])
       )
 
       return layeredSort(dataList, (x, y) => {
-        for (const { code, order } of sorts) {
-          const column = sortColumnsMap.get(code)
-          // 如果 code 对应的 column 不可排序，我们跳过该 code
+        for (const { dataIndex, order } of sorts) {
+          const column = sortColumnsMap.get(dataIndex)
+          // 如果 dataIndex 对应的 column 不可排序，我们跳过该 dataIndex
           if (column == null) {
             continue
           }
@@ -228,17 +228,17 @@ export function sort(opts: SortFeatureOptions = {}) {
     }
 
     // 在「升序 - 降序 - 不排序」之间不断切换
-    function toggle(code: string) {
-      const sortType = sortMap.get(code) as any
+    function toggle(dataIndex: string) {
+      const sortType = sortMap.get(dataIndex) as any
       let currentSort: SortItem
       if (sortType == null) {
-        currentSort = { code, order: orders[0] }
+        currentSort = { dataIndex, order: orders[0] }
         onChangeSorts(sorts.concat([currentSort]), currentSort)
       } else {
-        const index = sorts.findIndex((s) => s.code === code)
+        const index = sorts.findIndex((s) => s.dataIndex === dataIndex)
         const nextSorts = sorts.slice(0, index + 1)
         const nextOrder = getNextOrder(sortType.order)
-        currentSort = { code, order: nextOrder }
+        currentSort = { dataIndex, order: nextOrder }
         if (nextOrder === 'none') {
           nextSorts.pop()
         } else {
@@ -254,15 +254,15 @@ export function sort(opts: SortFeatureOptions = {}) {
       function dfs(col: ArtColumn): ArtColumn {
         const result = { ...col }
 
-        const sortable = col.code && (col.features?.sortable || sortMap.has(col.code))
-        const active = sortable && sortMap.has(col.code)
+        const sortable = col.dataIndex && (col.features?.sortable || sortMap.has(col.dataIndex))
+        const active = sortable && sortMap.has(col.dataIndex)
 
         if (sortable) {
           let sortIndex = -1
           let sortOrder: SortOrder = 'none'
 
           if (active) {
-            const { order, index } = sortMap.get(col.code) as any
+            const { order, index } = sortMap.get(col.dataIndex) as any
             sortOrder = order
             sortIndex = index
 
@@ -285,7 +285,7 @@ export function sort(opts: SortFeatureOptions = {}) {
                 if (stopClickEventPropagation) {
                   e.stopPropagation()
                 }
-                toggle(col.code)
+                toggle(col.dataIndex)
               }}
               sortOrder={sortOrder}
               column={col}
@@ -301,7 +301,7 @@ export function sort(opts: SortFeatureOptions = {}) {
                 if (stopClickEventPropagation) {
                   e.stopPropagation()
                 }
-                toggle(col.code)
+                toggle(col.dataIndex)
               }}
               sortOrder={sortOrder}
               column={col}

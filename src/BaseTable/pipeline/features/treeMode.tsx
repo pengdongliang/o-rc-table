@@ -26,7 +26,7 @@ export interface TreeModeFeatureOptions {
   onChangeOpenKeys?(nextKeys: string[], key: string, action: 'expand' | 'collapse'): void
 
   /** 自定义叶子节点的判定逻辑 */
-  isLeafNode?(node: any, nodeMeta: { depth: number; expanded: boolean; rowKey: string }): boolean
+  isLeafNode?(node: any, nodeMeta: { depth: number; expanded: boolean; currentRowKey: string }): boolean
 
   /** 展开折叠图标 */
   icon?(props: ExpandIconProps): JSX.Element
@@ -58,7 +58,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
     const stateKey = 'treeMode'
     const { ctx } = pipeline
 
-    const primaryKey = pipeline.ensurePrimaryKey('treeMode')
+    const rowKey = pipeline.ensurePrimaryKey('treeMode')
 
     const openKeys: string[] = opts.openKeys ?? pipeline.getStateAtKey(stateKey) ?? opts.defaultOpenKeys ?? []
     const openKeySet = new Set(openKeys)
@@ -67,16 +67,16 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
       pipeline.setStateAtKey(stateKey, nextKeys, { key, action })
     }
 
-    const toggle = (rowKey: string) => {
-      const expanded = openKeySet.has(rowKey)
+    const toggle = (currentRowKey: string) => {
+      const expanded = openKeySet.has(currentRowKey)
       if (expanded) {
         onChangeOpenKeys(
-          openKeys.filter((key) => key !== rowKey),
-          rowKey,
+          openKeys.filter((key) => key !== currentRowKey),
+          currentRowKey,
           'collapse'
         )
       } else {
-        onChangeOpenKeys([...openKeys, rowKey], rowKey, 'expand')
+        onChangeOpenKeys([...openKeys, currentRowKey], currentRowKey, 'expand')
       }
     }
     const isLeafNode = opts.isLeafNode ?? standardIsLeafNode
@@ -103,11 +103,11 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
           return
         }
         for (const node of nodes) {
-          const rowKey = internals.safeGetRowKey(primaryKey, node, -1)
-          const expanded = openKeySet.has(rowKey)
+          const currentRowKey = internals.safeGetRowKey(rowKey, node, -1)
+          const expanded = openKeySet.has(currentRowKey)
 
-          const isLeaf = isLeafNode(node, { depth, expanded, rowKey })
-          const treeMeta = { depth, isLeaf, expanded, rowKey }
+          const isLeaf = isLeafNode(node, { depth, expanded, currentRowKey })
+          const treeMeta = { depth, isLeaf, expanded, currentRowKey }
           result.push({ [treeMetaKey]: treeMeta, ...node })
 
           if (!isLeaf && expanded) {
@@ -123,7 +123,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
         return columns
       }
 
-      let expandColIndex = columns.findIndex(({ code }) => code && opts.expandColCode === code)
+      let expandColIndex = columns.findIndex(({ dataIndex }) => dataIndex && opts.expandColCode === dataIndex)
       expandColIndex = expandColIndex === -1 ? 0 : expandColIndex
       const expandCol = columns[expandColIndex]
 
@@ -134,7 +134,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
           return content
         }
 
-        const { rowKey, depth, isLeaf, expanded } = record[treeMetaKey]
+        const { currentRowKey, depth, isLeaf, expanded } = record[treeMetaKey]
 
         const indent = iconIndent + depth * indentSize
 
@@ -150,7 +150,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
           if (stopClickEventPropagation) {
             e.stopPropagation()
           }
-          toggle(rowKey)
+          toggle(currentRowKey)
         }
 
         const expandCls = expanded ? Classes.expanded : Classes.collapsed
@@ -196,7 +196,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
           return prevProps
         }
 
-        const { isLeaf, rowKey } = record[treeMetaKey]
+        const { isLeaf, currentRowKey } = record[treeMetaKey]
         if (isLeaf) {
           return prevProps
         }
@@ -206,7 +206,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
             if (stopClickEventPropagation) {
               e.stopPropagation()
             }
-            toggle(rowKey)
+            toggle(currentRowKey)
           },
           style: { cursor: 'pointer' },
         })

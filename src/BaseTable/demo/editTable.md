@@ -19,12 +19,12 @@ export default () => {
   ]
 
   const initColumns = [
-    { code: 'No', name: '序号', width: 60, align: 'center'},
-    { code: 'order', name: '单据号', width: 200, editable: true },
-    { code: 'from', name: '来户', width: 200, editable: true  },
-    { code: 'to', name: '往户', width: 200 , editable: true },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right'},
-    { code: 'balance', name: '应收余额', width: 100, align: 'right'}
+    { dataIndex: 'No', name: '序号', width: 60, align: 'center'},
+    { dataIndex: 'order', name: '物流编码', width: 200, editable: true },
+    { dataIndex: 'from', name: '发货地', width: 200, editable: true  },
+    { dataIndex: 'to', name: '收货地', width: 200 , editable: true },
+    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right'},
+    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right'}
   ]
 
   const [dataSource, setDataSource] = React.useState(initDataSource)
@@ -60,9 +60,9 @@ export default () => {
     }, [value]);
 
     const onBlur = () => {
-      const code = initColumns[colIndex].code
+      const dataIndex = initColumns[colIndex].dataIndex
       const newData = [...dataSource]
-      newData.splice(rowIndex,1,{ ...dataSource[rowIndex],[code]:cellValue })
+      newData.splice(rowIndex,1,{ ...dataSource[rowIndex],[dataIndex]:cellValue })
       setDataSource(newData)
       setActiveCell({ row: -1, col:-1 })
     };

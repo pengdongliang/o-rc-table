@@ -31,11 +31,11 @@ import {
   throttledWindowResize$,
 } from './utils'
 
-export type PrimaryKey = string | ((record: any) => string)
+export type RowKey = string | ((record: any) => string)
 
 export interface BaseTableProps {
   /** 主键 */
-  primaryKey?: PrimaryKey
+  rowKey?: RowKey
   /** 表格展示的数据源 */
   dataSource: any[]
   /** 表格页脚数据源 */
@@ -124,9 +124,9 @@ export interface BaseTableState {
   /** 是否存在纵向滚动条 */
   hasScrollY: boolean
 
-  /** 是否需要渲染 lock sections
-   * 当表格较宽时，所有的列都能被完整的渲染，此时不需要渲染 lock sections
-   * 只有当「整个表格的宽度」小于「每一列渲染宽度之和」时，lock sections 才需要被渲染 */
+  /** 是否需要渲染 fixed sections
+   * 当表格较宽时，所有的列都能被完整的渲染，此时不需要渲染 fixed sections
+   * 只有当「整个表格的宽度」小于「每一列渲染宽度之和」时，fixed sections 才需要被渲染 */
   needRenderLock: boolean
 
   /** 纵向虚拟滚动偏移量 */
@@ -241,7 +241,6 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     if (_lastHasScrollY !== this.hasScrollY) {
       this.props.setTableWidth?.(this.domHelper.tableBody.clientWidth)
     }
-    console.log(111111, this.state.hasScroll, this.hasScrollY,this.getScrollBarWidth())
     // 设置子节点宽度
     stickyScrollItem.style.width = `${innerTableWidth + (this.hasScrollY ? this.getScrollBarWidth() : 0)}px`
   }
@@ -338,7 +337,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
   }
 
   private renderTableBody = (info: RenderInfo) => {
-    const { dataSource, getRowProps, primaryKey, loading, emptyCellHeight } = this.props
+    const { dataSource, getRowProps, rowKey, loading, emptyCellHeight } = this.props
     const tableBodyClassName = cx(Classes.tableBody, Classes.horizontalScrollContainer)
 
     // 低版本Edge浏览器下也会出现双滚动条，这里设置overflow: 'hidden'，先去掉edge的方向键控制滚动条的功能
@@ -382,7 +381,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
           <HtmlTable
             tbodyHtmlTag="tbody"
             getRowProps={getRowProps}
-            primaryKey={primaryKey}
+            rowKey={rowKey}
             data={dataSource.slice(topIndex, bottomIndex)}
             stickyRightOffset={stickyRightOffset}
             horizontalRenderInfo={info}
@@ -402,7 +401,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
   }
 
   private renderTableFooter(info: RenderInfo) {
-    const { footerDataSource = [], getRowProps, primaryKey, stickyBottom } = this.props
+    const { footerDataSource = [], getRowProps, rowKey, stickyBottom } = this.props
 
     const renderFooter = getTableRenderTemplate('footer')
     if (typeof renderFooter === 'function') {
@@ -421,7 +420,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
           data={footerDataSource}
           horizontalRenderInfo={info}
           getRowProps={getRowProps}
-          primaryKey={primaryKey}
+          rowKey={rowKey}
           verticalRenderInfo={{
             offset: 0,
             first: 0,

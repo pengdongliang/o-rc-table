@@ -8,7 +8,7 @@ import formatToken from './util/alias'
 
 const getDesignToken = (config?: ThemeConfig): AliasToken => {
   const theme = config?.algorithm ? createTheme(config.algorithm) : createTheme(defaultDerivative)
-  const mergedToken = {
+  const mergedToken: any = {
     ...seedToken,
     ...config?.token,
   }

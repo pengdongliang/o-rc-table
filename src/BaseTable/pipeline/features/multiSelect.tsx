@@ -18,7 +18,7 @@ export interface MultiSelectFeatureOptions {
   /** 受控用法：当前选中的 keys */
   value?: string[]
 
-  /** 受控用法：上一次操作对应的 rowKey */
+  /** 受控用法：上一次操作对应的 currentRowKey */
   lastKey?: string
 
   /** 受控用法：状态改变回调  */
@@ -32,7 +32,7 @@ export interface MultiSelectFeatureOptions {
   /** 复选框所在列的位置 */
   checkboxPlacement?: 'start' | 'end'
 
-  /** 复选框所在列的 column 配置，可指定 width，lock, title, align, features 等属性 */
+  /** 复选框所在列的 column 配置，可指定 width，fixed, title, align, features 等属性 */
   checkboxColumn?: Partial<ArtColumn>
 
   /** 是否高亮被选中的行 */
@@ -55,7 +55,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
     if (Checkbox == null) {
       throw new Error('使用 multiSelect 之前需要设置 pipeline.ctx.components.Checkbox')
     }
-    const primaryKey = pipeline.ensurePrimaryKey('multiSelect')
+    const rowKey = pipeline.ensurePrimaryKey('multiSelect')
 
     const isDisabled = opts.isDisabled ?? always(false)
     const clickArea = opts.clickArea ?? 'checkbox'
@@ -79,19 +79,19 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
 
     const flatDataSource = collectNodes(pipeline.getDataSource())
     flatDataSource.forEach((row, rowIndex) => {
-      const rowKey = internals.safeGetRowKey(primaryKey, row, rowIndex)
-      fullKeySet.add(rowKey)
+      const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
+      fullKeySet.add(currentRowKey)
       // 在 allKeys 中排除被禁用的 key
       if (!isDisabled(row, rowIndex)) {
-        allKeys.push(rowKey)
+        allKeys.push(currentRowKey)
 
         // 存在一个非选中，则不再进行判断
         if (isAllChecked) {
-          isAllChecked = set.has(rowKey)
+          isAllChecked = set.has(currentRowKey)
         }
         // 存在一个选中，则不再进行判断
         if (!isAnyChecked) {
-          isAnyChecked = set.has(rowKey)
+          isAnyChecked = set.has(currentRowKey)
         }
       }
     })
@@ -121,13 +121,13 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
         align: 'center',
         ...opts.checkboxColumn,
         getCellProps(val: any, row: any, rowIndex: number): CellProps {
-          const rowKey = internals.safeGetRowKey(primaryKey, row, rowIndex)
+          const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
           let checkboxCellProps = {}
           const preCellProps = opts.checkboxColumn?.getCellProps?.(val, row, rowIndex)
           const fullRowsSet = pipeline.getFeatureOptions(fullRowsSetKey) || new Set<string>()
           const selectValueSet = pipeline.getFeatureOptions(selectValueSetKey) || new Set<string>()
-          if (fullRowsSet.has(rowKey) && clickArea === 'cell') {
-            const prevChecked = selectValueSet.has(rowKey)
+          if (fullRowsSet.has(currentRowKey) && clickArea === 'cell') {
+            const prevChecked = selectValueSet.has(currentRowKey)
             const disabled = isDisabled(row, rowIndex)
             checkboxCellProps = {
               style: { cursor: disabled ? 'not-allowed' : 'pointer' },
@@ -137,7 +137,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
                     if (opts.stopClickEventPropagation) {
                       e.stopPropagation()
                     }
-                    onCheckboxChange(prevChecked, rowKey, e.shiftKey)
+                    onCheckboxChange(prevChecked, currentRowKey, e.shiftKey)
                   },
             }
           }
@@ -147,7 +147,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
           if (row[pipeline.getFeatureOptions('footerRowMetaKey')]) {
             return null
           }
-          const key = internals.safeGetRowKey(primaryKey, row, rowIndex)
+          const key = internals.safeGetRowKey(rowKey, row, rowIndex)
           const selectValueSet = pipeline.getFeatureOptions(selectValueSetKey) || new Set<string>()
           const checked = selectValueSet.has(key)
           return (
@@ -190,10 +190,10 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
     }
 
     pipeline.appendRowPropsGetter((row, rowIndex) => {
-      const rowKey = internals.safeGetRowKey(primaryKey, row, rowIndex)
+      const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
       const fullRowsSet = pipeline.getFeatureOptions(fullRowsSetKey) || new Set<string>()
-      if (!fullRowsSet.has(rowKey)) {
-        // rowKey 不在 fullKeySet 中说明这一行是在 multiSelect 之后才生成的，multiSelect 不对之后生成的行进行处理
+      if (!fullRowsSet.has(currentRowKey)) {
+        // currentRowKey 不在 fullKeySet 中说明这一行是在 multiSelect 之后才生成的，multiSelect 不对之后生成的行进行处理
         return
       }
 
@@ -202,7 +202,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       let onClick: any
 
       const selectValueSet = pipeline.getFeatureOptions(selectValueSetKey) || new Set<string>()
-      const checked = selectValueSet.has(rowKey)
+      const checked = selectValueSet.has(currentRowKey)
       if (opts.highlightRowWhenSelected && checked) {
         className = 'highlight'
       }
@@ -215,7 +215,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
             if (opts.stopClickEventPropagation) {
               e.stopPropagation()
             }
-            onCheckboxChange(checked, rowKey, e.shiftKey)
+            onCheckboxChange(checked, currentRowKey, e.shiftKey)
           }
         }
       }

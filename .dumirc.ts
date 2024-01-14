@@ -27,8 +27,8 @@ export default defineConfig({
   crossorigin: {},
   favicons: ['https://gw.alipayobjects.com/zos/rmsportal/rlpTLlbMzTNYuZGGCVYM.png'],
   locales: [
-    { id: 'en-US', name: 'English', suffix: '' },
-    { id: 'zh-CN', name: '中文', suffix: '-cn' },
+    { id: 'zh-CN', name: '中文', suffix: '' },
+    { id: 'en-US', name: 'English', suffix: '-en' },
   ],
   define: {
     antdReproduceVersion: version,

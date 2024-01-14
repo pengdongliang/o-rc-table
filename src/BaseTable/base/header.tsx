@@ -229,7 +229,7 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
               ...headerCellProps.style,
               ...positionStyle,
             }}
-            data-code={col.code}
+            data-index={col.dataIndex}
           >
             {theaderPosition === 'center' && positionStyle.position === 'sticky' ? null : (
               <div className={Classes.tableHeaderCellContent} style={{ justifyContent }}>

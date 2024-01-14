@@ -8,15 +8,15 @@ function safeGetValue(column: ArtColumn, record: any, rowIndex: number) {
   if (column.getValue) {
     return column.getValue(record, rowIndex)
   }
-  return record[column.code]
+  return record[column.dataIndex]
 }
 
-function safeGetRowKey(primaryKey: string | ((data: any) => string), record: any, rowIndex: number): string {
+function safeGetRowKey(rowKey: string | ((data: any) => string), record: any, rowIndex: number): string {
   let key
-  if (typeof primaryKey === 'string') {
-    key = record[primaryKey]
-  } else if (typeof primaryKey === 'function') {
-    key = primaryKey(record)
+  if (typeof rowKey === 'string') {
+    key = record[rowKey]
+  } else if (typeof rowKey === 'function') {
+    key = rowKey(record)
   }
   if (key == null) {
     key = String(rowIndex)

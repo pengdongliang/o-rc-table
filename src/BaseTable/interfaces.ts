@@ -13,8 +13,8 @@ export interface ArtColumnStaticPart {
   /** 列的唯一标识 */
   key?: string
 
-  /** 在数据中的字段 code */
-  code?: string
+  /** 在数据中的字段 dataIndex */
+  dataIndex?: string
 
   /** 列标题的展示名称；在页面中进行展示时，该字段将覆盖 name 字段 */
   title?: ReactNode[] | ReactNode
@@ -32,7 +32,7 @@ export interface ArtColumnStaticPart {
   hidden?: boolean
 
   /** 是否锁列 */
-  lock?: boolean
+  fixed?: boolean
 
   /** 是否允许拖拽 */
   // dragable?: boolean
@@ -91,11 +91,11 @@ export interface AbstractTreeNode {
 
 export type SortOrder = 'desc' | 'asc' | 'none'
 
-export type SortItem = { code: string; order: SortOrder }
+export type SortItem = { dataIndex: string; order: SortOrder }
 
 export interface FilterItem {
   filter: any[]
-  code?: string
+  dataIndex?: string
   filterCondition?: string
 }
 export type Filters = FilterItem[]

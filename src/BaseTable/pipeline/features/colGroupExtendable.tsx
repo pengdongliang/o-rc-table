@@ -46,14 +46,14 @@ export const colGroupExtendable =
       // 当组合列可伸缩，且处于收缩状态时，只渲染一个子列，其他不渲染
       const toggle = (col: ArtColumn) => {
         // 对应的 col 进行状态切换
-        const changedValue = { [col.code]: !curState[col.code] }
-        curState[col.code] = !curState[col.code]
+        const changedValue = { [col.dataIndex]: !curState[col.dataIndex] }
+        curState[col.dataIndex] = !curState[col.dataIndex]
         pipeline.setStateAtKey(stateKey, { ...curState })
         opts?.onChangeExtendStatus && opts.onChangeExtendStatus(curState, changedValue)
       }
       const addIcon = (col: ArtColumn) => {
         const result = { ...col }
-        const curColState = curState[col.code]
+        const curColState = curState[col.dataIndex]
         const displaycolExtendIcon: ReactNode =
           typeof opts.extendIcon === 'function' ? opts.extendIcon(curColState) : opts.extendIcon
         const addIconNode = (
@@ -90,7 +90,7 @@ export const colGroupExtendable =
         const { showExtendIcon } = col?.features || {}
         if (showExtendIcon === true && col.children?.length > 1) {
           col = addIcon(col)
-          curState[col.code] === false && col.children.splice(1, col.children.length)
+          curState[col.dataIndex] === false && col.children.splice(1, col.children.length)
         }
         return col
       })(columns)

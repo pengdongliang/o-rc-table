@@ -10,8 +10,8 @@ import React from "react";
 import { Table, useTablePipeline, features } from "o-rc-table";
 
 export default () => {
-  const [ sorts, setSorts ] = React.useState([{ code: 'order', order: 'asc' }])
-  const [ filters, setFilters ] = React.useState([{code:'order',filter:'HK-FDF-24785-01',filterCondition:'contain'}])
+  const [ sorts, setSorts ] = React.useState([{ dataIndex: 'order', order: 'asc' }])
+  const [ filters, setFilters ] = React.useState([{dataIndex:'order',filter:'HK-FDF-24785-01',filterCondition:'contain'}])
 
   const dataSource = [
     {id: "1", "No":1,"order":"HK-FDF-24785-01","from":"11111111","to":"2222222","amount":"29400.00","balance":"1000.00"},
@@ -22,12 +22,12 @@ export default () => {
   ]
 
   const columns = [
-    { code: 'No', name: '序号', width: 60, align: 'center' },
-    { code: 'order', name: '单据号', width: 200, features: { sortable: true, filterable: true }},
-    { code: 'from', name: '来户', width: 200, features: { sortable: true, filterable: true } },
-    { code: 'to', name: '往户', width: 200, features: { sortable: true, filterable: true } },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right', features: { sortable: true, filterable: true } },
-    { code: 'balance', name: '应收余额', width: 100, align: 'right', features: { sortable: true, filterable: true } }
+    { dataIndex: 'No', name: '序号', width: 60, align: 'center' },
+    { dataIndex: 'order', name: '物流编码', width: 200, features: { sortable: true, filterable: true }},
+    { dataIndex: 'from', name: '发货地', width: 200, features: { sortable: true, filterable: true } },
+    { dataIndex: 'to', name: '收货地', width: 200, features: { sortable: true, filterable: true } },
+    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right', features: { sortable: true, filterable: true } },
+    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right', features: { sortable: true, filterable: true } }
   ]
 
   const handleSortsChanged = (nextSorts) => {

@@ -25,7 +25,7 @@ export interface TreeSelectFeatureOptions {
   /** 复选框所在列的位置 */
   checkboxPlacement?: 'start' | 'end'
 
-  /** 复选框所在列的 column 配置，可指定 width，lock, title, align, features 等属性 */
+  /** 复选框所在列的 column 配置，可指定 width，fixed, title, align, features 等属性 */
   checkboxColumn?: Partial<ArtColumn>
 
   /** 受控用法：当前选中的值 */
@@ -61,17 +61,17 @@ export function treeSelect(opts: TreeSelectFeatureOptions) {
     if (Checkbox == null) {
       throw new Error('使用 treeSelect 之前需要通过 pipeline context 设置 components.Checkbox')
     }
-    const primaryKey = pipeline.ensurePrimaryKey('treeSelect') as string
-    if (typeof primaryKey !== 'string') {
-      throw new Error('treeSelect 仅支持字符串作为 primaryKey')
+    const rowKey = pipeline.ensurePrimaryKey('treeSelect') as string
+    if (typeof rowKey !== 'string') {
+      throw new Error('treeSelect 仅支持字符串作为 rowKey')
     }
     const clickArea = opts.clickArea ?? 'checkbox'
     const isDisabled = opts.isDisabled ?? always(false)
     const isDetached = opts.idDetached ?? always(false)
 
     const value = opts.value ?? pipeline.getStateAtKey(STATE_KEY) ?? opts.defaultValue ?? []
-    const tree = opts.rootKey != null ? [{ [primaryKey]: opts.rootKey, children: opts.tree }] : opts.tree
-    const getNodeValue = (node: any) => node[primaryKey]
+    const tree = opts.rootKey != null ? [{ [rowKey]: opts.rootKey, children: opts.tree }] : opts.tree
+    const getNodeValue = (node: any) => node[rowKey]
 
     const treeDataHelper = opts.checkStrictly
       ? new StrictTreeDataHelper({ value, getNodeValue, tree })
@@ -107,10 +107,10 @@ export function treeSelect(opts: TreeSelectFeatureOptions) {
       title: opts.rootKey != null ? makeCheckbox(opts.rootKey, true) : undefined,
       ...opts.checkboxColumn,
       render(_val, record) {
-        return makeCheckbox(record[primaryKey], false, record)
+        return makeCheckbox(record[rowKey], false, record)
       },
       getCellProps(_val: any, row: any): CellProps {
-        const rowKey = row[primaryKey]
+        const currentRowKey = row[rowKey]
         if (clickArea !== 'cell') {
           return
         }
@@ -126,7 +126,7 @@ export function treeSelect(opts: TreeSelectFeatureOptions) {
             if (opts.stopClickEventPropagation) {
               e.stopPropagation()
             }
-            onToggleKey(rowKey)
+            onToggleKey(currentRowKey)
           },
         }
       },
@@ -151,7 +151,7 @@ export function treeSelect(opts: TreeSelectFeatureOptions) {
               if (opts.stopClickEventPropagation) {
                 e.stopPropagation()
               }
-              onToggleKey(row[primaryKey])
+              onToggleKey(row[rowKey])
             },
           }
         }
@@ -160,7 +160,7 @@ export function treeSelect(opts: TreeSelectFeatureOptions) {
 
     if (opts.highlightRowWhenSelected) {
       pipeline.appendRowPropsGetter((row) => {
-        if (treeDataHelper.isChecked(row[primaryKey])) {
+        if (treeDataHelper.isChecked(row[rowKey])) {
           return { className: 'highlight' }
         }
       })

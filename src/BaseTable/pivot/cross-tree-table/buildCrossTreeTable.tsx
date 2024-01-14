@@ -27,7 +27,7 @@ export type BuildCrossTreeTableOptions = Omit<
   openKeys: string[]
   onChangeOpenKeys(nextOpenKeys: string[]): void
   indentSize?: number
-  isLeafNode?(node: any, nodeMeta: { depth: number; expanded: boolean; rowKey: string }): boolean
+  isLeafNode?(node: any, nodeMeta: { depth: number; expanded: boolean; currentRowKey: string }): boolean
 }
 
 export default function buildCrossTreeTable(
@@ -50,7 +50,7 @@ export default function buildCrossTreeTable(
   const pipeline = new TablePipeline({
     state: {},
     setState: noop,
-    ctx: { primaryKey: ROW_KEY },
+    ctx: { rowKey: ROW_KEY },
   })
 
   pipeline.input({ dataSource: getDataSource(), columns: getColumns() })

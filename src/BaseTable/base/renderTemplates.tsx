@@ -110,7 +110,7 @@ function renderTableBodyInIE(
   props: BaseTableProps,
   extra?: { rowProps: React.HTMLAttributes<HTMLTableRowElement>; stickyRightOffset: number }
 ) {
-  const { dataSource, getRowProps, primaryKey } = props
+  const { dataSource, getRowProps, rowKey } = props
 
   const { topIndex, bottomBlank, topBlank, bottomIndex } = info.verticalRenderRange
   const { flat, visible, hasLockColumn } = info
@@ -124,7 +124,7 @@ function renderTableBodyInIE(
 
   const commonProps = {
     getRowProps: composeRowPropsGetter(getRowProps, extra.rowProps),
-    primaryKey,
+    rowKey,
     data: dataSource.slice(topIndex, bottomIndex),
   }
 
@@ -212,7 +212,7 @@ function renderTableFooterInIE(
   props: BaseTableProps,
   extra?: { rowProps: React.HTMLAttributes<HTMLTableRowElement> }
 ) {
-  const { footerDataSource = [], getRowProps, primaryKey, stickyBottom } = props
+  const { footerDataSource = [], getRowProps, rowKey, stickyBottom } = props
   const _getRowProps = composeRowPropsGetter(getRowProps, extra.rowProps)
 
   const { flat, visible, hasLockColumn } = info
@@ -226,7 +226,7 @@ function renderTableFooterInIE(
   const commonProps = {
     data: footerDataSource,
     getRowProps: _getRowProps,
-    primaryKey,
+    rowKey,
     verticalRenderInfo,
   }
 

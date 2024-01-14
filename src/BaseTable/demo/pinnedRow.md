@@ -60,12 +60,12 @@ export default () => {
   ]
 
   const columns = [
-    { code: 'No', name: '序号', width: 60, align: 'center' },
-    { code: 'order', name: '单据号', width: 200 },
-    { code: 'from', name: '来户', width: 200 },
-    { code: 'to', name: '往户', width: 200 },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right', aggType: 'sum' },
-    { code: 'balance', name: '应收余额', width: 100, align: 'right', aggType: 'avg' }
+    { dataIndex: 'No', name: '序号', width: 60, align: 'center' },
+    { dataIndex: 'order', name: '物流编码', width: 200 },
+    { dataIndex: 'from', name: '发货地', width: 200 },
+    { dataIndex: 'to', name: '收货地', width: 200 },
+    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right', aggType: 'sum' },
+    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right', aggType: 'avg' }
   ]
   const pipeline = useTablePipeline({})
     .input({ dataSource: dataSource, columns: columns })
@@ -105,7 +105,7 @@ export default () => {
         let colNaNValCount = 0
         rowdatas.forEach((row, i) => {
           let v
-          const temporaryVal = parseFloat(row[l.code].replace(',', ''))
+          const temporaryVal = parseFloat(row[l.dataIndex].replace(',', ''))
           if (isNaN(temporaryVal)) {
             v = 0
             if (!['avg', 'count'].includes(l.aggType)) {
@@ -146,7 +146,7 @@ export default () => {
               break
           }
         })
-        data[l.code] = typeof colResult === 'string' ? getFormatValue(colResult) : getFormatValue(colResult.toString())
+        data[l.dataIndex] = typeof colResult === 'string' ? getFormatValue(colResult) : getFormatValue(colResult.toString())
       })
     }
     return data

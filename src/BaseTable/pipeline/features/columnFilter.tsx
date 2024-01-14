@@ -62,7 +62,7 @@ export function filter(opts: FilterFeatureOptions = {}) {
 
     let inputFilters = filters ?? pipeline.getStateAtKey(stateKey) ?? defaultFilters ?? []
     inputFilters = mode === 'single' ? inputFilters.slice(0, 1) : inputFilters
-    const inputFiltersMap = new Map(inputFilters.map((filterItem) => [filterItem.code, { ...filterItem }]))
+    const inputFiltersMap = new Map(inputFilters.map((filterItem) => [filterItem.dataIndex, { ...filterItem }]))
     const { localeText } = pipeline.ctx
 
     function processColumns(columns: ArtColumn[]) {
@@ -71,20 +71,20 @@ export function filter(opts: FilterFeatureOptions = {}) {
       function dfs(col: ArtColumn): ArtColumn {
         const result = { ...col }
 
-        const filterable = col.code && col.features?.filterable
-        const filterActive = filterable && inputFiltersMap?.get(col.code)?.filter?.length > 0
+        const filterable = col.dataIndex && col.features?.filterable
+        const filterActive = filterable && inputFiltersMap?.get(col.dataIndex)?.filter?.length > 0
 
         if (filterable) {
           const handleFilterChanged = function (filterItem?: FilterItem) {
             const nextFiltersMap = new Map(inputFiltersMap)
-            const currentFilter = { code: col.code, ...filterItem }
+            const currentFilter = { dataIndex: col.dataIndex, ...filterItem }
             if (filterItem == null) {
-              nextFiltersMap.delete(col.code)
+              nextFiltersMap.delete(col.dataIndex)
             } else {
               if (mode === 'single') {
                 nextFiltersMap.clear()
               }
-              nextFiltersMap.set(col.code, currentFilter)
+              nextFiltersMap.set(col.dataIndex, currentFilter)
             }
             const nextFilters = Array.from(nextFiltersMap.values())
             onChangeFilters?.(nextFilters, currentFilter)
@@ -92,7 +92,7 @@ export function filter(opts: FilterFeatureOptions = {}) {
           }
 
           const setFilter = (filter?: any[], filterCondition?: string) => {
-            handleFilterChanged(!filter ? undefined : { code: col.code, filter, filterCondition })
+            handleFilterChanged(!filter ? undefined : { dataIndex: col.dataIndex, filter, filterCondition })
           }
 
           const filterPanel: FilterPanel = col.features?.filterPanel
@@ -100,10 +100,10 @@ export function filter(opts: FilterFeatureOptions = {}) {
           const colFilterIcon: React.ReactNode = col.features?.filterIcon ?? filterIcon
           const _Filter = (
             <Filter
-              key={`${col.code}_filter`}
+              key={`${col.dataIndex}_filter`}
               FilterPanelContent={filterPanel}
               filterIcon={colFilterIcon}
-              filterModel={inputFiltersMap.get(col.code)}
+              filterModel={inputFiltersMap.get(col.dataIndex)}
               setFilterModel={handleFilterChanged}
               setFilter={setFilter}
               isFilterActive={filterActive}
@@ -153,7 +153,7 @@ export function filter(opts: FilterFeatureOptions = {}) {
       const columnsMap = new Map(
         collectNodes(columns, 'leaf-only')
           .filter((col) => col.features?.filterable !== false && col.features?.filterable != null)
-          .map((col) => [col.code, col])
+          .map((col) => [col.dataIndex, col])
       )
 
       const defaultFilterOptionsMap = new Map(DEFAULT_FILTER_OPTIONS.map((item) => [item.key, { ...item }]))

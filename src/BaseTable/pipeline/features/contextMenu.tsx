@@ -112,11 +112,11 @@ export function contextMenu(opts: ContextMenuFeatureOptions = {}) {
     const showContextMenu = (e: React.MouseEvent<HTMLTableElement, MouseEvent>) => {
       const path = getEventPath(e)
       const cellEle = getCellEleInEventPath(path)
-      let code
+      let dataIndex
       let rowIndex
       let isInFooter
       if (cellEle) {
-        code = cellEle.getAttribute('data-code')
+        dataIndex = cellEle.getAttribute('data-index')
         rowIndex = cellEle.getAttribute('data-rowindex')
         isInFooter = isElementInsideTheFooter(cellEle)
       } else {
@@ -127,7 +127,8 @@ export function contextMenu(opts: ContextMenuFeatureOptions = {}) {
 
       const dataSource = isInFooter ? pipeline.getFooterDataSource() || [] : pipeline.getDataSource()
       const record = dataSource[rowIndex]
-      const column = code !== undefined && findByTree(pipeline.getColumns(), (item) => item.code === code)
+      const column =
+        dataIndex !== undefined && findByTree(pipeline.getColumns(), (item) => item.dataIndex === dataIndex)
       const value = column && record && internals.safeGetValue(column, record, rowIndex)
 
       const options = getContextMenuOptions(record, column, value, e)

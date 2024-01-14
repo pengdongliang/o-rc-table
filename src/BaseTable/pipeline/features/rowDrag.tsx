@@ -46,8 +46,8 @@ const SCROLL_OFFSET = 30
 
 const defaultRowDragColumn: ArtColumn = {
   name: '拖拽列',
-  code: ROW_DRAG_COLUMN_CODE,
-  lock: true,
+  dataIndex: ROW_DRAG_COLUMN_CODE,
+  fixed: true,
   title: '',
   width: 40,
   align: 'center',
@@ -136,7 +136,7 @@ export function rowDrag(opt: RowDragFeatureOptions) {
       const startRowInfo = getTargetRowInfo(mouseDownEvent.target, tableBody, dataSource)
       let endRowInfo = startRowInfo
 
-      if (!startRowInfo || startRowInfo.code !== rowDragColumn.code) return
+      if (!startRowInfo || startRowInfo.dataIndex !== rowDragColumn.dataIndex) return
 
       if (opt?.isDisabled?.(startRowInfo.row, startRowInfo.rowIndex)) return
 
@@ -198,7 +198,7 @@ export function rowDrag(opt: RowDragFeatureOptions) {
     }
 
     const rowDragColumn = opt?.rowDragColumn || defaultRowDragColumn
-    pipeline.setFeatureOptions('rowDragColumnKey', rowDragColumn.code)
+    pipeline.setFeatureOptions('rowDragColumnKey', rowDragColumn.dataIndex)
 
     const nextColumns = pipeline.getColumns().slice()
     nextColumns.unshift(rowDragColumn)
@@ -230,7 +230,7 @@ export function rowDrag(opt: RowDragFeatureOptions) {
 function getTargetRowInfo(target, tableBody, record) {
   while (target && tableBody.contains(target)) {
     if (target.getAttribute('data-role') === 'table-cell') {
-      const code = target.getAttribute('data-code')
+      const dataIndex = target.getAttribute('data-index')
       const rowIndex = parseInt(target.getAttribute('data-rowindex'))
       const row = record[rowIndex]
       const isFooterCell = isEleInFooter(target)
@@ -239,7 +239,7 @@ function getTargetRowInfo(target, tableBody, record) {
       return {
         rowIndex,
         row,
-        code,
+        dataIndex,
         cell: target,
       }
     }

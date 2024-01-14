@@ -22,7 +22,7 @@ export interface RangeSelectionFeatureOptions {
 interface DragCell {
   rowIndex: number
   rowSpan: number
-  code: string
+  dataIndex: string
   column: ArtColumn
   isFooterCell: boolean
 }
@@ -262,13 +262,13 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
 function getTargetCell(target, columns: ArtColumn[]): DragCell {
   while (target) {
     if (target.getAttribute('data-role') === 'table-cell') {
-      const columnCode = target.getAttribute('data-code')
-      const column = findByTree(columns, (item, index) => item.code === columnCode)
+      const columnCode = target.getAttribute('data-index')
+      const column = findByTree(columns, (item, index) => item.dataIndex === columnCode)
       if (!column) return null
       return {
         rowIndex: parseInt(target.getAttribute('data-rowindex')),
         rowSpan: parseInt(target.getAttribute('rowspan') || 1),
-        code: columnCode,
+        dataIndex: columnCode,
         column,
         isFooterCell: isEleInFooter(target),
       }
@@ -279,7 +279,7 @@ function getTargetCell(target, columns: ArtColumn[]): DragCell {
 }
 
 function isSameCell(cell1: DragCell, cell2: DragCell) {
-  return cell1.rowIndex === cell2.rowIndex && cell1.code === cell2.code && cell1.isFooterCell === cell2.isFooterCell
+  return cell1.rowIndex === cell2.rowIndex && cell1.dataIndex === cell2.dataIndex && cell1.isFooterCell === cell2.isFooterCell
 }
 
 function isEleInFooter(target) {
@@ -294,8 +294,8 @@ function isEleInFooter(target) {
 
 function getRangeColumns(startCell: DragCell, endCell: DragCell, columns: ArtColumn[]) {
   const flatColumns = collectNodes(columns, 'leaf-only')
-  const startIndex = flatColumns.findIndex((col) => col.code === startCell.code)
-  const endIndex = flatColumns.findIndex((col) => col.code === endCell.code)
+  const startIndex = flatColumns.findIndex((col) => col.dataIndex === startCell.dataIndex)
+  const endIndex = flatColumns.findIndex((col) => col.dataIndex === endCell.dataIndex)
   if (startIndex < endIndex) {
     return flatColumns.slice(startIndex, endIndex + 1)
   }
@@ -406,7 +406,7 @@ function getElementEditable(target) {
  */
 function isCellInRange(cellRange, rowIndex, col, isFooterCell) {
   const { startRow, endRow, columns, footerRowRange } = cellRange
-  const isColInRanges = columns.findIndex((item) => item.code === col.code) !== -1
+  const isColInRanges = columns.findIndex((item) => item.dataIndex === col.dataIndex) !== -1
   if (!isColInRanges) return false
   const { startRowIndex, endRowIndex } = getRowIndex(startRow, endRow)
   const { startRowIndex: footerStartRowIndex, endRowIndex: footerEndRowIndex } = getFooterRowIndex(footerRowRange)
@@ -425,8 +425,8 @@ export function getCellRangeId(cellRange: CellRange) {
   const { startRow, endRow, footerRowRange, columns } = cellRange
   const { startRowIndex, endRowIndex } = getRowIndex(startRow, endRow)
   const { startRowIndex: footerStartRowIndex, endRowIndex: footerEndRowIndex } = getFooterRowIndex(footerRowRange)
-  const firstColId = columns[0].code
-  const endColId = columns[columns.length - 1].code
+  const firstColId = columns[0].dataIndex
+  const endColId = columns[columns.length - 1].dataIndex
   return `${startRowIndex}_${endRowIndex}_${footerStartRowIndex}_${footerEndRowIndex}_${firstColId}_${endColId}`
 }
 
@@ -471,13 +471,13 @@ function getMatchBorderStyle(cellRanges, { isFooterCell, rowIndex, col, record }
           ? false
           : rowIndex === footerStartRowIndex
         : rowIndex === startRowIndex
-      const matchCellRangeLeft = col.code === startCol.code
+      const matchCellRangeLeft = col.dataIndex === startCol.dataIndex
       const matchCellRangeBottom = isFooterCell
         ? rowIndex === footerEndRowIndex
         : footerRowRange
         ? false
         : rowIndex === endRowIndex
-      const matchCellRangeRight = col.code === endCol.code
+      const matchCellRangeRight = col.dataIndex === endCol.dataIndex
 
       // 如果样式已经匹配上了，就不需要再取计算的样式
       obj.matchCellRangeTop = obj.matchCellRangeTop || matchCellRangeTop

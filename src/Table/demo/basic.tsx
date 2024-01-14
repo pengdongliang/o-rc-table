@@ -22,11 +22,11 @@ export default () => {
 
   const columns = React.useMemo(() => {
     const baseColumns = [
-      { code: 'order', name: '单据号', width: 200 },
-      { code: 'from', name: '来户', width: 200 },
-      { code: 'to', name: '往户', width: 200 },
-      { code: 'amount', name: '应付金额', width: 100, align: 'right' },
-      { code: 'balance', name: '应收余额', width: 100, align: 'right' },
+      { dataIndex: 'order', name: '物流编码', width: 200 },
+      { dataIndex: 'from', name: '发货地', width: 200 },
+      { dataIndex: 'to', name: '收货地', width: 200 },
+      { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right' },
+      { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right' },
     ]
 
     return Array.from(Array(2000))
@@ -37,9 +37,9 @@ export default () => {
               return { ...item, name: item.name + index }
             })
           ),
-        [{ code: 'No', name: '序号', width: 80, align: 'center', lock: true }]
+        [{ dataIndex: 'No', name: '序号', width: 80, align: 'center', fixed: true }]
       )
-      .concat({ code: 'opt', name: '操作', width: 80, align: 'center', lock: true })
+      .concat({ dataIndex: 'opt', name: '操作', width: 80, align: 'center', fixed: true })
   }, [])
 
   // TODO 主题未应用需要看看ConfigProvider

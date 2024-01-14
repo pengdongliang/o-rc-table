@@ -33,7 +33,7 @@ export interface RowDetailFeatureOptions {
   /** 是否包含详情单元格 */
   hasDetail?(row: any, rowIndex: number): ReactNode
 
-  /** 获取详情单元格所在行的 key，默认为 `(row) => row[primaryKey] + '_detail'` */
+  /** 获取详情单元格所在行的 key，默认为 `(row) => row[rowKey] + '_detail'` */
   getDetailKey?(row: any, rowIndex: number): string
 
   /** 详情单元格 td 的额外样式 */
@@ -71,14 +71,14 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
 
     const rowDetailMetaKey = opts.rowDetailMetaKey ?? rowDetailSymbol
 
-    const primaryKey = pipeline.ensurePrimaryKey('rowDetail')
+    const rowKey = pipeline.ensurePrimaryKey('rowDetail')
 
     const { indents } = pipeline.ctx
     const textOffset = indents.iconIndent + indents.iconWidth + indents.iconGap
     const clickArea = opts.clickArea ?? 'cell'
 
     const getDetailKey =
-      opts.getDetailKey ?? ((row, rowIndex) => `${internals.safeGetRowKey(primaryKey, row, rowIndex)}_detail`)
+      opts.getDetailKey ?? ((row, rowIndex) => `${internals.safeGetRowKey(rowKey, row, rowIndex)}_detail`)
     const renderDetail = opts.renderDetail ?? fallbackRenderDetail
     const hasDetail = opts.hasDetail ?? always(true)
 
@@ -89,7 +89,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
         ? pipeline
             .getDataSource()
             .filter(hasDetail)
-            .map((row, rowIndex) => internals.safeGetRowKey(primaryKey, row, rowIndex))
+            .map((row, rowIndex) => internals.safeGetRowKey(rowKey, row, rowIndex))
         : opts.defaultOpenKeys) ??
       []
     const onChangeOpenKeys: RowDetailFeatureOptions['onChangeOpenKeys'] = (nextKeys, key, action) => {
@@ -99,23 +99,23 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
 
     const openKeySet = new Set(openKeys)
 
-    const toggle = (rowKey: string) => {
-      const expanded = openKeySet.has(rowKey)
+    const toggle = (currentRowKey: string) => {
+      const expanded = openKeySet.has(currentRowKey)
       if (expanded) {
         onChangeOpenKeys(
-          openKeys.filter((key) => key !== rowKey),
-          rowKey,
+          openKeys.filter((key) => key !== currentRowKey),
+          currentRowKey,
           'collapse'
         )
       } else {
-        onChangeOpenKeys([...openKeys, rowKey], rowKey, 'expand')
+        onChangeOpenKeys([...openKeys, currentRowKey], currentRowKey, 'expand')
       }
     }
-    const detailPrimaryKey = typeof primaryKey === 'string' ? primaryKey : `${rowDetailMetaKey.toString()}PrimaryKey`
+    const detailPrimaryKey = typeof rowKey === 'string' ? rowKey : `${rowDetailMetaKey.toString()}RowKey`
     return pipeline
       .dataSource(
         flatMap(pipeline.getDataSource(), (row, rowIndex) => {
-          if (openKeySet.has(internals.safeGetRowKey(primaryKey, row, rowIndex))) {
+          if (openKeySet.has(internals.safeGetRowKey(rowKey, row, rowIndex))) {
             return [row, { [rowDetailMetaKey]: true, ...row, [detailPrimaryKey]: getDetailKey(row, rowIndex) }]
           }
           return [row]
@@ -134,7 +134,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
       }
       let expandColumnIndex = 0
       if (opts.expandColumnCode) {
-        expandColumnIndex = columns.findIndex((col) => col.code === opts.expandColumnCode)
+        expandColumnIndex = columns.findIndex((col) => col.dataIndex === opts.expandColumnCode)
         if (expandColumnIndex < 0) {
           console.warn('没找到可展开的列，请检查设置的展开列code')
           return columns
@@ -160,13 +160,13 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
           return <InlineFlexCell style={{ marginLeft: textOffset }}>{content}</InlineFlexCell>
         }
 
-        const rowKey = internals.safeGetRowKey(primaryKey, row, rowIndex)
-        const expanded = openKeySet.has(rowKey)
+        const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
+        const expanded = openKeySet.has(currentRowKey)
         const onClick = (e: React.MouseEvent) => {
           if (opts.stopClickEventPropagation) {
             e.stopPropagation()
           }
-          toggle(rowKey)
+          toggle(currentRowKey)
         }
 
         const expandCls = expanded ? Classes.expanded : Classes.collapsed
@@ -217,7 +217,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
             if (opts.stopClickEventPropagation) {
               e.stopPropagation()
             }
-            toggle(internals.safeGetRowKey(primaryKey, row, rowIndex))
+            toggle(internals.safeGetRowKey(rowKey, row, rowIndex))
           },
           style: { cursor: 'pointer' },
         })

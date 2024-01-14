@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 
-import { PrimaryKey, TableProps } from '../base'
+import { RowKey, TableProps } from '../base'
 import { ArtColumn, TableTransform, Transform } from '../interfaces'
 import { mergeCellProps } from '../utils'
 import { autoFillTableWidth, tableWidthKey } from './features/autoFill'
@@ -21,7 +21,7 @@ export interface TablePipelineIndentsConfig {
 }
 
 export interface TablePipelineCtx {
-  primaryKey?: PrimaryKey
+  rowKey?: RowKey
   components: { [name: string]: any }
   indents: TablePipelineIndentsConfig
 
@@ -32,7 +32,7 @@ export interface TablePipelineCtx {
  * 表格数据处理流水线。TablePipeline 提供了表格数据处理过程中的一些上下文与工具方法，包括……
  *
  * 1. ctx：上下文环境对象，step（流水线上的一步）可以对 ctx 中的字段进行读写。
- * ctx 中部分字段名称有特定的含义（例如 primaryKey 表示行的主键），使用自定义的上下文信息时注意避开这些名称。
+ * ctx 中部分字段名称有特定的含义（例如 rowKey 表示行的主键），使用自定义的上下文信息时注意避开这些名称。
  *
  * 2. rowPropsGetters：getRowProps 回调队列，step 可以通过 pipeline.appendRowPropsGetter 向队列中追加回调函数，
  *   在调用 pipeline.props() 队列中的所有函数会组合形成最终的 getRowProps
@@ -138,13 +138,13 @@ export class TablePipeline {
   }
 
   /**
-   * 确保 primaryKey 已被设置，并返回 primaryKey
+   * 确保 rowKey 已被设置，并返回 rowKey
    */
-  ensurePrimaryKey(hint?: string): PrimaryKey {
-    if (this.ctx.primaryKey == null) {
-      throw new Error(hint ? `PrimaryKey must be set before using ${hint}` : 'Must be set first `primaryKey`')
+  ensurePrimaryKey(hint?: string): RowKey {
+    if (this.ctx.rowKey == null) {
+      throw new Error(hint ? `RowKey must be set before using ${hint}` : 'Must be set first `rowKey`')
     }
-    return this.ctx.primaryKey
+    return this.ctx.rowKey
   }
 
   /**
@@ -182,8 +182,8 @@ export class TablePipeline {
   /**
    * 设置主键
    */
-  primaryKey(key: PrimaryKey) {
-    this.ctx.primaryKey = key
+  rowKey(key: RowKey) {
+    this.ctx.rowKey = key
     return this
   }
 
@@ -255,7 +255,7 @@ export class TablePipeline {
   }
 
   /**
-   * 获取 BaseTable 的 props，结果中包含 dataSource/columns/primaryKey/getRowProps 四个字段
+   * 获取 BaseTable 的 props，结果中包含 dataSource/columns/rowKey/getRowProps 四个字段
    */
   getProps(this: TablePipeline) {
     this.use(autoFillTableWidth())
@@ -263,8 +263,8 @@ export class TablePipeline {
       dataSource: this._dataSource,
       columns: this._columns,
     }
-    if (this.ctx.primaryKey) {
-      result.primaryKey = this.ctx.primaryKey
+    if (this.ctx.rowKey) {
+      result.rowKey = this.ctx.rowKey
     }
 
     if (this._footerDataSource) {

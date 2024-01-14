@@ -29,19 +29,19 @@ export default () => {
   ]
 
   const columns = [
-    { code: 'No', name: '序号', width: 60, align: 'center' },
-    { code: 'order', name: '单据号', width: 200, features: { sortable: true, filterable: true }},
-    { code: 'from', name: '来户', width: 200, features: { sortable: true, filterable: true } },
-    { code: 'to', name: '往户', width: 200, features: { sortable: true, filterable: true } },
-    { code: 'amount', name: '应付金额', width: 100, align: 'right', features: { sortable: true, filterable: true } },
-    { code: 'balance', name: '应收余额', width: 100, align: 'right', features: { sortable: true, filterable: true } }
+    { dataIndex: 'No', name: '序号', width: 60, align: 'center' },
+    { dataIndex: 'order', name: '物流编码', width: 200, features: { sortable: true, filterable: true }},
+    { dataIndex: 'from', name: '发货地', width: 200, features: { sortable: true, filterable: true } },
+    { dataIndex: 'to', name: '收货地', width: 200, features: { sortable: true, filterable: true } },
+    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right', features: { sortable: true, filterable: true } },
+    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right', features: { sortable: true, filterable: true } }
   ]
     const pipeline = useTablePipeline({})
     .input({ dataSource: dataSource, columns: columns })
     .use(
       features.sort({
         mode: 'single',
-        defaultSorts: [{ code: 'order', order: 'asc' }],
+        defaultSorts: [{ dataIndex: 'order', order: 'asc' }],
         highlightColumnWhenActive: true,
         sortIconHoverShow: true,
         onChangeSorts: function (nextSorts) {
@@ -53,7 +53,7 @@ export default () => {
       features.filter({
         defaultFilters:[
            {
-              code:'order',
+              dataIndex:'order',
               filter:'HK-FDF-24785-01',
               filterCondition:'contain'
            }

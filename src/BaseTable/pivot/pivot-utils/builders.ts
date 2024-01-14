@@ -80,17 +80,17 @@ export function buildRecordMatrix({
       col = buildByTop(ctx, slice, topRootDrillNode, 0)
     } else {
       children = []
-      const code = leftCodes[depth]
-      const groups = groupBy(slice, (dwdRow) => dwdRow[code])
+      const dataIndex = leftCodes[depth]
+      const groups = groupBy(slice, (dwdRow) => dwdRow[dataIndex])
 
-      ctx.peculiarity.add(code)
+      ctx.peculiarity.add(dataIndex)
       for (const child of drillNode.children) {
         const group = groups[child.value]
         if (group) {
           children.push(buildByLeft(ctx, group, child, depth + 1))
         }
       }
-      ctx.peculiarity.delete(code)
+      ctx.peculiarity.delete(dataIndex)
 
       col = mergeColsByTopTree(
         ctx,
@@ -113,16 +113,16 @@ export function buildRecordMatrix({
       record = aggregate(slice, ctx)
     } else {
       children = []
-      const code = topCodes[depth]
-      const groups = groupBy(slice, (dwdRow) => dwdRow[code])
-      ctx.peculiarity.add(code)
+      const dataIndex = topCodes[depth]
+      const groups = groupBy(slice, (dwdRow) => dwdRow[dataIndex])
+      ctx.peculiarity.add(dataIndex)
       for (const child of drillNode.children) {
         const group = groups[child.value]
         if (group) {
           children.push(buildByTop(ctx, group, child, depth + 1))
         }
       }
-      ctx.peculiarity.delete(code)
+      ctx.peculiarity.delete(dataIndex)
       record = aggregate(
         children.map((child) => child.record),
         ctx
