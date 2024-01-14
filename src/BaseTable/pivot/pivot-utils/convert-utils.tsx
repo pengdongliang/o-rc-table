@@ -1,30 +1,35 @@
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import cx from 'classnames'
+import { TablePipeline } from 'o-rc-table'
 import { noop } from 'rxjs'
 
-import { Classes } from '../../base/styles'
 import { icons } from '../../common-views'
 import { isLeafNode } from '../../utils'
 import { CrossTableIndicator, CrossTreeNode } from '../cross-table'
 import { DrillNode } from './interfaces'
 import simpleEncode from './simpleEncode'
 
-const ExpandSpan = styled.span`
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px 2px 0;
-  cursor: pointer;
+const ExpandSpan = styled.span(({ theme }) => {
+  const { Classes = {} } = theme
 
-  .icon {
-    fill: #999;
-    margin-right: 4px;
+  return css`
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px 2px 0;
+    cursor: pointer;
 
-    &.${Classes.expanded} {
-      transform-origin: center center;
-      transform: rotate(90deg);
+    .icon {
+      fill: #999;
+      margin-right: 4px;
+
+      &.${Classes?.expanded} {
+        transform-origin: center center;
+        transform: rotate(90deg);
+      }
     }
-  }
-`
+  `
+})
 
 type ConvertOptions = {
   /** 需要在子节点处附加的 指标节点 */
@@ -70,7 +75,8 @@ export function convertDrillTreeToCrossTree<T extends CrossTreeNode = CrossTreeN
     expandKeys,
     onChangeExpandKeys = noop,
     supportsExpand,
-  }: ConvertOptions = {}
+  }: ConvertOptions = {},
+  pipeline: TablePipeline
 ): T[] {
   const totalKey = encode([])
   if (supportsExpand && expandKeys == null) {
@@ -80,7 +86,7 @@ export function convertDrillTreeToCrossTree<T extends CrossTreeNode = CrossTreeN
   }
   const expandKeySet = new Set(expandKeys)
 
-  return dfs(drillTree, 0)
+  return dfs(drillTree, 0, pipeline)
 
   /** 在 indicators 非空的情况下获取指标对应的 CrossTreeNode */
   function getIndicators(node: DrillNode, nodeData: any) {
@@ -108,7 +114,7 @@ export function convertDrillTreeToCrossTree<T extends CrossTreeNode = CrossTreeN
     } as T
   }
 
-  function dfs(drillNodes: DrillNode[], depth: number): T[] {
+  function dfs(drillNodes: DrillNode[], depth: number, pipeline: TablePipeline): T[] {
     const result: T[] = []
 
     for (const node of drillNodes) {
@@ -126,7 +132,7 @@ export function convertDrillTreeToCrossTree<T extends CrossTreeNode = CrossTreeN
 
         if (!supportsExpand || (enforceExpandTotalNode && node.key === totalKey)) {
           // 不支持展开功能 或是强制展开
-          crossTreeNode.children = dfs(node.children, depth + 1)
+          crossTreeNode.children = dfs(node.children, depth + 1, pipeline)
         } else if (expandKeySet.has(node.key)) {
           // 展开的父节点
           crossTreeNode.title = (
@@ -139,11 +145,11 @@ export function convertDrillTreeToCrossTree<T extends CrossTreeNode = CrossTreeN
                 )
               }}
             >
-              <icons.CaretRight className={cx('icon', Classes.expanded)} />
+              <icons.CaretRight className={cx('icon', pipeline.getTableContext().Classes?.expanded)} />
               {node.value}
             </ExpandSpan>
           )
-          crossTreeNode.children = dfs(node.children, depth + 1)
+          crossTreeNode.children = dfs(node.children, depth + 1, pipeline)
         } else {
           // 收拢的父节点
           needProcessChildren = false

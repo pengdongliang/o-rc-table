@@ -1,5 +1,4 @@
 import { type CSSObject, unit } from '@ant-design/cssinjs'
-import { Classes } from 'o-rc-table'
 
 import type { GenerateStyle } from '../../theme/internal'
 import type { TableToken } from './index'
@@ -21,7 +20,7 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
     [`&${componentCls}-${size}`]: {
       [`> ${componentCls}-container`]: {
         [`> ${componentCls}-content, > ${componentCls}-body`]: {
-          [`> .${Classes.virtual} > table, > table`]: {
+          [`> .${componentCls}-virtual > table, > table`]: {
             [`
               > tbody > tr > th,
               > tbody > tr > td
@@ -57,7 +56,7 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
             > ${componentCls}-body,
             > ${componentCls}-summary
           `]: {
-            [`> .${Classes.virtual} > table, > table`]: {
+            [`> .${componentCls}-virtual > table, > table`]: {
               // ============================= Cell =============================
               [`
                 > thead > tr > th,
@@ -118,7 +117,7 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
         // ============================ Scroll ============================
         [`&${componentCls}-scroll-horizontal`]: {
           [`> ${componentCls}-container > ${componentCls}-body`]: {
-            [`.${Classes.virtual} > table, > table`]: {
+            [`.${componentCls}-virtual > table, > table`]: {
               '> tbody': {
                 [`
                 > tr${componentCls}-expanded-row,

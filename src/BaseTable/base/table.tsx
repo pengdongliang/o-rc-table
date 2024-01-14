@@ -4,6 +4,7 @@ import React, { CSSProperties, ReactNode } from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 import { BehaviorSubject, combineLatest, from, noop, Subject, Subscription } from 'rxjs'
 import * as op from 'rxjs/operators'
+import { ThemeProvider as EmotionThemeProvider } from '@emotion/react'
 
 import { ArtColumn } from '../interfaces'
 import { browserType, console } from '../utils'
@@ -16,7 +17,7 @@ import { TableDOMHelper } from './helpers/TableDOMUtils'
 import { HtmlTable } from './html-table'
 import { RenderInfo, ResolvedUseVirtual, VerticalRenderRange, VirtualEnum } from './interfaces'
 import getTableRenderTemplate from './renderTemplates'
-import { BaseTableCSSVariables, Classes, LOCK_SHADOW_PADDING, prefix, StyledArtTableWrapper } from './styles'
+import { BaseTableCSSVariables, getTableClasses, LOCK_SHADOW_PADDING, StyledArtTableWrapper } from './styles'
 import {
   addResizeObserver,
   // cssPolifill,
@@ -30,6 +31,8 @@ import {
   syncScrollLeft,
   throttledWindowResize$,
 } from './utils'
+import { BaseTableContext, BaseTableContextProps } from '.'
+import { prefix } from '@changesets/logger'
 
 export type RowKey = string | ((record: any) => string)
 
@@ -42,6 +45,11 @@ export interface BaseTableProps {
   footerDataSource?: any[]
   /** 表格的列配置 */
   columns: ArtColumn[]
+  /**
+   * @description 命名空间
+   * @default o-rc-table
+   */
+  namespace?: BaseTableContextProps['namespace']
 
   /** 是否开启虚拟滚动 */
   useVirtual?: VirtualEnum | { horizontal?: VirtualEnum; vertical?: VirtualEnum; header?: VirtualEnum }
@@ -137,6 +145,8 @@ export interface BaseTableState {
   offsetX: number
   /** 横向虚拟滚动 最大渲染尺寸 */
   maxRenderWidth: number
+  /** 上下文数据 */
+  contextValue: BaseTableContextProps
 }
 
 export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
@@ -161,6 +171,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     dataSource: [] as any[],
 
     useOuterBorder: true,
+    namespace: 'o-rc-table',
   }
 
   private rowHeightManager = makeRowHeightManager(this.props.dataSource.length, this.props.estimatedRowHeight)
@@ -204,6 +215,10 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
       // https://stackoverflow.com/questions/60026223/does-resizeobserver-invokes-initially-on-page-load
       maxRenderHeight: 600,
       maxRenderWidth: 800,
+      contextValue: {
+        namespace: 'o-rc-table',
+        Classes: {},
+      },
     }
   }
 
@@ -253,7 +268,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     }
     return (
       <div
-        className={cx(Classes.tableHeader, Classes.tableHeaderNoScrollbar)}
+        className={cx(this.state.contextValue.Classes?.tableHeader, this.state.contextValue.Classes?.tableHeaderNoScrollbar)}
         style={{
           top: stickyTop === 0 ? undefined : stickyTop,
           display: hasHeader ? undefined : 'none',
@@ -261,7 +276,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
       >
         <TableHeader info={info} />
         <div
-          className={Classes.verticalScrollPlaceholder}
+          className={this.state.contextValue.Classes?.verticalScrollPlaceholder}
           style={this.hasScrollY ? { width: this.getScrollBarWidth() } : undefined}
         />
       </div>
@@ -338,7 +353,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
 
   private renderTableBody = (info: RenderInfo) => {
     const { dataSource, getRowProps, rowKey, loading, emptyCellHeight } = this.props
-    const tableBodyClassName = cx(Classes.tableBody, Classes.horizontalScrollContainer)
+    const tableBodyClassName = cx(this.state.contextValue.Classes?.tableBody, this.state.contextValue.Classes?.horizontalScrollContainer)
 
     // 低版本Edge浏览器下也会出现双滚动条，这里设置overflow: 'hidden'，先去掉edge的方向键控制滚动条的功能
     const virtualStyle = browserType.isIE || browserType.isEdge ? { overflow: 'hidden' } : {}
@@ -348,8 +363,8 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
       let { EmptyContent } = components
 
       return (
-        <div className={cx(tableBodyClassName, Classes.tableBodyEmpty)}>
-          <div className={Classes.virtual} tabIndex={-1} style={virtualStyle}>
+        <div className={cx(tableBodyClassName, this.state.contextValue.Classes?.tableBodyEmpty)}>
+          <div className={this.state.contextValue.Classes?.virtual} tabIndex={-1} style={virtualStyle}>
             <EmptyHtmlTable
               descriptors={info.visible}
               loading={loading}
@@ -374,9 +389,10 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
 
     return (
       <div className={tableBodyClassName}>
-        <div className={Classes.virtual} tabIndex={-1} style={virtualStyle}>
+        <div className={this.state.contextValue.Classes?.virtual} tabIndex={-1} style={virtualStyle}>
           {topBlank > 0 && (
-            <div key="top-blank" className={cx(Classes.virtualBlank, 'top')} style={{ height: topBlank }} />
+            <div key="top-blank" className={cx(this.state.contextValue.Classes?.virtualBlank, 'top')}
+                 style={{ height: topBlank }} />
           )}
           <HtmlTable
             tbodyHtmlTag="tbody"
@@ -393,7 +409,8 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
             }}
           />
           {bottomBlank > 0 && (
-            <div key="bottom-blank" className={cx(Classes.virtualBlank, 'bottom')} style={{ height: bottomBlank }} />
+            <div key="bottom-blank" className={cx(this.state.contextValue.Classes?.virtualBlank, 'bottom')}
+                 style={{ height: bottomBlank }} />
           )}
         </div>
       </div>
@@ -412,7 +429,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
 
     return (
       <div
-        className={cx(Classes.tableFooter, Classes.horizontalScrollContainer)}
+        className={cx(this.state.contextValue.Classes?.tableFooter, this.state.contextValue.Classes?.horizontalScrollContainer)}
         style={{ bottom: stickyBottom === 0 ? undefined : stickyBottom }}
       >
         <HtmlTable
@@ -430,7 +447,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
         />
         {footerDataSource.length > 0 ? (
           <div
-            className={Classes.verticalScrollPlaceholder}
+            className={this.state.contextValue.Classes?.verticalScrollPlaceholder}
             style={this.hasScrollY ? { width: this.getScrollBarWidth(), visibility: 'initial' } : undefined}
           />
         ) : null}
@@ -443,16 +460,18 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     return (
       <>
         <div
-          className={Classes.lockShadowMask}
+          className={this.state.contextValue.Classes?.lockShadowMask}
           style={{ left: 0, width: info.leftLockTotalWidth + LOCK_SHADOW_PADDING }}
         >
-          <div className={cx(Classes.lockShadow, Classes.leftLockShadow)} />
+          <div
+            className={cx(this.state.contextValue.Classes?.lockShadow, this.state.contextValue.Classes?.leftLockShadow)} />
         </div>
         <div
-          className={Classes.lockShadowMask}
+          className={this.state.contextValue.Classes?.lockShadowMask}
           style={{ right: 0, width: info.rightLockTotalWidth + LOCK_SHADOW_PADDING }}
         >
-          <div className={cx(Classes.lockShadow, Classes.rightLockShadow)} />
+          <div
+            className={cx(this.state.contextValue.Classes?.lockShadow, this.state.contextValue.Classes?.rightLockShadow)} />
         </div>
       </>
     )
@@ -463,15 +482,16 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     const { hasStickyScroll, stickyBottom } = this.props
     const { hasScroll } = this.state
     return (
-      <div className={cx(Classes.horizontalScrollContainer, Classes.horizontalStickyScrollContainer)}>
+      <div
+        className={cx(this.state.contextValue.Classes?.horizontalScrollContainer, this.state.contextValue.Classes?.horizontalStickyScrollContainer)}>
         <div
-          className={cx(Classes.stickyScroll)}
+          className={cx(this.state.contextValue.Classes?.stickyScroll)}
           style={{
             display: hasStickyScroll && hasScroll ? 'block' : 'none',
             bottom: stickyBottom,
           }}
         >
-          <div className={Classes.stickyScrollItem} />
+          <div className={this.state.contextValue.Classes?.stickyScrollItem} />
         </div>
       </div>
     )
@@ -495,19 +515,20 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
       getTableProps,
       footerDataSource,
       bordered,
+      namespace,
     } = this.props
 
     const artTableWrapperClassName = cx(
-      prefix,
+      namespace,
       {
-        [Classes.outerBorder]: useOuterBorder,
-        [Classes.lockWrapper]: info.hasLockColumn,
-        [Classes.hasHeader]: hasHeader,
-        [Classes.stickyHeader]: isStickyHeader,
-        [Classes.hasFooter]: footerDataSource.length > 0,
-        [Classes.stickyFooter]: isStickyFooter,
-        [Classes.artTableBordered]: bordered,
-        [Classes.iePolyfillWrapper]: browserType.isIE,
+        [this.state.contextValue.Classes?.outerBorder]: useOuterBorder,
+        [this.state.contextValue.Classes?.lockWrapper]: info.hasLockColumn,
+        [this.state.contextValue.Classes?.hasHeader]: hasHeader,
+        [this.state.contextValue.Classes?.stickyHeader]: isStickyHeader,
+        [this.state.contextValue.Classes?.hasFooter]: footerDataSource.length > 0,
+        [this.state.contextValue.Classes?.stickyFooter]: isStickyFooter,
+        [this.state.contextValue.Classes?.artTableBordered]: bordered,
+        [this.state.contextValue.Classes?.iePolyfillWrapper]: browserType.isIE,
       },
       className,
     )
@@ -522,30 +543,44 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
 
     return (
       <StyledArtTableWrapper {...artTableWrapperProps}>
-        <div {...tableProps} className={cx(Classes.artTable, tableProps.className)}>
-          {this.renderTableHeader(info)}
-          {this.renderTableBody(info)}
-          {footerDataSource?.length > 0 && this.renderTableFooter(info)}
-          {this.renderLockShadows(info)}
-        </div>
-        {this.renderStickyScroll(info)}
+        <BaseTableContext.Provider value={this.state.contextValue}>
+          <EmotionThemeProvider theme={this.state.contextValue}>
+            {Object.keys(this.state.contextValue.Classes).length > 0 &&
+              <>
+                <div {...tableProps}
+                     className={cx(getTableClasses(this.props.namespace)?.artTable, tableProps.className)}>
+                  {this.renderTableHeader(info)}
+                  {this.renderTableBody(info)}
+                  {footerDataSource?.length > 0 && this.renderTableFooter(info)}
+                  {this.renderLockShadows(info)}
+                </div>
+                {this.renderStickyScroll(info)}
+              </>
+            }
+          </EmotionThemeProvider>
+        </BaseTableContext.Provider>
       </StyledArtTableWrapper>
     )
   }
 
   componentDidMount() {
-    this.rootSubscription = new Subscription()
-    this.resizeSubject = new Subject()
-    this.updateDOMHelper()
-
+    const { namespace } = this.props
     this.props$ = new BehaviorSubject(this.props)
-    this.initSubscriptions()
-    this.didMountOrUpdate()
-    // const { cssVariables, enableCSSVariables, bordered } = this.props
-    // cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
-    this.props.setTableWidth?.(this.domHelper.tableBody.clientWidth)
-    this.props.setTableDomHelper?.(this.domHelper)
-    this.props.setRowHeightManager?.(this.rowHeightManager)
+    // TODO 渲染异常, 部分样式未生成, 横向虚拟滚动失效
+    this.setState({ contextValue: { namespace, Classes: getTableClasses(namespace) } }, ()=> {
+      this.rootSubscription = new Subscription()
+      this.resizeSubject = new Subject()
+      this.updateDOMHelper()
+
+
+      this.initSubscriptions()
+      this.didMountOrUpdate()
+      // const { cssVariables, enableCSSVariables, bordered } = this.props
+      // cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
+      this.props.setTableWidth?.(this.domHelper.tableBody.clientWidth)
+      this.props.setTableDomHelper?.(this.domHelper)
+      this.props.setRowHeightManager?.(this.rowHeightManager)
+    })
   }
 
   componentDidUpdate(prevProps: Readonly<BaseTableProps>, prevState: Readonly<BaseTableState>) {
@@ -553,9 +588,11 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
     // if (!shallowEqual(prevProps?.cssVariables, this.props?.cssVariables)) {
     //   cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
     // }
-    this.updateDOMHelper()
-    this.props$.next(this.props)
-    this.didMountOrUpdate(prevProps, prevState)
+    if(Object.keys(this.state.contextValue.Classes).length > 0) {
+      this.updateDOMHelper()
+      this.props$.next(this.props)
+      this.didMountOrUpdate(prevProps, prevState)
+    }
   }
 
   private didMountOrUpdate(prevProps?: Readonly<BaseTableProps>, prevState?: Readonly<BaseTableState>) {
@@ -727,7 +764,7 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
 
   /** 更新 DOM 节点的引用，方便其他方法直接操作 DOM */
   private updateDOMHelper() {
-    this.domHelper = new TableDOMHelper(this.artTableWrapperRef.current)
+    this.domHelper = new TableDOMHelper(this.artTableWrapperRef.current, getTableClasses(this.props.namespace))
   }
 
   private updateRowHeightManager() {

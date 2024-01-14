@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import cx from 'classnames'
 import React, { CSSProperties, ReactNode } from 'react'
 
-import { Classes } from '../../base/styles'
+import { useBaseTableContext } from '../../base'
 import { ArtColumn, SortItem, SortOrder } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, console, isLeafNode, layeredSort, mergeCellProps, smartCompare } from '../../utils'
@@ -38,13 +38,15 @@ function DefaultSortHeaderCell({ children, column, onToggle, sortOrder, sortInde
   // 通过 justify-content 来与 col.align 保持对齐方向一致
   const justifyContent = column.align === 'right' ? 'flex-end' : column.align === 'center' ? 'center' : 'flex-start'
 
+  const tableContext = useBaseTableContext()
+
   return (
     <TableHeaderCell onClick={onToggle} style={{ justifyContent }}>
       {children}
       <SortIcon
         style={{ userSelect: 'none', marginLeft: 2, flexShrink: 0 }}
         className={cx({
-          [Classes.tableSortIcon]: true,
+          [tableContext.Classes?.tableSortIcon]: true,
           active: sortOrder === 'desc' || sortOrder === 'asc',
         })}
         size={16}
@@ -270,7 +272,7 @@ export function sort(opts: SortFeatureOptions = {}) {
               result.headerCellProps = mergeCellProps(col.headerCellProps, {
                 style: { background: 'var(--header-highlight-bgcolor)' } as any,
               })
-              result.getCellProps = (value, row, rowIndex) => {
+              result.getCellProps = (_value, row, rowIndex) => {
                 const prevCellProps = internals.safeGetCellProps(col, row, rowIndex)
                 return mergeCellProps(prevCellProps, {
                   style: { background: 'var(--highlight-bgcolor)' } as any,

@@ -64,6 +64,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
         <Table
           style={style}
           loading={spinProps.spinning}
+          namespace={prefixCls}
           {...rest}
           className={classNames(cssVarCls, rootCls, hashId)}
           {...pipeline.getProps()}

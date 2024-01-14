@@ -1,16 +1,29 @@
 import { useRef, useState } from 'react'
 
-import { RowKey, TableProps } from '../base'
+import { BaseTableContextProps, RowKey, TableProps, useBaseTableContext } from '../base'
 import { ArtColumn, TableTransform, Transform } from '../interfaces'
 import { mergeCellProps } from '../utils'
 import { autoFillTableWidth, tableWidthKey } from './features/autoFill'
 
 type RowPropsGetter = TableProps['getRowProps']
 
+type InputType =
+  | {
+      dataSource: any[]
+      columns: ArtColumn[]
+      tableContext?: BaseTableContextProps
+    }
+  | {
+      dataSource?: any[]
+      columns?: ArtColumn[]
+      tableContext: BaseTableContextProps
+    }
+
 interface PipelineSnapshot {
   dataSource: any[]
   columns: ArtColumn[]
   rowPropsGetters: RowPropsGetter[]
+  tableContext: BaseTableContextProps
 }
 
 export interface TablePipelineIndentsConfig {
@@ -56,6 +69,8 @@ export class TablePipeline {
 
   private _footerDataSource?: any[]
 
+  private _tableContext?: BaseTableContextProps
+
   static defaultIndents: TablePipelineIndentsConfig = {
     iconIndent: -8,
     iconWidth: 16,
@@ -96,6 +111,7 @@ export class TablePipeline {
     function S4() {
       return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
     }
+
     return `${S4() + S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`
   }
 
@@ -120,6 +136,13 @@ export class TablePipeline {
       return this._columns
     }
     return this._snapshots[name].columns
+  }
+
+  getTableContext(name?: string) {
+    if (name == null) {
+      return this._tableContext
+    }
+    return this._snapshots[name].tableContext
   }
 
   getFooterDataSource() {
@@ -150,14 +173,18 @@ export class TablePipeline {
   /**
    * 设置流水线的输入数据
    */
-  input(input: { dataSource: any[]; columns: ArtColumn[] }) {
+  input(input: InputType) {
     if (this._dataSource != null || this._columns != null) {
       throw new Error('Input cannot be called twice')
     }
 
     this._dataSource = input.dataSource
 
-    this._columns = input.columns.map((col) => ({ ...col, key: this.guid() }))
+    this._columns = input.columns?.map((col) => ({ ...col, key: this.guid() }))
+
+    if (input.tableContext) {
+      this._tableContext = input.tableContext
+    }
 
     this.snapshot('input')
     return this
@@ -203,6 +230,7 @@ export class TablePipeline {
       dataSource: this._dataSource,
       columns: this._columns,
       rowPropsGetters: this._rowPropsGetters.slice(),
+      tableContext: this._tableContext,
     }
     return this
   }
@@ -301,5 +329,8 @@ export class TablePipeline {
 export function useTablePipeline(ctx?: Partial<TablePipelineCtx>) {
   const [state, setState] = useState<any>({})
   const ref = useRef<any>({ featureOptions: {} })
-  return new TablePipeline({ state, setState, ctx, ref })
+
+  const tableContext = useBaseTableContext()
+
+  return new TablePipeline({ state, setState, ctx, ref }).input({ tableContext })
 }

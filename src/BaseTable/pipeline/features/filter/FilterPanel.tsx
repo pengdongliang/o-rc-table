@@ -1,42 +1,47 @@
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
+import { useBaseTableContext } from 'o-rc-table'
 import React, { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react'
 
-import { Classes } from '../../../base/styles'
 import { isElementInEventPath, keepWithinBounds } from '../../../utils'
 import KeyCode from '../../../utils/keyCode'
 import DefaultFilterIcon from './DefaultFilterIcon'
 
-const FilterPanelStyle = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-height: 450px;
-  min-width: 160px;
-  border-radius: 2px;
-  background-color: #fff;
-  box-shadow: 0 0 5px 0 rgba(154, 154, 154, 0.5);
-  cursor: default;
+const FilterPanelStyle = styled.div(({ theme }) => {
+  const { Classes = {} } = theme
 
-  .${Classes.popupHeader} {
+  return css`
     display: flex;
-    background-color: #ebedf1;
+    flex-direction: column;
+    max-height: 450px;
+    min-width: 160px;
+    border-radius: 2px;
+    background-color: #fff;
+    box-shadow: 0 0 5px 0 rgba(154, 154, 154, 0.5);
+    cursor: default;
 
-    .${Classes.filterIcon} {
+    .${Classes?.popupHeader} {
       display: flex;
-      color: #666;
-      background-color: #fff;
-      padding: 8px 16px 8px 16px;
-      border-right: 1px solid transparent;
-      border-left: 1px solid transparent;
-      border-top: 1px solid transparent;
-      border-top-right-radius: 2px;
-      border-top-left-radius: 2px;
-    }
-  }
+      background-color: #ebedf1;
 
-  .${Classes.popupBody} {
-    display: flex;
-  }
-`
+      .${Classes?.filterIcon} {
+        display: flex;
+        color: #666;
+        background-color: #fff;
+        padding: 8px 16px 8px 16px;
+        border-right: 1px solid transparent;
+        border-left: 1px solid transparent;
+        border-top: 1px solid transparent;
+        border-top-right-radius: 2px;
+        border-top-left-radius: 2px;
+      }
+    }
+
+    .${Classes?.popupBody} {
+      display: flex;
+    }
+  `
+})
 
 const useWindowEvents = (func, evens) => {
   React.useEffect(() => {
@@ -62,6 +67,9 @@ function FilterPanel({ style, children, position, filterIcon, onClose, hideFilte
   const [perfectPosition, setPerfectPosition] = useState(position)
   const [visible, setVisible] = useState(false)
   const ref = React.useRef<HTMLDivElement>(null)
+
+  const tableContext = useBaseTableContext()
+
   const isContainPanel = (e) => {
     return isElementInEventPath(ref.current, e)
   }
@@ -94,7 +102,7 @@ function FilterPanel({ style, children, position, filterIcon, onClose, hideFilte
 
   return (
     <FilterPanelStyle
-      className={Classes.popup}
+      className={tableContext.Classes?.popup}
       style={{
         ...style,
         left: visible ? perfectPosition.x : 0,
@@ -108,11 +116,13 @@ function FilterPanel({ style, children, position, filterIcon, onClose, hideFilte
       tabIndex={-1}
     >
       {!hideFilterPopupHeader ? (
-        <div className={Classes.popupHeader}>
-          <span className={Classes.filterIcon}>{filterIcon || <DefaultFilterIcon width={12} height={12} />}</span>
+        <div className={tableContext.Classes?.popupHeader}>
+          <span className={tableContext.Classes?.filterIcon}>
+            {filterIcon || <DefaultFilterIcon width={12} height={12} />}
+          </span>
         </div>
       ) : null}
-      <div className={Classes.popupBody}>{children}</div>
+      <div className={tableContext.Classes?.popupBody}>{children}</div>
     </FilterPanelStyle>
   )
 }

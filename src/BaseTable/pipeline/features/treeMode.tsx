@@ -1,7 +1,6 @@
 import cx from 'classnames'
 import React from 'react'
 
-import { Classes } from '../../base/styles'
 import { ExpansionCell, icons, InlineFlexCell } from '../../common-views'
 import { ArtColumn } from '../../interfaces'
 import { internals } from '../../internals'
@@ -127,7 +126,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
       expandColIndex = expandColIndex === -1 ? 0 : expandColIndex
       const expandCol = columns[expandColIndex]
 
-      const render = (value: any, record: any, recordIndex: number) => {
+      const render = (_value: any, record: any, recordIndex: number) => {
         const content = internals.safeRender(expandCol, record, recordIndex)
         if (record[treeMetaKey] == null) {
           // 没有 treeMeta 信息的话，就返回原先的渲染结果
@@ -140,7 +139,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
 
         if (isLeaf) {
           return (
-            <InlineFlexCell className={cx('expansion-cell', Classes.leaf)}>
+            <InlineFlexCell className={cx('expansion-cell', pipeline.getTableContext().Classes?.leaf)}>
               <span style={{ marginLeft: indent + iconWidth + iconGap }}>{content}</span>
             </InlineFlexCell>
           )
@@ -153,7 +152,9 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
           toggle(currentRowKey)
         }
 
-        const expandCls = expanded ? Classes.expanded : Classes.collapsed
+        const expandCls = expanded
+          ? pipeline.getTableContext().Classes?.expanded
+          : pipeline.getTableContext().Classes?.collapsed
         return (
           <ExpansionCell
             className={cx('expansion-cell', expandCls)}
@@ -189,7 +190,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
         )
       }
 
-      const getCellProps = (value: any, record: any, rowIndex: number) => {
+      const getCellProps = (_value: any, record: any, rowIndex: number) => {
         const prevProps = internals.safeGetCellProps(expandCol, record, rowIndex)
         if (record[treeMetaKey] == null) {
           // 没有 treeMeta 信息的话，就返回原先的 cellProps

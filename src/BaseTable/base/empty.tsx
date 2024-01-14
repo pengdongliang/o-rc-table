@@ -1,9 +1,9 @@
 import cx from 'classnames'
+import { useBaseTableContext } from 'o-rc-table'
 import React from 'react'
 
 import { Colgroup } from './colgroup'
 import { VisibleColumnDescriptor } from './interfaces'
-import { Classes } from './styles'
 
 const DefaultEmptyContent = React.memo(() => (
   <>
@@ -31,15 +31,17 @@ export function EmptyHtmlTable({
 }: EmptyTableProps) {
   const show = !loading
 
+  const { Classes } = useBaseTableContext()
+
   return (
     <>
       <table key="table">
         <Colgroup descriptors={descriptors} />
         <tbody>
-          <tr className={cx(Classes.tableRow, Classes.first, Classes.last, 'no-hover')} data-rowindex={0}>
+          <tr className={cx(Classes?.tableRow, Classes?.first, Classes?.last, 'no-hover')} data-rowindex={0}>
             {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <td
-              className={cx(Classes.tableCell, Classes.first, Classes.last)}
+              className={cx(Classes?.tableCell, Classes?.first, Classes?.last)}
               colSpan={descriptors.length}
               style={{ height: emptyCellHeight ?? 200 }}
             />
@@ -47,7 +49,7 @@ export function EmptyHtmlTable({
         </tbody>
       </table>
       {show && (
-        <div className={Classes.emptyWrapper} key="empty">
+        <div className={Classes?.emptyWrapper} key="empty">
           <EmptyContent />
         </div>
       )}

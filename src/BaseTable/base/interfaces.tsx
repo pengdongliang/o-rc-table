@@ -1,4 +1,5 @@
 import { ArtColumn } from '../interfaces'
+import { BaseTableContextProps } from '.'
 
 export type VirtualEnum = false | true | 'auto'
 
@@ -27,7 +28,7 @@ export interface ResolvedUseVirtual {
   header: boolean
 }
 
-export interface RenderInfo {
+export interface RenderInfo extends Partial<BaseTableContextProps> {
   verticalRenderRange: VerticalRenderRange
   horizontalRenderRange: HorizontalRenderRange
   visible: VisibleColumnDescriptor[]

@@ -1,10 +1,10 @@
 import cx from 'classnames'
+import { useBaseTableContext } from 'o-rc-table'
 import type { CSSProperties } from 'react'
 
 import type { ArtColumn } from '../interfaces'
 import { getTreeDepth, isLeafNode } from '../utils'
 import { HorizontalRenderRange, RenderInfo } from './interfaces'
-import { Classes } from './styles'
 
 function range(n: number) {
   const array: number[] = []
@@ -182,6 +182,8 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
   const rowCount = _rowCount ?? getTreeDepth(nested.full) + 1
   const headerRenderInfo = calculateHeaderRenderInfo(info, rowCount)
 
+  const tableContext = useBaseTableContext()
+
   const fullFlatCount = flat.full.length
   const leftFlatCount = flat.left.length
   const rightFlatCount = flat.right.length
@@ -214,12 +216,13 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
           <th
             key={col.key}
             {...headerCellProps}
-            className={cx(Classes.tableHeaderCell, headerCellProps.className, {
-              [Classes.first]: colIndex === 0,
-              [Classes.last]: colIndex + colSpan === fullFlatCount,
-              [Classes.lockLeft]: colIndex < leftFlatCount || theaderPosition === 'left',
-              [Classes.lockRight]: colIndex >= fullFlatCount - rightFlatCount || theaderPosition === 'right',
-              [Classes.leaf]: wrapped.isLeaf,
+            className={cx(tableContext.Classes?.tableHeaderCell, headerCellProps.className, {
+              [tableContext.Classes?.first]: colIndex === 0,
+              [tableContext.Classes?.last]: colIndex + colSpan === fullFlatCount,
+              [tableContext.Classes?.lockLeft]: colIndex < leftFlatCount || theaderPosition === 'left',
+              [tableContext.Classes?.lockRight]:
+                colIndex >= fullFlatCount - rightFlatCount || theaderPosition === 'right',
+              [tableContext.Classes?.leaf]: wrapped.isLeaf,
             })}
             colSpan={colSpan}
             rowSpan={isLeaf ? rowCount - level : undefined}
@@ -232,7 +235,7 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
             data-index={col.dataIndex}
           >
             {theaderPosition === 'center' && positionStyle.position === 'sticky' ? null : (
-              <div className={Classes.tableHeaderCellContent} style={{ justifyContent }}>
+              <div className={tableContext.Classes?.tableHeaderCellContent} style={{ justifyContent }}>
                 {col.title ?? col.name}
               </div>
             )}
@@ -249,9 +252,9 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
     return (
       <tr
         key={level}
-        className={cx(Classes.tableHeaderRow, {
-          [Classes.first]: level === 0,
-          [Classes.last]: level === rowCount - 1,
+        className={cx(tableContext.Classes?.tableHeaderRow, {
+          [tableContext.Classes?.first]: level === 0,
+          [tableContext.Classes?.last]: level === rowCount - 1,
         })}
       >
         {headerCells}
@@ -272,7 +275,7 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
   return (
     <table>
       <colgroup>{colgroup}</colgroup>
-      <thead className={Classes.tableHeaderThead}>{thead}</thead>
+      <thead className={tableContext.Classes?.tableHeaderThead}>{thead}</thead>
     </table>
   )
 }

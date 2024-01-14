@@ -2,7 +2,6 @@ import styled from '@emotion/styled'
 import cx from 'classnames'
 import { CSSProperties, ReactNode } from 'react'
 
-import { Classes } from '../../base/styles'
 import { ArtColumn } from '../../interfaces'
 import { internals } from '../../internals'
 import { makeRecursiveMapper } from '../../utils'
@@ -74,7 +73,7 @@ export const colGroupExtendable =
                     verticalAlign: 'middle',
                   }}
                   className={cx({
-                    [Classes.tableExtendIcon]: true,
+                    [pipeline.getTableContext().Classes?.tableExtendIcon]: true,
                   })}
                   size={14}
                   isExtend={curColState}

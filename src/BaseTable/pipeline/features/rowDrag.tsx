@@ -1,10 +1,8 @@
-/* eslint-disable */
 import cx from 'classnames'
 import React from 'react'
 import { fromEvent } from 'rxjs'
 import { map, takeUntil } from 'rxjs/operators'
 
-import { Classes } from '../../base/styles'
 import { ArtColumn, CellProps } from '../../interfaces'
 import { TablePipeline } from '../pipeline'
 
@@ -44,35 +42,37 @@ export const ROW_DRAG_COLUMN_CODE = '$_row_drag_column_&'
 export const rowDragKey = 'rowDragKey'
 const SCROLL_OFFSET = 30
 
-const defaultRowDragColumn: ArtColumn = {
-  name: '拖拽列',
-  dataIndex: ROW_DRAG_COLUMN_CODE,
-  fixed: true,
-  title: '',
-  width: 40,
-  align: 'center',
-  getCellProps(): CellProps {
-    return {
-      className: cx(Classes.rowDragCell),
-    }
-  },
-  render() {
-    return (
-      <svg
-        viewBox="0 0 1024 1024"
-        version="1.1"
-        xmlns="http://www.w3.org/1999/xlink"
-        data-icon="drag"
-        width="16"
-        height="16"
-      >
-        <path
-          d="M298.688 192a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m298.624 0a64 64 0 1 0 128 0 64 64 0 0 0-128 0zM298.688 512a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m298.624 0a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m-298.624 320a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m298.624 0a64 64 0 1 0 128 0 64 64 0 0 0-128 0z"
-          p-id="4278"
-        />
-      </svg>
-    )
-  },
+const defaultRowDragColumn = (pipeline: TablePipeline): ArtColumn => {
+  return {
+    name: '拖拽列',
+    dataIndex: ROW_DRAG_COLUMN_CODE,
+    fixed: true,
+    title: '',
+    width: 40,
+    align: 'center',
+    getCellProps(): CellProps {
+      return {
+        className: cx(pipeline.getTableContext().Classes?.rowDragCell),
+      }
+    },
+    render() {
+      return (
+        <svg
+          viewBox="0 0 1024 1024"
+          version="1.1"
+          xmlns="http://www.w3.org/1999/xlink"
+          data-icon="drag"
+          width="16"
+          height="16"
+        >
+          <path
+            d="M298.688 192a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m298.624 0a64 64 0 1 0 128 0 64 64 0 0 0-128 0zM298.688 512a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m298.624 0a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m-298.624 320a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m298.624 0a64 64 0 1 0 128 0 64 64 0 0 0-128 0z"
+            p-id="4278"
+          />
+        </svg>
+      )
+    },
+  }
 }
 
 export function rowDrag(opt: RowDragFeatureOptions) {
@@ -87,7 +87,7 @@ export function rowDrag(opt: RowDragFeatureOptions) {
 
     const handleDragStrat = (event: RowDragEvent) => {
       // 开始拖拽
-      artTable.classList.add(cx(Classes.rowDragging))
+      artTable.classList.add(cx(pipeline.getTableContext().Classes?.rowDragging))
       opt?.onDragStart?.(event)
     }
 
@@ -98,7 +98,7 @@ export function rowDrag(opt: RowDragFeatureOptions) {
     }
 
     const handleDragEnd = (event: RowDragEvent, isOutOfRange: boolean) => {
-      artTable.classList.remove(cx(Classes.rowDragging))
+      artTable.classList.remove(cx(pipeline.getTableContext().Classes?.rowDragging))
       pipeline.setStateAtKey(rowDragKey, event)
       // 超出拖拽范围不触发dragend事件
       if (!isOutOfRange) {
@@ -106,7 +106,16 @@ export function rowDrag(opt: RowDragFeatureOptions) {
       }
     }
 
-    const getDragEvent = (startRowInfo, endRowInfo, { isFinished, dragPosition = 'bottom' }) => {
+    const getDragEvent = (
+      startRowInfo: { rowIndex: any; row: any; dataIndex?: any; cell?: any },
+      endRowInfo: {
+        rowIndex: any
+        row: any
+        dataIndex?: any
+        cell?: any
+      },
+      { isFinished, dragPosition = 'bottom' }: { isFinished: boolean; dragPosition: string }
+    ) => {
       return {
         startRowIndex: startRowInfo.rowIndex,
         startRow: startRowInfo.row,
@@ -133,7 +142,7 @@ export function rowDrag(opt: RowDragFeatureOptions) {
     }
 
     const onMouseDown = (mouseDownEvent: React.MouseEvent<HTMLTableElement, MouseEvent>) => {
-      const startRowInfo = getTargetRowInfo(mouseDownEvent.target, tableBody, dataSource)
+      const startRowInfo = getTargetRowInfo(mouseDownEvent.target, tableBody, dataSource, pipeline)
       let endRowInfo = startRowInfo
 
       if (!startRowInfo || startRowInfo.dataIndex !== rowDragColumn.dataIndex) return
@@ -150,7 +159,7 @@ export function rowDrag(opt: RowDragFeatureOptions) {
       const startRowRects = startRowInfo.cell.getBoundingClientRect()
       // 光标位置距离初始拖拽行的偏移量
       const startOffset = mouseDownEvent.clientY - startRowRects.y
-      const dragElement = createDragElement(startRowRects, tableWidth, rowHeight)
+      const dragElement = createDragElement(startRowRects, tableWidth, rowHeight, pipeline)
       // 可拖拽的范围
       const dragRange = getDragRange(tableBody, { startOffset, rowHeight: startRowRects.height })
 
@@ -160,7 +169,7 @@ export function rowDrag(opt: RowDragFeatureOptions) {
       const rowDrag$ = mousemove$.pipe(
         map((mouseMoveEvent: MouseEvent) => {
           const { clientX, clientY } = mouseMoveEvent
-          const tagretRow = getTargetRowInfo(mouseMoveEvent.target, tableBody, dataSource)
+          const tagretRow = getTargetRowInfo(mouseMoveEvent.target, tableBody, dataSource, pipeline)
           if (tagretRow) {
             endRowInfo = tagretRow
           }
@@ -197,7 +206,7 @@ export function rowDrag(opt: RowDragFeatureOptions) {
       })
     }
 
-    const rowDragColumn = opt?.rowDragColumn || defaultRowDragColumn
+    const rowDragColumn = opt?.rowDragColumn || defaultRowDragColumn(pipeline)
     pipeline.setFeatureOptions('rowDragColumnKey', rowDragColumn.dataIndex)
 
     const nextColumns = pipeline.getColumns().slice()
@@ -214,10 +223,10 @@ export function rowDrag(opt: RowDragFeatureOptions) {
       if (isFooterCell || isFinished || (rowIndex !== startRowIndex && rowIndex !== endRowIndex)) return
 
       const className = cx({
-        [Classes.rowDragStart]: rowIndex === startRowIndex,
-        [Classes.rowDragEnd]: rowIndex === endRowIndex,
-        [Classes.rowDragEndToTop]: rowIndex === endRowIndex && dragPosition === 'top',
-        [Classes.rowDragEndToBottom]: rowIndex === endRowIndex && dragPosition === 'bottom',
+        [pipeline.getTableContext().Classes?.rowDragStart]: rowIndex === startRowIndex,
+        [pipeline.getTableContext().Classes?.rowDragEnd]: rowIndex === endRowIndex,
+        [pipeline.getTableContext().Classes?.rowDragEndToTop]: rowIndex === endRowIndex && dragPosition === 'top',
+        [pipeline.getTableContext().Classes?.rowDragEndToBottom]: rowIndex === endRowIndex && dragPosition === 'bottom',
       })
 
       return { className }
@@ -227,13 +236,18 @@ export function rowDrag(opt: RowDragFeatureOptions) {
   }
 }
 
-function getTargetRowInfo(target, tableBody, record) {
+function getTargetRowInfo(
+  target: any,
+  tableBody: { contains: (arg0: any) => any },
+  record: any[],
+  pipeline: TablePipeline
+) {
   while (target && tableBody.contains(target)) {
     if (target.getAttribute('data-role') === 'table-cell') {
       const dataIndex = target.getAttribute('data-index')
       const rowIndex = parseInt(target.getAttribute('data-rowindex'))
       const row = record[rowIndex]
-      const isFooterCell = isEleInFooter(target)
+      const isFooterCell = isEleInFooter(target, pipeline)
 
       if (!row || isFooterCell) return null
       return {
@@ -248,9 +262,9 @@ function getTargetRowInfo(target, tableBody, record) {
   return null
 }
 
-function isEleInFooter(target) {
-  while (target && !target.classList.contains(Classes.artTable)) {
-    if (target.classList.contains(Classes.tableFooter)) {
+function isEleInFooter(target: any, pipeline: TablePipeline) {
+  while (target && !target.classList.contains(pipeline.getTableContext().Classes?.artTable)) {
+    if (target.classList.contains(pipeline.getTableContext().Classes?.tableFooter)) {
       return true
     }
     target = target.parentElement
@@ -258,11 +272,11 @@ function isEleInFooter(target) {
   return false
 }
 
-function createDragElement(rects, tableWidth, rowHeight) {
+function createDragElement(rects: { x: any; y: any }, tableWidth: any, rowHeight: number, pipeline: TablePipeline) {
   const { x, y } = rects
 
   const dragMoveElement = document.createElement('div')
-  dragMoveElement.className = cx(Classes.rowDragElement)
+  dragMoveElement.className = cx(pipeline.getTableContext().Classes?.rowDragElement)
   dragMoveElement.style.cssText = `position:fixed;z-index:9999;left:${x}px;top:${y}px;pointer-events:none;width:${tableWidth}px;height:${rowHeight}px;background:var(--primary-color);opacity: 0.1;`
 
   document.body.appendChild(dragMoveElement)
@@ -270,18 +284,27 @@ function createDragElement(rects, tableWidth, rowHeight) {
   return dragMoveElement
 }
 
-function updateDragElementPosition(element, dragRange, { x, y, startOffset }) {
+function updateDragElementPosition(
+  element: HTMLDivElement,
+  dragRange: {
+    minX: any
+    maxX: any
+    minY: any
+    maxY: any
+  },
+  { x, y, startOffset }: { x: number; y: number; startOffset: number }
+) {
   const validPosition = getValidPosition({ x, y }, dragRange)
   element.style.top = `${validPosition.y - startOffset}px`
 
   return element
 }
 
-function removeDragElement(element) {
+function removeDragElement(element: HTMLDivElement) {
   document.body.removeChild(element)
 }
 
-function updateCurSorStyle(isOutOfRange) {
+function updateCurSorStyle(isOutOfRange: boolean) {
   if (isOutOfRange) {
     document.body.style.cursor = 'no-drop'
   } else {
@@ -293,7 +316,10 @@ function removeCurSorStyle() {
   document.body.style.cursor = 'default'
 }
 
-function getDragRange(tableBody, { startOffset, rowHeight }) {
+function getDragRange(
+  tableBody: { getBoundingClientRect: () => any },
+  { startOffset, rowHeight }: { startOffset: number; rowHeight: any }
+) {
   const tableBodyClientRect = tableBody.getBoundingClientRect()
   const { height, width, x, y } = tableBodyClientRect
   return {
@@ -304,7 +330,7 @@ function getDragRange(tableBody, { startOffset, rowHeight }) {
   }
 }
 
-function getValidPosition(position, dragRange) {
+function getValidPosition(position: { x: any; y: any }, dragRange: { minX: any; maxX: any; minY: any; maxY: any }) {
   const { x, y } = position
   const { minX, maxX, minY, maxY } = dragRange
 
@@ -316,7 +342,7 @@ function getValidPosition(position, dragRange) {
   }
 }
 
-function isOutOfDragRange(position, dragRange) {
+function isOutOfDragRange(position: { x: any; y: any }, dragRange: { minX: any; maxX: any; minY: any; maxY: any }) {
   const { x, y } = position
   const { minX, maxX, minY, maxY } = dragRange
 

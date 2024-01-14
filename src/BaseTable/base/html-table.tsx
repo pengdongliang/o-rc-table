@@ -1,4 +1,5 @@
 import cx from 'classnames'
+import { BaseTableContextProps, useBaseTableContext } from 'o-rc-table'
 import type { CSSProperties } from 'react'
 import React, { ReactNode } from 'react'
 
@@ -7,7 +8,6 @@ import { internals } from '../internals'
 import { Colgroup } from './colgroup'
 import SpanManager from './helpers/SpanManager'
 import { RenderInfo } from './interfaces'
-import { Classes } from './styles'
 import { BaseTableProps } from './table'
 
 export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'getRowProps' | 'rowKey'>> {
@@ -42,6 +42,8 @@ export function HtmlTable({
 }: HtmlTableProps) {
   const { flat } = hozInfo
 
+  const tableContext = useBaseTableContext()
+
   const spanManager = new SpanManager()
   const fullFlatCount = flat.full.length
   const leftFlatCount = flat.left.length
@@ -50,22 +52,26 @@ export function HtmlTable({
   return (
     <table>
       <Colgroup descriptors={hozInfo.visible} />
-      {React.createElement(tbodyHtmlTag, { className: Classes.tableBodyTbody }, data.map(renderRow))}
+      {React.createElement(
+        tbodyHtmlTag,
+        { className: tableContext.Classes?.tableBodyTbody },
+        data.map((item, index) => renderRow(item, index, tableContext.Classes))
+      )}
     </table>
   )
 
-  function renderRow(record: any, i: number) {
+  function renderRow(record: any, i: number, Classes: BaseTableContextProps['Classes']) {
     const rowIndex = verInfo.offset + i
     spanManager.stripUpwards(rowIndex)
 
     const rowProps = getRowProps(record, rowIndex)
     const rowClass = cx(
-      Classes.tableRow,
+      Classes?.tableRow,
       {
-        [Classes.first]: rowIndex === verInfo.first,
-        [Classes.last]: rowIndex === verInfo.last,
-        [Classes.even]: rowIndex % 2 === 0,
-        [Classes.odd]: rowIndex % 2 === 1,
+        [Classes?.first]: rowIndex === verInfo.first,
+        [Classes?.last]: rowIndex === verInfo.last,
+        [Classes?.even]: rowIndex % 2 === 0,
+        [Classes?.odd]: rowIndex % 2 === 1,
       },
       rowProps?.className
     )
@@ -97,13 +103,19 @@ export function HtmlTable({
               <td key={descriptor.blankSide} style={{ visibility: descriptor.isPlacehoder ? 'hidden' : undefined }} />
             )
           }
-          return renderBodyCell(record, rowIndex, descriptor.col, descriptor.colIndex)
+          return renderBodyCell(record, rowIndex, descriptor.col, descriptor.colIndex, Classes)
         })}
       </tr>
     )
   }
 
-  function renderBodyCell(record: any, rowIndex: number, column: ArtColumn, colIndex: number) {
+  function renderBodyCell(
+    record: any,
+    rowIndex: number,
+    column: ArtColumn,
+    colIndex: number,
+    Classes: BaseTableContextProps['Classes']
+  ) {
     if (spanManager.testSkip(rowIndex, colIndex)) {
       return null
     }
@@ -160,13 +172,13 @@ export function HtmlTable({
       {
         key: colIndex,
         ...cellProps,
-        className: cx(Classes.tableCell, cellProps.className, {
+        className: cx(Classes?.tableCell, cellProps.className, {
           // class
-          [Classes.first]: colIndex === 0,
-          [Classes.last]: colIndex + colSpan === fullFlatCount,
-          [Classes.lockLeft]: colIndex < leftFlatCount || tbodyPosition === 'left',
-          [Classes.lockRight]: colIndex >= fullFlatCount - rightFlatCount,
-          [Classes.rowSpan]: rowSpan > 1,
+          [Classes?.first]: colIndex === 0,
+          [Classes?.last]: colIndex + colSpan === fullFlatCount,
+          [Classes?.lockLeft]: colIndex < leftFlatCount || tbodyPosition === 'left',
+          [Classes?.lockRight]: colIndex >= fullFlatCount - rightFlatCount,
+          [Classes?.rowSpan]: rowSpan > 1,
         }),
         ...(hasSpan ? { colSpan, rowSpan } : null),
         style: {

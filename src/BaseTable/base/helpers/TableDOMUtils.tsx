@@ -1,5 +1,3 @@
-import { Classes } from '../styles'
-
 // 表格 DOM 结构
 // div.o-rc-table-wrapper
 // └── div.art-loading-wrapper
@@ -38,6 +36,8 @@ import { Classes } from '../styles'
 //  artTable.querySelector('.art-fixed-shadow-mask .art-left-fixed-shadow')
 
 // 表格 DOM 结构辅助工具
+import { BaseTableContextProps } from 'o-rc-table'
+
 export class TableDOMHelper {
   readonly artTableWrapper: HTMLDivElement
 
@@ -61,54 +61,57 @@ export class TableDOMHelper {
 
   readonly tableFooterMain: HTMLDivElement
 
-  constructor(artTableWrapper: HTMLDivElement) {
-    this.artTableWrapper = artTableWrapper
-    this.artTable = artTableWrapper.querySelector<HTMLDivElement>(`.${Classes.artTable}`)
-    this.tableHeader = this.artTable.querySelector(`.${Classes.tableHeader}`)
-    this.tableHeaderMain = this.artTable.querySelector(`.${Classes.tableHeaderMain}`)
-    this.tableBody = this.artTable.querySelector(`.${Classes.tableBody}`)
-    this.virtual = this.artTable.querySelector(`.${Classes.virtual}`)
-    this.tableElement = this.artTable.querySelector(`.${Classes.tableBody} table`)
-    this.tableFooter = this.artTable.querySelector(`.${Classes.tableFooter}`)
-    this.tableFooterMain = this.artTable.querySelector(`.${Classes.tableFooterMain}`)
+  readonly Classes: BaseTableContextProps['Classes']
 
-    const stickyScrollSelector = `.${Classes.artTable} + .${Classes.horizontalStickyScrollContainer} .${Classes.stickyScroll}`
+  constructor(artTableWrapper: HTMLDivElement, Classes: BaseTableContextProps['Classes']) {
+    this.Classes = Classes
+    this.artTableWrapper = artTableWrapper
+    this.artTable = artTableWrapper.querySelector<HTMLDivElement>(`.${Classes?.artTable}`)
+    this.tableHeader = this.artTable.querySelector(`.${Classes?.tableHeader}`)
+    this.tableHeaderMain = this.artTable.querySelector(`.${Classes?.tableHeaderMain}`)
+    this.tableBody = this.artTable.querySelector(`.${Classes?.tableBody}`)
+    this.virtual = this.artTable.querySelector(`.${Classes?.virtual}`)
+    this.tableElement = this.artTable.querySelector(`.${Classes?.tableBody} table`)
+    this.tableFooter = this.artTable.querySelector(`.${Classes?.tableFooter}`)
+    this.tableFooterMain = this.artTable.querySelector(`.${Classes?.tableFooterMain}`)
+
+    const stickyScrollSelector = `.${Classes?.artTable} + .${Classes?.horizontalStickyScrollContainer} .${Classes?.stickyScroll}`
     this.stickyScroll = artTableWrapper.querySelector<HTMLDivElement>(stickyScrollSelector)
-    this.stickyScrollItem = this.stickyScroll.querySelector(`.${Classes.stickyScrollItem}`)
+    this.stickyScrollItem = this.stickyScroll.querySelector(`.${Classes?.stickyScrollItem}`)
   }
 
   getVirtualTop(): HTMLDivElement {
-    return this.tableBody.querySelector<HTMLDivElement>(`.${Classes.virtualBlank}.top`)
+    return this.tableBody.querySelector<HTMLDivElement>(`.${this.Classes?.virtualBlank}.top`)
   }
 
   getTableRows(): NodeListOf<HTMLTableRowElement> {
-    const tbody = this.artTable.querySelector(`.${Classes.tableBody} .${Classes.virtual} table tbody`)
+    const tbody = this.artTable.querySelector(`.${this.Classes?.tableBody} .${this.Classes?.virtual} table tbody`)
     return tbody.childNodes as NodeListOf<HTMLTableRowElement>
   }
 
   getTableBodyHtmlTable(): HTMLTableElement {
-    return this.artTable.querySelector(`.${Classes.tableBody} .${Classes.virtual} table`)
+    return this.artTable.querySelector(`.${this.Classes?.tableBody} .${this.Classes?.virtual} table`)
   }
 
   getLeftLockShadow(): HTMLDivElement {
-    const selector = `.${Classes.lockShadowMask} .${Classes.leftLockShadow}`
+    const selector = `.${this.Classes?.lockShadowMask} .${this.Classes?.leftLockShadow}`
     const allLeftLockShadow = this.artTable.querySelectorAll<HTMLDivElement>(selector)
     return allLeftLockShadow[allLeftLockShadow.length - 1] // 当table-body、table-footer嵌套多层表格时，需要查找最后一个，否则会查找到嵌套表格的
   }
 
   getRightLockShadow(): HTMLDivElement {
-    const selector = `.${Classes.lockShadowMask} .${Classes.rightLockShadow}`
+    const selector = `.${this.Classes?.lockShadowMask} .${this.Classes?.rightLockShadow}`
     const allRightLockShadow = this.artTable.querySelectorAll<HTMLDivElement>(selector)
     return allRightLockShadow[allRightLockShadow.length - 1] // 当table-body、table-footer嵌套多层表格时，需要查找最后一个，否则会查找到嵌套表格的
   }
 
   getLoadingIndicator(): HTMLDivElement {
-    return this.artTableWrapper.querySelector<HTMLDivElement>(`.${Classes.loadingIndicator}`)
+    return this.artTableWrapper.querySelector<HTMLDivElement>(`.${this.Classes?.loadingIndicator}`)
   }
 
   getRowTop(rowIndex: number) {
     if (rowIndex === 0) return 0
-    const selector = `.${Classes.tableBody} .${Classes.tableRow}[data-rowindex="${rowIndex}"]`
+    const selector = `.${this.Classes?.tableBody} .${this.Classes?.tableRow}[data-rowindex="${rowIndex}"]`
     const row = this.artTable.querySelector<HTMLDivElement>(selector)
     const rowOffsetTop = (row && row.offsetTop) || 0
     const tableOffsetTop = this.tableElement.offsetTop || 0

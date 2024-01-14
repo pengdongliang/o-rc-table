@@ -1,7 +1,6 @@
 import cx from 'classnames'
 import React, { ReactNode } from 'react'
 
-import { Classes } from '../../base'
 import getTableRenderTemplate from '../../base/renderTemplates'
 import { ExpansionCell, icons, InlineFlexCell } from '../../common-views'
 import { ArtColumn } from '../../interfaces'
@@ -143,7 +142,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
       const expandCol = columns[expandColumnIndex]
       const tableColumns = [...columns]
 
-      const render = (value: any, row: any, rowIndex: number) => {
+      const render = (_value: any, row: any, rowIndex: number) => {
         if (row[rowDetailMetaKey]) {
           // 第一列内容已经渲染
           if (expandColumnIndex !== 0) return
@@ -169,7 +168,9 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
           toggle(currentRowKey)
         }
 
-        const expandCls = expanded ? Classes.expanded : Classes.collapsed
+        const expandCls = expanded
+          ? pipeline.getTableContext().Classes?.expanded
+          : pipeline.getTableContext().Classes?.collapsed
         const ExpandIcon = opts.expandIcon
         return (
           <ExpansionCell
@@ -239,7 +240,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
       tableColumns[0] = {
         ...firstCol,
         render: firstColRender,
-        getSpanRect(value: any, row: any, rowIndex: number) {
+        getSpanRect(_value: any, row: any, rowIndex: number) {
           if (row[rowDetailMetaKey]) {
             // detail 总是成一行
             return {
@@ -259,7 +260,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
         ),
         render,
         getCellProps: clickArea === 'cell' ? getCellProps : expandCol.getCellProps,
-        getSpanRect(value: any, row: any, rowIndex: number) {
+        getSpanRect(_value: any, row: any, rowIndex: number) {
           if (row[rowDetailMetaKey]) {
             // detail 总是成一行
             return {

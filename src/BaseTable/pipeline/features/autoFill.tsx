@@ -1,5 +1,4 @@
 import { getLeftNestedLockCount } from '../../base/calculations'
-import { Classes } from '../../base/styles'
 import { ArtColumn } from '../../interfaces'
 import { isLeafNode, makeRecursiveMapper } from '../../utils'
 import { TablePipeline } from '../pipeline'
@@ -69,7 +68,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
         },
         getCellProps: () => {
           return {
-            className: Classes.emptyColCell,
+            className: pipeline.getTableContext().Classes?.emptyColCell,
           }
         },
       }

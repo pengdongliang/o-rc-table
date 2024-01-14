@@ -4,7 +4,6 @@ import { fromEvent } from 'rxjs'
 import * as op from 'rxjs/operators'
 import styled from '@emotion/styled'
 
-import { Classes } from '../../base/styles'
 import { ArtColumn } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, isGroupColumn, makeRecursiveMapper, mergeCellProps } from '../../utils'
@@ -193,13 +192,13 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
               {features?.resizeable !== false &&
                 (isGroup ? (
                   <TableHeaderGroupCellResize
-                    className={Classes.tableHeaderCellResize}
+                    className={pipeline.getTableContext().Classes?.tableHeaderCellResize}
                     onDoubleClick={(e: React.MouseEvent<HTMLSpanElement>) => handleDoubleClick(e, col)}
                     onMouseDown={(e: React.MouseEvent<HTMLSpanElement>) => handleMouseDown(e, col)}
                   />
                 ) : (
                   <TableHeaderCellResize
-                    className={Classes.tableHeaderCellResize}
+                    className={pipeline.getTableContext().Classes?.tableHeaderCellResize}
                     onDoubleClick={(e: React.MouseEvent<HTMLSpanElement>) => handleDoubleClick(e, col)}
                     onMouseDown={(e: React.MouseEvent<HTMLSpanElement>) => handleMouseDown(e, col)}
                   />

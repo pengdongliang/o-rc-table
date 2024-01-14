@@ -1,9 +1,10 @@
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import cx from 'classnames'
+import { useBaseTableContext } from 'o-rc-table'
 import React, { CSSProperties, ReactNode, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
-import { Classes } from '../../../base/styles'
 import { addResizeObserver } from '../../../base/utils'
 import { CustomeFilterPanelProps, DefaultFilterPanelProps, FilterPanel as FilterPanelType } from '../../../interfaces'
 import { calculatePopupRelative } from '../../../utils'
@@ -41,17 +42,21 @@ interface FilterPanelProps {
   popupParent?: HTMLElement
 }
 
-const FilterIconSpanStyle = styled.span`
-  // position: absolute;
-  // right: 4px;
-  // cursor: pointer;
-  // transform: translateY(-50%);
-  // top: 50%;
-  // height: 12px;
-  > .${Classes.filterIcon} {
-    display: flex;
-  }
-`
+const FilterIconSpanStyle = styled.span(({ theme }) => {
+  const { Classes = {} } = theme
+
+  return css`
+    // position: absolute;
+    // right: 4px;
+    // cursor: pointer;
+    // transform: translateY(-50%);
+    // top: 50%;
+    // height: 12px;
+    > .${Classes?.filterIcon} {
+      display: flex;
+    }
+  `
+})
 
 function Panel({
   ele,
@@ -85,6 +90,7 @@ function Panel({
   return (
     <div ref={filterPanelRef}>
       <FilterPanel
+        // @ts-ignore
         style={style}
         onClose={hidePanel}
         position={position}
@@ -118,6 +124,7 @@ function Filter({
   const iconWrapRef = React.useRef<HTMLElement>()
 
   const hidePanel = () => setShowPanel(false)
+  const tableContext = useBaseTableContext()
 
   const renderPanelContent = () => {
     if (FilterPanelContent) {
@@ -141,11 +148,7 @@ function Filter({
     )
   }
 
-  const handleIconClick = (e: {
-    currentTarget: { contains: (arg0: HTMLElement) => any }
-    target: HTMLElement
-    stopPropagation: () => void
-  }) => {
+  const handleIconClick = (e: any) => {
     // 只有当icon区域点击会触发面板展开
     // 防止 createPortal 区域的点击触发该事件
     if (e.currentTarget.contains(e.target as HTMLElement)) {
@@ -155,12 +158,7 @@ function Filter({
       e.stopPropagation()
     }
   }
-  const handleKeyDown = (e: {
-    keyCode: number
-    currentTarget: { contains: (arg0: HTMLElement) => any }
-    target: HTMLElement
-    stopPropagation: () => void
-  }) => {
+  const handleKeyDown = (e: any) => {
     if (e.keyCode === KeyCode.ESC) {
       if (e.currentTarget.contains(e.target as HTMLElement)) {
         setShowPanel(false)
@@ -186,7 +184,7 @@ function Filter({
       ref={iconWrapRef}
       tabIndex={-1}
     >
-      <span ref={iconRef} className={Classes.filterIcon}>
+      <span ref={iconRef} className={tableContext.Classes?.filterIcon}>
         {displayFilterIcon || <DefaultFilterIcon width={size} height={size} />}
       </span>
       {showPanel &&

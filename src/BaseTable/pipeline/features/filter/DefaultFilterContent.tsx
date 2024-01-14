@@ -1,93 +1,102 @@
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import cx from 'classnames'
+import { useBaseTableContext } from 'o-rc-table'
 import React, { useEffect, useRef } from 'react'
 
-import { ButtonCSS, Classes } from '../../../base/styles'
+import { ButtonCSS } from '../../../base/styles'
 import { DefaultFilterPanelProps } from '../../../interfaces'
 import KeyCode from '../../../utils/keyCode'
 import { DEFAULT_FILTER_OPTIONS } from './util'
 
-const DefaultFilterContentStyle = styled.div`
-  display: flex;
-  flex-direction: column;
-  background-color: #ffffff;
-  border-radius: 2px;
-  width: 100%;
+const DefaultFilterContentStyle = styled.div(({ theme }) => {
+  const { namespace } = theme
 
-  ${ButtonCSS}
-  .filter-option-list {
+  return css`
     display: flex;
     flex-direction: column;
-    margin-top: 8px;
-    ul {
-      margin: 0;
-      padding: 0;
-      li {
-        display: flex;
-        position: relative;
-        flex-shrink: 0;
-        height: 32px;
-        align-items: center;
-        border-radius: 2px;
-        font-size: 12px;
-        color: var(--color);
-        padding: 0 12px;
-        overflow: hidden;
-        cursor: pointer;
-        &:hover {
+    background-color: #ffffff;
+    border-radius: 2px;
+    width: 100%;
+
+    ${ButtonCSS(namespace)}
+    .filter-option-list {
+      display: flex;
+      flex-direction: column;
+      margin-top: 8px;
+      ul {
+        margin: 0;
+        padding: 0;
+        li {
+          display: flex;
+          position: relative;
+          flex-shrink: 0;
+          height: 32px;
+          align-items: center;
+          border-radius: 2px;
+          font-size: 12px;
+          color: var(--color);
+          padding: 0 12px;
+          overflow: hidden;
+          cursor: pointer;
+          &:hover {
+            background-color: var(--primary-color-level1);
+          }
+        }
+        li.active {
           background-color: var(--primary-color-level1);
         }
       }
-      li.active {
-        background-color: var(--primary-color-level1);
+    }
+
+    .filter-search {
+      display: flex;
+      padding: 6px 12px;
+
+      .filter-search-inner {
+        width: 100%;
+        font-size: 12px;
+        color: #333333;
+        height: 28px;
+        line-height: 28px;
+        padding: 0 8px;
+        outline: none;
+        background-color: #fafafa;
+        border-radius: 2px;
+        border: 1px solid var(--strong-border-color);
+        &:hover {
+          border-color: var(--primary-color);
+        }
+        &:focus {
+          border-color: var(--primary-color);
+        }
       }
     }
-  }
 
-  .filter-search {
-    display: flex;
-    padding: 6px 12px;
+    .filter-footer {
+      display: flex;
+      flex-direction: row;
+      padding: 8px 12px;
+      justify-content: space-between;
 
-    .filter-search-inner {
-      width: 100%;
-      font-size: 12px;
-      color: #333333;
-      height: 28px;
-      line-height: 28px;
-      padding: 0 8px;
-      outline: none;
-      background-color: #fafafa;
-      border-radius: 2px;
-      border: 1px solid var(--strong-border-color);
-      &:hover {
-        border-color: var(--primary-color);
-      }
-      &:focus {
-        border-color: var(--primary-color);
+      .filter-btn {
+        text-align: center;
+        font-size: 12px;
+        width: 60px;
+        height: 24px;
+        line-height: 24px;
       }
     }
-  }
-
-  .filter-footer {
-    display: flex;
-    flex-direction: row;
-    padding: 8px 12px;
-    justify-content: space-between;
-
-    .filter-btn {
-      text-align: center;
-      font-size: 12px;
-      width: 60px;
-      height: 24px;
-      line-height: 24px;
-    }
-  }
-`
+  `
+})
 
 function DefaultFilterContent({ setFilterModel, filterModel, hidePanel, localeText = {} }: DefaultFilterPanelProps) {
   const [selectedValue, setSelectedValue] = React.useState(filterModel?.filterCondition || 'contain')
   const [innerValue, setInnerValue] = React.useState(filterModel?.filter || [])
   const inputRef = useRef<HTMLInputElement>()
+
+  const { Classes } = useBaseTableContext()
+
   const handleClick = React.useCallback((option: { key: React.SetStateAction<string> }) => {
     setSelectedValue(option.key)
   }, [])
@@ -153,7 +162,7 @@ function DefaultFilterContent({ setFilterModel, filterModel, hidePanel, localeTe
         <button
           className={cx({
             'filter-btn': true,
-            [Classes.button]: true,
+            [Classes?.button]: true,
           })}
           onClick={reset}
         >
@@ -162,8 +171,8 @@ function DefaultFilterContent({ setFilterModel, filterModel, hidePanel, localeTe
         <button
           className={cx({
             'filter-btn': true,
-            [Classes.button]: true,
-            [Classes.buttonPrimary]: true,
+            [Classes?.button]: true,
+            [Classes?.buttonPrimary]: true,
           })}
           onClick={confirm}
         >

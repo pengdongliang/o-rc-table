@@ -1,10 +1,8 @@
-/* eslint-disable */
 import cx from 'classnames'
 import React from 'react'
 import { fromEvent } from 'rxjs'
 import { map, takeUntil } from 'rxjs/operators'
 
-import { Classes } from '../../base/styles'
 import { ArtColumn, CellProps } from '../../interfaces'
 import { collectNodes, isElementInEventPath, makeRecursiveMapper, mergeCellProps } from '../../utils'
 import { findByTree } from '../../utils/others'
@@ -85,16 +83,16 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
       }
       cellRanges.push(cellRange)
       if (isCellRangeSingleCell(cellRanges)) {
-        artTable.classList.remove(cx(Classes.rangeSelection))
+        artTable.classList.remove(cx(pipeline.getTableContext().Classes?.rangeSelection))
       } else {
-        artTable.classList.add(cx(Classes.rangeSelection))
+        artTable.classList.add(cx(pipeline.getTableContext().Classes?.rangeSelection))
       }
       rangeSelectedChange(cellRanges, isFinished)
     }
 
     const shiftKeySelect = (event: React.MouseEvent<HTMLTableElement, MouseEvent>) => {
       const { target } = event
-      const clickCell = getTargetCell(target, columns)
+      const clickCell = getTargetCell(target, columns, pipeline)
       if (clickCell) {
         const _lastClickCell = pipeline.getFeatureOptions(lastClickCellKey)
         if (_lastClickCell) {
@@ -106,7 +104,7 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
       }
     }
 
-    const updateScrollPosition = (client) => {
+    const updateScrollPosition = (client: { clientX: any; clientY: any }) => {
       const { clientX, clientY } = client
       const tableBodyClientRect = tableBody.getBoundingClientRect()
 
@@ -126,7 +124,7 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
       }
     }
 
-    const setStartSelectedCellRanges = (isCtrlKey, isShiftKey) => {
+    const setStartSelectedCellRanges = (isCtrlKey: boolean, isShiftKey: boolean) => {
       if (opts?.suppressMultiRangeSelection) {
         pipeline.setFeatureOptions(startSelectedCellRangesKey, [])
         return
@@ -170,7 +168,7 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
         return
       }
 
-      const startDragCell = getTargetCell(target, columns)
+      const startDragCell = getTargetCell(target, columns, pipeline)
       pipeline.setFeatureOptions(lastClickCellKey, startDragCell)
       let draggingCell = startDragCell
 
@@ -180,7 +178,7 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
       const rangeSelected$ = mousemove$.pipe(
         map((mouseMoveEvent: MouseEvent) => {
           const target = mouseMoveEvent.target || mouseMoveEvent.srcElement
-          draggingCell = getTargetCell(target, columns)
+          draggingCell = getTargetCell(target, columns, pipeline)
           const client = {
             clientX: mouseMoveEvent.clientX,
             clientY: mouseMoveEvent.clientY,
@@ -216,7 +214,7 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
         // 焦点位于可编辑的单元格内不做全选
         if (columns.length && rowLen && !getElementEditable(e.target)) {
           opts.preventkDefaultOfKeyDownEvent !== false && e.preventDefault()
-          artTable.classList.add(cx(Classes.rangeSelection))
+          artTable.classList.add(cx(pipeline.getTableContext().Classes?.rangeSelection))
           rangeSelectedChange(
             [
               {
@@ -234,7 +232,12 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
       }
     }
 
-    pipeline.addTableProps({ onMouseDown, onKeyDown, tabIndex: -1, className: cx([Classes.rangeSelection]) }) // todo: 后面可以把mousedown放到一个流里面
+    pipeline.addTableProps({
+      onMouseDown,
+      onKeyDown,
+      tabIndex: -1,
+      className: cx([pipeline.getTableContext().Classes?.rangeSelection]),
+    }) // todo: 后面可以把mousedown放到一个流里面
 
     return pipeline.mapColumns(
       makeRecursiveMapper((col) => {
@@ -246,9 +249,9 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
           getCellProps(value: any, record: any, rowIndex: number): CellProps {
             const prevCellProps = prevGetCellProps?.(value, record, rowIndex)
             const isFooterCell = record[pipeline.getFeatureOptions('footerRowMetaKey')]
-            if (!cellRanges.some((cellRange) => isCellInRange(cellRange, rowIndex, col, isFooterCell)))
+            if (!cellRanges.some((cellRange: any) => isCellInRange(cellRange, rowIndex, col, isFooterCell)))
               return prevCellProps
-            const className = getCellRangesClassName(cellRanges, { isFooterCell, rowIndex, col, record })
+            const className = getCellRangesClassName(cellRanges, { isFooterCell, rowIndex, col }, pipeline)
             return mergeCellProps(prevCellProps, {
               className,
             })
@@ -259,18 +262,18 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
   }
 }
 
-function getTargetCell(target, columns: ArtColumn[]): DragCell {
+function getTargetCell(target: any, columns: ArtColumn[], pipeline: TablePipeline): DragCell {
   while (target) {
     if (target.getAttribute('data-role') === 'table-cell') {
       const columnCode = target.getAttribute('data-index')
-      const column = findByTree(columns, (item, index) => item.dataIndex === columnCode)
+      const column = findByTree(columns, (item) => item.dataIndex === columnCode)
       if (!column) return null
       return {
         rowIndex: parseInt(target.getAttribute('data-rowindex')),
         rowSpan: parseInt(target.getAttribute('rowspan') || 1),
         dataIndex: columnCode,
         column,
-        isFooterCell: isEleInFooter(target),
+        isFooterCell: isEleInFooter(target, pipeline),
       }
     }
     target = target.parentElement
@@ -279,12 +282,19 @@ function getTargetCell(target, columns: ArtColumn[]): DragCell {
 }
 
 function isSameCell(cell1: DragCell, cell2: DragCell) {
-  return cell1.rowIndex === cell2.rowIndex && cell1.dataIndex === cell2.dataIndex && cell1.isFooterCell === cell2.isFooterCell
+  return (
+    cell1.rowIndex === cell2.rowIndex &&
+    cell1.dataIndex === cell2.dataIndex &&
+    cell1.isFooterCell === cell2.isFooterCell
+  )
 }
 
-function isEleInFooter(target) {
-  while (target && !target.classList.contains(Classes.artTable)) {
-    if (target.classList.contains(Classes.tableFooter)) {
+function isEleInFooter(
+  target: { classList: { contains: (arg0: any) => any }; parentElement: any },
+  pipeline: TablePipeline
+) {
+  while (target && !target.classList.contains(pipeline.getTableContext().Classes?.artTable)) {
+    if (target.classList.contains(pipeline.getTableContext().Classes?.tableFooter)) {
       return true
     }
     target = target.parentElement
@@ -388,7 +398,7 @@ function getFooterRowIndex(footerRowRange: FooterRowRange) {
   return { startRowIndex: -1, endRowIndex: -1 }
 }
 
-function getElementEditable(target) {
+function getElementEditable(target: any) {
   if (!target) return
   if (['input', 'textarea'].includes(target.tagName.toLowerCase())) {
     if (target.type === 'checkbox') return
@@ -404,9 +414,14 @@ function getElementEditable(target) {
  * @param isFooterCell
  * @returns
  */
-function isCellInRange(cellRange, rowIndex, col, isFooterCell) {
+function isCellInRange(
+  cellRange: { startRow: any; endRow: any; columns: any; footerRowRange: any },
+  rowIndex: number,
+  col: ArtColumn,
+  isFooterCell: any
+) {
   const { startRow, endRow, columns, footerRowRange } = cellRange
-  const isColInRanges = columns.findIndex((item) => item.dataIndex === col.dataIndex) !== -1
+  const isColInRanges = columns.findIndex((item: Record<string, any>) => item.dataIndex === col.dataIndex) !== -1
   if (!isColInRanges) return false
   const { startRowIndex, endRowIndex } = getRowIndex(startRow, endRow)
   const { startRowIndex: footerStartRowIndex, endRowIndex: footerEndRowIndex } = getFooterRowIndex(footerRowRange)
@@ -436,28 +451,28 @@ export function getCellRangeId(cellRange: CellRange) {
  * @param param1
  * @returns
  */
-function getCellRangesClassName(cellRanges, { isFooterCell, rowIndex, col, record }) {
+function getCellRangesClassName(cellRanges: any, { isFooterCell, rowIndex, col }, pipeline: TablePipeline) {
   const { matchCellRangeTop, matchCellRangeLeft, matchCellRangeBottom, matchCellRangeRight } = getMatchBorderStyle(
     cellRanges,
-    { isFooterCell, rowIndex, col, record }
+    { isFooterCell, rowIndex, col }
   )
 
   const isSingleCell = isCellRangeSingleCell(cellRanges)
   const className = cx({
-    [Classes.tableCellRangeSingleCell]: isSingleCell,
-    [Classes.tableCellRangeSelected]: !isSingleCell,
-    [Classes.tableCellRangeTop]: !isSingleCell && matchCellRangeTop,
-    [Classes.tableCellRangeLeft]: !isSingleCell && matchCellRangeLeft,
-    [Classes.tableCellRangeBottom]: !isSingleCell && matchCellRangeBottom,
-    [Classes.tableCellRangeRight]: !isSingleCell && matchCellRangeRight,
+    [pipeline.getTableContext().Classes?.tableCellRangeSingleCell]: isSingleCell,
+    [pipeline.getTableContext().Classes?.tableCellRangeSelected]: !isSingleCell,
+    [pipeline.getTableContext().Classes?.tableCellRangeTop]: !isSingleCell && matchCellRangeTop,
+    [pipeline.getTableContext().Classes?.tableCellRangeLeft]: !isSingleCell && matchCellRangeLeft,
+    [pipeline.getTableContext().Classes?.tableCellRangeBottom]: !isSingleCell && matchCellRangeBottom,
+    [pipeline.getTableContext().Classes?.tableCellRangeRight]: !isSingleCell && matchCellRangeRight,
   })
 
   return className
 }
 
-function getMatchBorderStyle(cellRanges, { isFooterCell, rowIndex, col, record }) {
+function getMatchBorderStyle(cellRanges: any, { isFooterCell, rowIndex, col }) {
   return cellRanges.reduce(
-    (obj, cellRange) => {
+    (obj: Record<string, any>, cellRange: { startRow: any; endRow: any; columns: any; footerRowRange: any }) => {
       if (!isCellInRange(cellRange, rowIndex, col, isFooterCell)) return obj
       const { startRow, endRow, columns, footerRowRange } = cellRange
       const { startRowIndex, endRowIndex } = getRowIndex(startRow, endRow)

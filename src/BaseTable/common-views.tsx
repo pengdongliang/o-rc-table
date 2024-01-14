@@ -1,29 +1,32 @@
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import React from 'react'
-
-import { Classes, MenuClasses } from './base/styles'
 
 export const InlineFlexCell = styled.div`
   display: inline-flex;
   align-items: center;
 `
 
-export const ExpansionCell = styled((props) => <InlineFlexCell {...props} />)`
-  &.${Classes.leaf} {
-    cursor: default;
-  }
+export const ExpansionCell = styled((props) => <InlineFlexCell {...props} />)(({ theme }) => {
+  const { Classes = {} } = theme
 
-  .expansion-icon {
-    fill: #999;
-    flex: 0 0 16px;
-    transition: transform 200ms;
-
-    &.${Classes.expanded} {
-      transform-origin: center center;
-      transform: rotate(90deg);
+  return css`
+    &.${Classes?.leaf} {
+      cursor: default;
     }
-  }
-`
+
+    .expansion-icon {
+      fill: #999;
+      flex: 0 0 16px;
+      transition: transform 200ms;
+
+      &.${Classes?.expanded} {
+        transform-origin: center center;
+        transform: rotate(90deg);
+      }
+    }
+  `
+})
 
 interface IconProps extends React.SVGProps<SVGElement> {
   height?: number
@@ -99,44 +102,48 @@ export const icons = {
   Info: InfoIcon,
 }
 
-export const ContextMenuStyleWrap = styled.div`
-  &.${MenuClasses.menu} {
-    border: 1px solid #e9ecf1;
-    border-radius: 2px;
-    background-color: #fff;
-    box-shadow: 0px 0px 5px 0px rgb(154 154 154 / 50%);
-    cursor: default;
-    font-size: 12px;
-    position: absolute;
-    z-index: 1050;
-    max-width: 600px;
-    padding: 8px 0;
-  }
+export const ContextMenuStyleWrap = styled.div(({ theme }) => {
+  const { Classes = {} } = theme
 
-  .${MenuClasses.menuList} {
-    width: 100%;
-    display: table;
-  }
+  return css`
+    &.${Classes?.menu} {
+      border: 1px solid #e9ecf1;
+      border-radius: 2px;
+      background-color: #fff;
+      box-shadow: 0px 0px 5px 0px rgb(154 154 154 / 50%);
+      cursor: default;
+      font-size: 12px;
+      position: absolute;
+      z-index: 1050;
+      max-width: 600px;
+      padding: 8px 0;
+    }
 
-  .${MenuClasses.menuList} .${MenuClasses.menuOption} {
-    display: table-row;
-    color: #212121;
-  }
+    .${Classes?.menuList} {
+      width: 100%;
+      display: table;
+    }
 
-  .${MenuClasses.menuList} .${MenuClasses.menuOptionActive} {
-    background-color: var(--hover-bgcolor);
-  }
+    .${Classes?.menuList} .${Classes?.menuOption} {
+      display: table-row;
+      color: #212121;
+    }
 
-  .${MenuClasses.menuList} .${MenuClasses.menuOption} .${MenuClasses.menuOptionText} {
-    display: table-cell;
-    padding: 8px 12px;
-    max-width: 576px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    line-height: 16px;
-  }
-  .${MenuClasses.menuList} .${MenuClasses.menuOption}.${MenuClasses.menuOptionDisable} {
-    opacity: 0.5;
-  }
-`
+    .${Classes?.menuList} .${Classes?.menuOptionActive} {
+      background-color: var(--hover-bgcolor);
+    }
+
+    .${Classes?.menuList} .${Classes?.menuOption} .${Classes?.menuOptionText} {
+      display: table-cell;
+      padding: 8px 12px;
+      max-width: 576px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      line-height: 16px;
+    }
+    .${Classes?.menuList} .${Classes?.menuOption}.${Classes?.menuOptionDisable} {
+      opacity: 0.5;
+    }
+  `
+})

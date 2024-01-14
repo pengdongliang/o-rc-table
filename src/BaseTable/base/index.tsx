@@ -1,5 +1,7 @@
+export type { BaseTableContextProps } from './context'
+export { BaseTableContext, useBaseTableContext } from './context'
 export type { LoadingContentWrapperProps } from './loading'
 export type { BaseTableCSSVariables as TableCSSVariables } from './styles'
-export { Classes } from './styles'
+export { getTableClasses } from './styles'
 export type { RowKey, BaseTableProps as TableProps } from './table'
 export { BaseTable as Table } from './table'

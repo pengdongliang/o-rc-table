@@ -2,7 +2,6 @@
 import cx from 'classnames'
 import React, { ReactNode } from 'react'
 
-import { Classes } from '../../base/styles'
 import { AbstractTreeNode, ArtColumn, FilterItem, FilterPanel, Filters } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, isLeafNode } from '../../utils'
@@ -108,7 +107,7 @@ export function filter(opts: FilterFeatureOptions = {}) {
               setFilter={setFilter}
               isFilterActive={filterActive}
               className={cx({
-                [Classes.tableFilterTrigger]: true,
+                [pipeline.getTableContext().Classes?.tableFilterTrigger]: true,
                 active: filterActive,
               })}
               stopClickEventPropagation={stopClickEventPropagation}

@@ -4,17 +4,17 @@ import ReactDom from 'react-dom'
 
 import { ArtColumn } from '../interfaces'
 import { browserType, getTreeDepth } from '../utils'
+import { BaseTableContextProps } from '.'
 import TableHeader from './header'
 import { TableDOMHelper } from './helpers/TableDOMUtils'
 import { HtmlTable } from './html-table'
 import { RenderInfo } from './interfaces'
-import { Classes } from './styles'
 import { BaseTableProps } from './table'
 import { composeRowPropsGetter } from './utils'
 
 const TEMPLATES = new Map()
 
-interface RowDetailOptions {
+interface RowDetailOptions extends BaseTableContextProps {
   row: any
   rowIndex: number
   renderDetail?(row: any, rowIndex: number): ReactNode
@@ -24,16 +24,16 @@ interface RowDetailOptions {
 function renderTableHeaderInIE(info: RenderInfo, props: BaseTableProps) {
   const { stickyTop, hasHeader } = props
 
-  const { flat, nested, visible, hasLockColumn } = info
+  const { flat, nested, visible, hasLockColumn, Classes } = info
   const { left, right } = flat
   const { left: leftNested, right: rightNested, full } = nested
 
   const rowCount = getTreeDepth(full) + 1
 
   return (
-    <div className={cx(Classes.tableHeader)}>
+    <div className={cx(Classes?.tableHeader)}>
       <div
-        className={cx(Classes.tableHeaderMain, 'no-scrollbar')}
+        className={cx(Classes?.tableHeaderMain, 'no-scrollbar')}
         style={{
           top: stickyTop === 0 ? undefined : stickyTop,
           display: hasHeader ? undefined : 'none',
@@ -42,7 +42,7 @@ function renderTableHeaderInIE(info: RenderInfo, props: BaseTableProps) {
         <TableHeader info={info} theaderPosition={hasLockColumn ? 'center' : undefined} />
       </div>
       {left.length > 0 ? (
-        <div className={Classes.fixedLeft}>
+        <div className={Classes?.fixedLeft}>
           <TableHeader
             info={{
               ...info,
@@ -72,7 +72,7 @@ function renderTableHeaderInIE(info: RenderInfo, props: BaseTableProps) {
         </div>
       ) : null}
       {right.length > 0 ? (
-        <div className={Classes.fixedRight}>
+        <div className={Classes?.fixedRight}>
           <TableHeader
             info={{
               ...info,
@@ -113,7 +113,7 @@ function renderTableBodyInIE(
   const { dataSource, getRowProps, rowKey } = props
 
   const { topIndex, bottomBlank, topBlank, bottomIndex } = info.verticalRenderRange
-  const { flat, visible, hasLockColumn } = info
+  const { flat, visible, hasLockColumn, Classes } = info
   const { left, right } = flat
   const verticalRenderInfo = {
     first: 0,
@@ -133,10 +133,10 @@ function renderTableBodyInIE(
   }
 
   return (
-    <div className={cx(Classes.tableBody, Classes.horizontalScrollContainer)}>
-      <div className={Classes.virtual} tabIndex={-1}>
+    <div className={cx(Classes?.tableBody, Classes?.horizontalScrollContainer)}>
+      <div className={Classes?.virtual} tabIndex={-1}>
         {topBlank > 0 && (
-          <div key="top-blank" className={cx(Classes.virtualBlank, 'top')} style={{ height: topBlank }} />
+          <div key="top-blank" className={cx(Classes?.virtualBlank, 'top')} style={{ height: topBlank }} />
         )}
         <HtmlTable
           tbodyHtmlTag="tbody"
@@ -146,13 +146,13 @@ function renderTableBodyInIE(
           verticalRenderInfo={verticalRenderInfo}
         />
         {bottomBlank > 0 && (
-          <div key="bottom-blank" className={cx(Classes.virtualBlank, 'bottom')} style={{ height: bottomBlank }} />
+          <div key="bottom-blank" className={cx(Classes?.virtualBlank, 'bottom')} style={{ height: bottomBlank }} />
         )}
       </div>
       {left.length > 0 ? (
-        <div className={Classes.fixedLeft}>
+        <div className={Classes?.fixedLeft}>
           {topBlank > 0 && (
-            <div key="top-blank" className={cx(Classes.virtualBlank, 'top')} style={{ height: topBlank }} />
+            <div key="top-blank" className={cx(Classes?.virtualBlank, 'top')} style={{ height: topBlank }} />
           )}
           <HtmlTable
             tbodyHtmlTag="tbody"
@@ -171,14 +171,14 @@ function renderTableBodyInIE(
             verticalRenderInfo={verticalRenderInfo}
           />
           {bottomBlank > 0 && (
-            <div key="bottom-blank" className={cx(Classes.virtualBlank, 'bottom')} style={{ height: bottomBlank }} />
+            <div key="bottom-blank" className={cx(Classes?.virtualBlank, 'bottom')} style={{ height: bottomBlank }} />
           )}
         </div>
       ) : null}
       {right.length > 0 ? (
-        <div className={Classes.fixedRight} style={fixedRightTableStyle}>
+        <div className={Classes?.fixedRight} style={fixedRightTableStyle}>
           {topBlank > 0 && (
-            <div key="top-blank" className={cx(Classes.virtualBlank, 'top')} style={{ height: topBlank }} />
+            <div key="top-blank" className={cx(Classes?.virtualBlank, 'top')} style={{ height: topBlank }} />
           )}
           <HtmlTable
             tbodyHtmlTag="tbody"
@@ -198,11 +198,11 @@ function renderTableBodyInIE(
             verticalRenderInfo={verticalRenderInfo}
           />
           {bottomBlank > 0 && (
-            <div key="bottom-blank" className={cx(Classes.virtualBlank, 'bottom')} style={{ height: bottomBlank }} />
+            <div key="bottom-blank" className={cx(Classes?.virtualBlank, 'bottom')} style={{ height: bottomBlank }} />
           )}
         </div>
       ) : null}
-      <div className={Classes.rowDetailContainer} />
+      <div className={Classes?.rowDetailContainer} />
     </div>
   )
 }
@@ -215,7 +215,7 @@ function renderTableFooterInIE(
   const { footerDataSource = [], getRowProps, rowKey, stickyBottom } = props
   const _getRowProps = composeRowPropsGetter(getRowProps, extra.rowProps)
 
-  const { flat, visible, hasLockColumn } = info
+  const { flat, visible, hasLockColumn, Classes } = info
   const { left, right } = flat
   const verticalRenderInfo = {
     offset: 0,
@@ -231,8 +231,8 @@ function renderTableFooterInIE(
   }
 
   return (
-    <div className={cx(Classes.tableFooter)} style={{ bottom: stickyBottom === 0 ? undefined : stickyBottom }}>
-      <div className={cx(Classes.tableFooterMain, Classes.horizontalScrollContainer)}>
+    <div className={cx(Classes?.tableFooter)} style={{ bottom: stickyBottom === 0 ? undefined : stickyBottom }}>
+      <div className={cx(Classes?.tableFooterMain, Classes?.horizontalScrollContainer)}>
         <HtmlTable
           tbodyHtmlTag="tfoot"
           {...commonProps}
@@ -241,7 +241,7 @@ function renderTableFooterInIE(
         />
       </div>
       {left.length > 0 ? (
-        <div className={Classes.fixedLeft}>
+        <div className={Classes?.fixedLeft}>
           <HtmlTable
             tbodyHtmlTag="tfoot"
             {...commonProps}
@@ -260,7 +260,7 @@ function renderTableFooterInIE(
         </div>
       ) : null}
       {right.length > 0 ? (
-        <div className={Classes.fixedRight}>
+        <div className={Classes?.fixedRight}>
           <HtmlTable
             tbodyHtmlTag="tfoot"
             {...commonProps}
@@ -283,27 +283,27 @@ function renderTableFooterInIE(
 }
 
 function renderRowDetailInIE(params: RowDetailOptions) {
-  const { domHelper } = params
+  const { domHelper, Classes } = params
   if (!domHelper) return
   const { artTable } = domHelper
-  const rowDetailContainer = artTable && artTable.querySelector(`.${Classes.rowDetailContainer}`)
+  const rowDetailContainer = artTable && artTable.querySelector(`.${Classes?.rowDetailContainer}`)
 
   return ReactDom.createPortal(<RowDetail {...params} />, rowDetailContainer)
 }
 
 function RowDetail(props: RowDetailOptions) {
   const detailRef = useRef(null)
-  const { row, rowIndex, domHelper, renderDetail } = props
+  const { row, rowIndex, domHelper, renderDetail, Classes } = props
   const { artTable } = domHelper
 
   useEffect(() => {
     const selector = (position: string) => {
-      return `.${position} .${Classes.tableRow}[data-rowindex="${rowIndex}"]`
+      return `.${position} .${Classes?.tableRow}[data-rowindex="${rowIndex}"]`
     }
     const itemRect = detailRef.current && detailRef.current.getBoundingClientRect()
-    const targetRow = artTable.querySelector<HTMLDivElement>(selector(Classes.tableBody))
-    const targetRowLeft = artTable.querySelector<HTMLDivElement>(selector(Classes.fixedLeft))
-    const targetRowRight = artTable.querySelector<HTMLDivElement>(selector(Classes.fixedRight))
+    const targetRow = artTable.querySelector<HTMLDivElement>(selector(Classes?.tableBody))
+    const targetRowLeft = artTable.querySelector<HTMLDivElement>(selector(Classes?.fixedLeft))
+    const targetRowRight = artTable.querySelector<HTMLDivElement>(selector(Classes?.fixedRight))
 
     if (itemRect.height) {
       targetRow && (targetRow.style.height = `${itemRect.height}px`)
@@ -320,7 +320,7 @@ function RowDetail(props: RowDetailOptions) {
   })
 
   return (
-    <div ref={detailRef} className={Classes.rowDetailItem}>
+    <div ref={detailRef} className={Classes?.rowDetailItem}>
       {renderDetail(row, rowIndex)}
     </div>
   )

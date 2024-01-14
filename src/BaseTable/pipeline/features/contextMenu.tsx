@@ -1,8 +1,8 @@
 import cx from 'classnames'
+import { useBaseTableContext } from 'o-rc-table/base'
 import React, { useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
 
-import { MenuClasses } from '../../base/styles'
 import { ContextMenuStyleWrap } from '../../common-views'
 import { internals } from '../../internals'
 import {
@@ -181,7 +181,9 @@ function Menu(props) {
     position: { x: number; y: number }
     getPopupParent: () => HTMLElement
   } = props
-  const menuRef = useRef<HTMLElement>()
+  const menuRef = useRef<HTMLDivElement>()
+
+  const tableContext = useBaseTableContext()
 
   useEffect(() => {
     if (menuRef.current) {
@@ -197,11 +199,11 @@ function Menu(props) {
 
   return (
     <ContextMenuStyleWrap
-      className={cx(MenuClasses.menu, className)}
+      className={cx(tableContext.Classes?.menu, className)}
       ref={menuRef}
       style={{ left: position.x, top: position.y }}
     >
-      <div className={MenuClasses.menuList}>
+      <div className={tableContext.Classes?.menuList}>
         {options.map((item, index) => (
           <MenuItem
             key={item.key ? item.key : getMenuItemKey({ name: item.name, index })}
@@ -217,10 +219,11 @@ function Menu(props) {
   )
 }
 
-function MenuItem(props) {
+function MenuItem(props: Record<string, any>) {
   const { name, action, className, disabled, hideContextMenu } = props
 
   const itemRef = useRef()
+  const tableContext = useBaseTableContext()
 
   const handleClick = () => {
     if (disabled) {
@@ -236,7 +239,7 @@ function MenuItem(props) {
     }
     const itemDom = itemRef.current as HTMLElement
     if (itemDom) {
-      itemDom.classList.add(MenuClasses.menuOptionActive)
+      itemDom.classList.add(tableContext.Classes?.menuOptionActive)
     }
   }
 
@@ -247,20 +250,22 @@ function MenuItem(props) {
     const itemDom = itemRef.current as HTMLElement
     if (itemDom) {
       setTimeout(() => {
-        itemDom.classList.remove(MenuClasses.menuOptionActive)
+        itemDom.classList.remove(tableContext.Classes?.menuOptionActive)
       }, 10)
     }
   }
 
   return (
     <div
-      className={cx(MenuClasses.menuOption, className, { [MenuClasses.menuOptionDisable]: disabled })}
+      className={cx(tableContext.Classes?.menuOption, className, {
+        [tableContext.Classes?.menuOptionDisable]: disabled,
+      })}
       ref={itemRef}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <span className={MenuClasses.menuOptionText}>{name}</span>
+      <span className={tableContext.Classes?.menuOptionText}>{name}</span>
     </div>
   )
 }

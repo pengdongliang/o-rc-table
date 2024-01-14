@@ -1,7 +1,6 @@
 import cx from 'classnames'
 import React from 'react'
 
-import { Classes } from '../../base'
 import { ExpansionCell, icons, InlineFlexCell } from '../../common-views'
 import { ArtColumn } from '../../interfaces'
 import { internals } from '../../internals'
@@ -94,7 +93,7 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
       const columnFlatCount = collectNodes(columns, 'leaf-only').length
       const [firstCol, ...others] = columns
 
-      const render = (value: any, row: any, rowIndex: number) => {
+      const render = (_value: any, row: any, rowIndex: number) => {
         const content = internals.safeRender(firstCol, row, rowIndex)
         const meta = getGroupingMeta(row)
         if (!meta.isGroupHeader || !meta.expandable) {
@@ -107,7 +106,9 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
         }
 
         const expanded = openKeySet.has(row[rowKey])
-        const expandCls = expanded ? Classes.expanded : Classes.collapsed
+        const expandCls = expanded
+          ? pipeline.getTableContext().Classes?.expanded
+          : pipeline.getTableContext().Classes?.collapsed
         return (
           <ExpansionCell className={cx('expansion-cell', expandCls)}>
             <icons.CaretRight
@@ -165,7 +166,7 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
           ),
           render,
           getCellProps,
-          getSpanRect(value: any, row: any, rowIndex: number) {
+          getSpanRect(_value: any, row: any, rowIndex: number) {
             if (getGroupingMeta(row).isGroupHeader) {
               return { top: rowIndex, bottom: rowIndex + 1, left: 0, right: columnFlatCount }
             }

@@ -1,6 +1,5 @@
+import { useBaseTableContext } from '@src/BaseTable'
 import React, { ReactNode } from 'react'
-
-import { Classes } from './styles'
 
 const DefaultLoadingIcon = React.memo(() => (
   <svg
@@ -36,8 +35,10 @@ export interface LoadingContentWrapperProps {
 }
 
 function DefaultLoadingContentWrapper({ children, visible }: LoadingContentWrapperProps) {
+  const tableContext = useBaseTableContext()
+
   return (
-    <div className={Classes.loadingContentWrapper} style={{ filter: visible ? 'blur(1px)' : 'none' }}>
+    <div className={tableContext.Classes?.loadingContentWrapper} style={{ filter: visible ? 'blur(1px)' : 'none' }}>
       {children}
     </div>
   )
@@ -56,11 +57,13 @@ export default function Loading({
   LoadingContentWrapper = DefaultLoadingContentWrapper,
   LoadingIcon = DefaultLoadingIcon,
 }: LoadingProps) {
+  const tableContext = useBaseTableContext()
+
   return (
-    <div className={Classes.loadingWrapper}>
+    <div className={tableContext.Classes?.loadingWrapper}>
       {visible && (
-        <div className={Classes.loadingIndicatorWrapper}>
-          <div className={Classes.loadingIndicator}>
+        <div className={tableContext.Classes?.loadingIndicatorWrapper}>
+          <div className={tableContext.Classes?.loadingIndicator}>
             <LoadingIcon />
           </div>
         </div>

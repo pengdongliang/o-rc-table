@@ -190,31 +190,32 @@ export default () => {
 
 ### Table
 
-| 属性                 | 说明                    | 类型            | 默认值     | 可选值                   | 版本 |
-|--------------------|-----------------------|---------------|---------|-----------------------|----|
-| useOuterBorder     | 是否带边框                 | boolean       | `true`  | `true` `false`        | -  |
-| columns            | 表格列的配置描述，具体项见下表       | ArtColumn[]1  | -       | -                     | -  |
-| dataSource         | 数据数组                  | any[]         | -       | -                     | -  |
-| loading            | 表格是否在加载中              | boolean       | `false` | `true` `false`        | -  |
-| style              | 自定义内联样式               | CSSProperties | `-`     | `-`                   | -  |
-| rowKey         | 主键                    | string        | -       | -                     | -  |
-| hasHeader          | 表格是否具有头部              | boolean       | `true`  | `true` `false`        | -  |
-| emptyCellHeight    | 数据为空时，单元格的高度          | number        | -       | -                     | -  |
-| useVirtual         | 是否开启虚拟滚动              | boolean auto  | `auto`  | `true` `false` `auto` | -  |
-| estimatedRowHeight | 虚拟滚动开启情况下，表格中每一行的预估高度 | number        | `48`    | -                     | -  |
+| 属性                 | 说明                    | 类型            | 默认值          | 可选值                   | 版本 |
+|--------------------|-----------------------|---------------|--------------|-----------------------|----|
+| useOuterBorder     | 是否带边框                 | boolean       | `true`       | `true` `false`        | -  |
+| columns            | 表格列的配置描述，具体项见下表       | ArtColumn[]1  | -            | -                     | -  |
+| dataSource         | 数据数组                  | any[]         | -            | -                     | -  |
+| loading            | 表格是否在加载中              | boolean       | `false`      | `true` `false`        | -  |
+| style              | 自定义内联样式               | CSSProperties | `-`          | `-`                   | -  |
+| rowKey             | 主键                    | string        | -            | -                     | -  |
+| hasHeader          | 表格是否具有头部              | boolean       | `true`       | `true` `false`        | -  |
+| emptyCellHeight    | 数据为空时，单元格的高度          | number        | -            | -                     | -  |
+| useVirtual         | 是否开启虚拟滚动              | boolean auto  | `auto`       | `true` `false` `auto` | -  |
+| estimatedRowHeight | 虚拟滚动开启情况下，表格中每一行的预估高度 | number        | `48`         | -                     | -  |
+| namespace          | 命名空间                  | string        | `o-rc-table` | -                     | -  |
 
 ### Column
 
 | 属性                 | 说明                                | 类型                      | 默认值      | 可选值                     | 版本 |
 |--------------------|-----------------------------------|-------------------------|----------|-------------------------|----|
 | name               | 列的名称                              | string                  | -        | -                       | -  |
-| dataIndex               | 在数据中的字段                           | string                  | -        | -                       | -  |
+| dataIndex          | 在数据中的字段                           | string                  | -        | -                       | -  |
 | title              | 列标题的展示名称；在页面中进行展示时，该字段将覆盖 name 字段 | string                  | -        | -                       | -  |
 | width              | 列的宽度，如果该列是锁定的，则宽度为必传项             | number                  | -        | -                       | -  |
 | align              | 单元格中的文本或内容的 对其方向                  | `center`                | `-`      | `left` `center` `right` | -  |
 | verticalAlign      | 单元格中的文本或内容的 垂直水平轴对其方向             | string                  | `middle` | `top` `bottom` `middle` | -  |
 | hidden             | 是否隐藏                              | boolean                 | `false`  | `true` `false`          | -  |
-| fixed               | 是否锁列                              | boolean                 | -        | `HTMLTableCellElement`  | -  |
+| fixed              | 是否锁列                              | boolean                 | -        | `HTMLTableCellElement`  | -  |
 | headerCellProps    | 表头单元格的 props                      | number                  | -        | -                       | -  |
 | features           | 功能开关, 具体项见下表                      | 	{ [key: string]: any } | -        | -                       | -  |
 | estimatedRowHeight | 虚拟滚动开启情况下，表格中每一行的预估高度             | number                  | `48`     | -                       | -  |
@@ -241,17 +242,17 @@ export default () => {
 - 启用行多选功能之前，pipeline 必须已经设置了 rowKey
 - 行多选依赖复选框组件，使用之前需要先设置 pipeline.ctx.components.Checkbox
 
-| 属性                        | 说明                                                           | 类型                                  | 默认值        | 可选值                     | 版本 |
-|---------------------------|--------------------------------------------------------------|-------------------------------------|------------|-------------------------|----|
-| defaultValue              | 非受控用法：默认选中的值                                                 | string[]                            | `-`        | `-`                     | -  |
-| value                     | 受控用法：当前选中的 keys                                              | string[]                            | `-`        | `-`                     | -  |
-| onChange                  | 受控用法：状态改变回调                                                  | (nextValue,key,keys,action) => void | `-`        | `-`                     | -  |
-| checkboxPlacement         | 复选框所在列的位置                                                    | string                              | `start`    | `start` `end`           | -  |
+| 属性                        | 说明                                                            | 类型                                  | 默认值        | 可选值                     | 版本 |
+|---------------------------|---------------------------------------------------------------|-------------------------------------|------------|-------------------------|----|
+| defaultValue              | 非受控用法：默认选中的值                                                  | string[]                            | `-`        | `-`                     | -  |
+| value                     | 受控用法：当前选中的 keys                                               | string[]                            | `-`        | `-`                     | -  |
+| onChange                  | 受控用法：状态改变回调                                                   | (nextValue,key,keys,action) => void | `-`        | `-`                     | -  |
+| checkboxPlacement         | 复选框所在列的位置                                                     | string                              | `start`    | `start` `end`           | -  |
 | checkboxColumn            | 复选框所在列的 column 配置，可指定 width，fixed, title, align, features 等属性 | `Partial<ArtColumnStaticPart>`      | `-`        | `-`                     | -  |
-| highlightRowWhenSelected  | 是否高亮被选中的行                                                    | boolean                             | `true`     | `true` `false`          | -  |
-| isDisabled                | 判断一行中的 checkbox 是否要禁用                                        | (row, rowIndex) => boolean          | `-`        | `-`                     | -  |
-| clickArea                 | 点击事件的响应区域                                                    | string                              | `checkbox` | `checkbox` `cell` `row` | -  |
-| stopClickEventPropagation | 是否对触发 onChange 的 click 事件调用 event.stopPropagation()          | boolean                             | `false`    | `true` `false`          | -  |
+| highlightRowWhenSelected  | 是否高亮被选中的行                                                     | boolean                             | `true`     | `true` `false`          | -  |
+| isDisabled                | 判断一行中的 checkbox 是否要禁用                                         | (row, rowIndex) => boolean          | `-`        | `-`                     | -  |
+| clickArea                 | 点击事件的响应区域                                                     | string                              | `checkbox` | `checkbox` `cell` `row` | -  |
+| stopClickEventPropagation | 是否对触发 onChange 的 click 事件调用 event.stopPropagation()           | boolean                             | `false`    | `true` `false`          | -  |
 
 ##### onChange
 
@@ -275,17 +276,17 @@ export default () => {
 - 启用行单选功能之前，pipeline 必须已经设置了 rowKey。
 - 行单选依赖单选框组件，使用 singleSelect 之前需要通过 pipeline context 设置 components.Radio。
 
-| 属性                        | 说明                                                           | 类型                                 | 默认值        | 可选值                     | 版本 |
-|---------------------------|--------------------------------------------------------------|------------------------------------|------------|-------------------------|----|
-| defaultValue              | 非受控用法：默认选中的值                                                 | string                             | `-`        | `-`                     | -  |
-| value                     | 受控用法：当前选中的 keys                                              | string                             | `-`        | `-`                     | -  |
-| onChange                  | 受控用法：状态改变回调                                                  | (nextValue) => void                | `-`        | `-`                     | -  |
-| radioPlacement            | 单选框所在列的位置                                                    | string                             | `start`    | `start` `end`           | -  |
+| 属性                        | 说明                                                            | 类型                                 | 默认值        | 可选值                     | 版本 |
+|---------------------------|---------------------------------------------------------------|------------------------------------|------------|-------------------------|----|
+| defaultValue              | 非受控用法：默认选中的值                                                  | string                             | `-`        | `-`                     | -  |
+| value                     | 受控用法：当前选中的 keys                                               | string                             | `-`        | `-`                     | -  |
+| onChange                  | 受控用法：状态改变回调                                                   | (nextValue) => void                | `-`        | `-`                     | -  |
+| radioPlacement            | 单选框所在列的位置                                                     | string                             | `start`    | `start` `end`           | -  |
 | radioColumn               | 单选框所在列的 column 配置，可指定 width，fixed, title, align, features 等属性 | `Partial<ArtColumnStaticPart>`     | `-`        | `-`                     | -  |
-| highlightRowWhenSelected  | 是否高亮被选中的行                                                    | boolean                            | `true`     | `true` `false`          | -  |
-| isDisabled                | 判断一行中的 checkbox 是否要禁用                                        | fucntion(row, rowIndex) => boolean | `-`        | `-`                     | -  |
-| clickArea                 | 点击事件的响应区域                                                    | string                             | `checkbox` | `checkbox` `cell` `row` | -  |
-| stopClickEventPropagation | 是否对触发 onChange 的 click 事件调用 event.stopPropagation()          | boolean                            | `false`    | `true` `false`          | -  |
+| highlightRowWhenSelected  | 是否高亮被选中的行                                                     | boolean                            | `true`     | `true` `false`          | -  |
+| isDisabled                | 判断一行中的 checkbox 是否要禁用                                         | fucntion(row, rowIndex) => boolean | `-`        | `-`                     | -  |
+| clickArea                 | 点击事件的响应区域                                                     | string                             | `checkbox` | `checkbox` `cell` `row` | -  |
+| stopClickEventPropagation | 是否对触发 onChange 的 click 事件调用 event.stopPropagation()           | boolean                            | `false`    | `true` `false`          | -  |
 
 ##### onChange
 
@@ -297,14 +298,14 @@ export default () => {
 
 过滤配置项
 
-| 属性                        | 说明                         | 类型                     | 默认值        | 可选值                 | 版本 |
-|---------------------------|----------------------------|------------------------|------------|---------------------|----|
-| defaultFilters            | (非受控用法) 默认的过滤字段列表          | object[]               | `-`        | `[{dataIndex,filter}]`   | -  |
-| filters                   | (受控用法) 过滤字段列表              | object[]               | `-`        | `[{dataIndex,filter}]`   | -  |
-| onChangeFilters           | 更新过滤字段列表的回调函数              | (nextFilters: Filters) | `-`        | `-`                 | -  |
-| keepDataSource            | 是否保持 dataSource 不变         | boolean                | `false`    | `true` `false`      | -  |
-| mode                      | 过滤模式。单选 single，多选 multiple | string                 | `multiple` | `single` `multiple` | -  |
-| stopClickEventPropagation | 是否对触发弹出过滤面板的点击事件阻止冒泡       | boolean                | `false`    | `true` `false`      | -  |
+| 属性                        | 说明                         | 类型                     | 默认值        | 可选值                    | 版本 |
+|---------------------------|----------------------------|------------------------|------------|------------------------|----|
+| defaultFilters            | (非受控用法) 默认的过滤字段列表          | object[]               | `-`        | `[{dataIndex,filter}]` | -  |
+| filters                   | (受控用法) 过滤字段列表              | object[]               | `-`        | `[{dataIndex,filter}]` | -  |
+| onChangeFilters           | 更新过滤字段列表的回调函数              | (nextFilters: Filters) | `-`        | `-`                    | -  |
+| keepDataSource            | 是否保持 dataSource 不变         | boolean                | `false`    | `true` `false`         | -  |
+| mode                      | 过滤模式。单选 single，多选 multiple | string                 | `multiple` | `single` `multiple`    | -  |
+| stopClickEventPropagation | 是否对触发弹出过滤面板的点击事件阻止冒泡       | boolean                | `false`    | `true` `false`         | -  |
 
 ##### 更新排序字段列表的回调函数 onChangeFilters
 
@@ -320,8 +321,8 @@ export default () => {
 
 | 属性                        | 说明                         | 类型                                         | 默认值       | 可选值                   | 版本 |
 |---------------------------|----------------------------|--------------------------------------------|-----------|-----------------------|----|
-| defaultSorts              | (非受控用法) 默认的排序字段列表          | object[]                                   | `-`       | `[{dataIndex,order}]`      | -  |
-| sorts                     | (受控用法) 排序字段列表              | object[]                                   | `-`       | `[{dataIndex,order}]`      | -  |
+| defaultSorts              | (非受控用法) 默认的排序字段列表          | object[]                                   | `-`       | `[{dataIndex,order}]` | -  |
+| sorts                     | (受控用法) 排序字段列表              | object[]                                   | `-`       | `[{dataIndex,order}]` | -  |
 | onChangeSorts             | 更新排序字段列表的回调函数              | (nextFilters: Filters)                     | `-`       | `-`                   | -  |
 | orders                    | 排序切换顺序                     | []                                         | `-`       | [`desc` `asc` `none`] | -  |
 | keepDataSource            | 是否保持 dataSource 不变         | boolean                                    | `false`   | `true` `false`        | -  |
@@ -374,20 +375,20 @@ interface SortHeaderCellProps {
 
 详情行配置项
 
-| 属性                        | 说明                                                         | 类型                                                                         | 默认值                    | 可选值                                         | 版本 |
-|---------------------------|------------------------------------------------------------|----------------------------------------------------------------------------|------------------------|---------------------------------------------|----|
-| defaultOpenAll            | (非受控用法) 是否默认展开所有详情单元格                                      | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
-| defaultOpenKeys           | (非受控用法) 默认展开的 keys                                         | string[]                                                                   | `-`                    | `-`                                         | -  |
-| openKeys                  | (受控用法) 当前展开的 keys                                          | string[]                                                                   | `-`                    | `-`                                         | -  |
-| onChangeOpenKeys          | (受控用法) openKeys 改变的回调                                      | (nextKeys: string[], key: string, action: 'expand' &#124; 'collapse'):void | `-`                    | `-`                                         | -  |
-| renderDetail              | 详情单元格的渲染方法                                                 | (row: any, rowIndex: number): ReactNode                                    | `-`                    | `-`                                         | -  |
-| hasDetail                 | 是否包含详情单元格                                                  | (row: any, rowIndex: number): boolean                                      | `-`                    | `-`                                         | -  |
+| 属性                        | 说明                                                     | 类型                                                                         | 默认值                    | 可选值                                         | 版本 |
+|---------------------------|--------------------------------------------------------|----------------------------------------------------------------------------|------------------------|---------------------------------------------|----|
+| defaultOpenAll            | (非受控用法) 是否默认展开所有详情单元格                                  | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
+| defaultOpenKeys           | (非受控用法) 默认展开的 keys                                     | string[]                                                                   | `-`                    | `-`                                         | -  |
+| openKeys                  | (受控用法) 当前展开的 keys                                      | string[]                                                                   | `-`                    | `-`                                         | -  |
+| onChangeOpenKeys          | (受控用法) openKeys 改变的回调                                  | (nextKeys: string[], key: string, action: 'expand' &#124; 'collapse'):void | `-`                    | `-`                                         | -  |
+| renderDetail              | 详情单元格的渲染方法                                             | (row: any, rowIndex: number): ReactNode                                    | `-`                    | `-`                                         | -  |
+| hasDetail                 | 是否包含详情单元格                                              | (row: any, rowIndex: number): boolean                                      | `-`                    | `-`                                         | -  |
 | getDetailKey              | 获取详情单元格所在行的 key，默认为 `(row) => row[rowKey] + '_detail'` | (row: any, rowIndex: number): string                                       | `-`                    | `-`                                         | -  |
-| detailCellStyle           | 详情单元格 td 的额外样式                                             | React.CSSProperties                                                        | `-`                    | `-`                                         | -  |
-| clickArea                 | 点击事件的响应区域                                                  | string                                                                     | `cell`                 | `'cell'` &#124; `'content'` &#124; `'icon'` | -  |
-| stopClickEventPropagation | 是否对触发展开/收拢的 click 事件调用 event.stopPropagation()             | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
-| rowDetailMetaKey          | 指定表格每一行元信息的记录字段                                            | string &#124; symbol                                                       | `Symbol('row-detail')` | `-`                                         | -  |
-| expandColumnCode          | 指定在哪一列设置展开按钮                                               | string                                                                     | `-`                    | `-`                                         | -  |
+| detailCellStyle           | 详情单元格 td 的额外样式                                         | React.CSSProperties                                                        | `-`                    | `-`                                         | -  |
+| clickArea                 | 点击事件的响应区域                                              | string                                                                     | `cell`                 | `'cell'` &#124; `'content'` &#124; `'icon'` | -  |
+| stopClickEventPropagation | 是否对触发展开/收拢的 click 事件调用 event.stopPropagation()         | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
+| rowDetailMetaKey          | 指定表格每一行元信息的记录字段                                        | string &#124; symbol                                                       | `Symbol('row-detail')` | `-`                                         | -  |
+| expandColumnCode          | 指定在哪一列设置展开按钮                                           | string                                                                     | `-`                    | `-`                                         | -  |
 
 <br/>
 
@@ -407,18 +408,18 @@ interface SortHeaderCellProps {
 
 树形数据展示配置项
 
-| 属性                        | 说明                                                         | 类型                                                                                   | 默认值                        | 可选值                                         | 版本 |
-|---------------------------|------------------------------------------------------------|--------------------------------------------------------------------------------------|----------------------------|---------------------------------------------|----|
-| defaultOpenKeys           | (非受控用法) 默认展开的 keys                                         | string[]                                                                             | `-`                        | `-`                                         | -  |
-| openKeys                  | (受控用法) 当前展开的 keys                                          | string[]                                                                             | `-`                        | `-`                                         | -  |
-| onChangeOpenKeys          | (受控用法) openKeys 改变的回调                                      | (nextKeys: string[], key: string, action: 'expand' &#124; 'collapse'):void           | `-`                        | `-`                                         | -  |
+| 属性                        | 说明                                                         | 类型                                                                                          | 默认值                        | 可选值                                         | 版本 |
+|---------------------------|------------------------------------------------------------|---------------------------------------------------------------------------------------------|----------------------------|---------------------------------------------|----|
+| defaultOpenKeys           | (非受控用法) 默认展开的 keys                                         | string[]                                                                                    | `-`                        | `-`                                         | -  |
+| openKeys                  | (受控用法) 当前展开的 keys                                          | string[]                                                                                    | `-`                        | `-`                                         | -  |
+| onChangeOpenKeys          | (受控用法) openKeys 改变的回调                                      | (nextKeys: string[], key: string, action: 'expand' &#124; 'collapse'):void                  | `-`                        | `-`                                         | -  |
 | isLeafNode                | 自定义叶子节点的判定逻辑                                               | (node: any, nodeMeta: { depth: number; expanded: boolean; currentRowKey: string }): boolean | `-`                        | `-`                                         | -  |
-| iconIndent                | icon 的缩进值。一般为负数，此时 icon 将向左偏移，默认从 pipeline.ctx.indents 中获取 | number                                                                               | `-`                        | `-`                                         | -  |
-| iconGap                   | icon 与右侧文本的距离，默认从 pipeline.ctx.indents 中获取                 | number                                                                               | `-`                        | `-`                                         | -  |
-| indentSize                | 每一级缩进产生的距离，默认从 pipeline.ctx.indents 中获取                    | number                                                                               | `-`                        | `-`                                         | -  |
-| clickArea                 | 点击事件的响应区域                                                  | string                                                                               | `cell`                     | `'cell'` &#124; `'content'` &#124; `'icon'` | -  |
-| stopClickEventPropagation | 是否对触发展开/收拢的 click 事件调用 event.stopPropagation()             | boolean                                                                              | `false`                    | `true` &#124; `false`                       | -  |
-| treeMetaKey               | 指定表格每一行元信息的记录字段                                            | string &#124; symbol                                                                 | `Symbol('treeMetaSymbol')` | `-`                                         | -  |
+| iconIndent                | icon 的缩进值。一般为负数，此时 icon 将向左偏移，默认从 pipeline.ctx.indents 中获取 | number                                                                                      | `-`                        | `-`                                         | -  |
+| iconGap                   | icon 与右侧文本的距离，默认从 pipeline.ctx.indents 中获取                 | number                                                                                      | `-`                        | `-`                                         | -  |
+| indentSize                | 每一级缩进产生的距离，默认从 pipeline.ctx.indents 中获取                    | number                                                                                      | `-`                        | `-`                                         | -  |
+| clickArea                 | 点击事件的响应区域                                                  | string                                                                                      | `cell`                     | `'cell'` &#124; `'content'` &#124; `'icon'` | -  |
+| stopClickEventPropagation | 是否对触发展开/收拢的 click 事件调用 event.stopPropagation()             | boolean                                                                                     | `false`                    | `true` &#124; `false`                       | -  |
+| treeMetaKey               | 指定表格每一行元信息的记录字段                                            | string &#124; symbol                                                                        | `Symbol('treeMetaSymbol')` | `-`                                         | -  |
 
 <br/>
 
