@@ -1,12 +1,13 @@
 import { Spin, type SpinProps } from 'antd'
 import { type ConfigConsumerProps, ConfigContext } from 'antd/es/config-provider'
 import classNames from 'classnames'
-import { Table, useTablePipeline } from 'o-rc-table'
+import { useTablePipeline } from 'o-rc-table'
 import type { BaseTableProps } from 'o-rc-table/base/table'
 import * as React from 'react'
 
 import useCSSVarCls from '../ConfigProvider/hooks/useCSSVarCls'
 import { AnyObject } from '../theme/interface'
+import RcTable from './RcTable'
 import useStyle from './style'
 
 export type TableRef = ReturnType<typeof useTablePipeline>
@@ -61,7 +62,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
   return wrapCSSVar(
     <div className={wrapperClassNames} style={mergedStyle}>
       <Spin spinning={false} {...spinProps}>
-        <Table
+        <RcTable
           style={style}
           loading={spinProps.spinning}
           namespace={prefixCls}

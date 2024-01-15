@@ -1,7 +1,19 @@
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react'
+import { createImmutable } from '@rc-component/context'
+import type { CompareProps } from '@rc-component/context/lib/Immutable'
+import { internals } from '@src/BaseTable'
 import cx from 'classnames'
 import { getRichVisibleRectsStream } from 'o-rc-table/base/helpers/getRichVisibleRectsStream'
-import React, { CSSProperties, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, {
+  CSSProperties,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { BehaviorSubject, combineLatest, from, noop, Subject, Subscription } from 'rxjs'
 import * as op from 'rxjs/operators'
 
@@ -31,17 +43,17 @@ import {
   throttledWindowResize$,
 } from './utils'
 
-export type RowKey = string | ((record: any) => string)
+export type RowKey<RecordType = unknown> = string | keyof RecordType | ((record: RecordType) => React.Key)
 
-export interface BaseTableProps {
+export interface BaseTableProps<RecordType = Record<string, any>> {
   /** 主键 */
-  rowKey?: RowKey
+  rowKey?: RowKey<RecordType>
   /** 表格展示的数据源 */
-  dataSource: any[]
+  dataSource: RecordType[]
   /** 表格页脚数据源 */
   footerDataSource?: any[]
   /** 表格的列配置 */
-  columns: ArtColumn[]
+  columns: ArtColumn<RecordType>[]
   /**
    * @description 命名空间
    * @default o-rc-table
@@ -122,7 +134,12 @@ export interface BaseTableProps {
   }
 }
 
-export const BaseTable = (props: BaseTableProps) => {
+export type BaseTableRef = {
+  nativeElement: HTMLDivElement
+  scrollTo: (config: { index?: number; key?: React.Key; top?: number }) => void
+}
+
+const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   const {
     setTableWidth,
     setTableDomHelper,
@@ -303,7 +320,6 @@ export const BaseTable = (props: BaseTableProps) => {
   )
 
   const syncHorizontalScrollFromTableBody = useCallback(() => {
-    console.log(111111, domHelper.current.virtual.scrollLeft)
     syncHorizontalScroll(domHelper.current.virtual.scrollLeft)
   }, [syncHorizontalScroll])
 
@@ -666,7 +682,7 @@ export const BaseTable = (props: BaseTableProps) => {
           op.distinctUntilChanged(shallowEqual)
         ),
         props$.current.pipe(
-          op.startWith(null),
+          op.startWith(null as any),
           op.pairwise(),
           op.filter(([prevProps, curProps]) => prevProps == null || (!prevProps.loading && curProps.loading))
         ),
@@ -846,20 +862,36 @@ export const BaseTable = (props: BaseTableProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // useEffect(() => {
-  //   // const { cssVariables, enableCSSVariables, bordered } = this.props
-  //   // if (!shallowEqual(prevProps?.cssVariables, this.props?.cssVariables)) {
-  //   //   cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
-  //   // }
-  //   updateDOMHelper()
-  //   props$.current.next(props)
-  //   didMountOrUpdate(props$.current.getValue())
-  // }, [didMountOrUpdate, props, updateDOMHelper])
-
   useEffect(() => {
+    // const { cssVariables, enableCSSVariables, bordered } = props
+    // if (!shallowEqual(prevProps?.cssVariables, props?.cssVariables)) {
+    //   cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
+    // }
     updateDOMHelper()
     props$.current.next(props)
     didMountOrUpdate(props$.current.getValue())
+  }, [didMountOrUpdate, props, updateDOMHelper])
+
+  useImperativeHandle(ref, () => {
+    return {
+      nativeElement: artTableWrapperRef.current,
+      scrollTo: (config: Record<string, any>) => {
+        if (domHelper.current instanceof HTMLElement) {
+          const { index, top, key } = config
+
+          if (top) {
+            domHelper.current?.scrollTo({
+              top,
+            })
+          } else {
+            const mergedKey = key ?? internals.safeGetRowKey(rowKey, dataSource, index)
+            domHelper.current.querySelector(`[data-row-key="${mergedKey}"]`)?.scrollIntoView()
+          }
+        } else if ((domHelper.current as any)?.scrollTo) {
+          ;(domHelper.current as any).scrollTo(config)
+        }
+      },
+    }
   })
 
   const artTableWrapperProps = {
@@ -871,9 +903,9 @@ export const BaseTable = (props: BaseTableProps) => {
   const tableProps = getTableProps?.() || {}
 
   return (
-    <StyledArtTableWrapper {...artTableWrapperProps}>
-      <BaseTableContext.Provider value={contextValue}>
-        <EmotionThemeProvider theme={contextValue}>
+    <BaseTableContext.Provider value={contextValue}>
+      <EmotionThemeProvider theme={contextValue}>
+        <StyledArtTableWrapper {...artTableWrapperProps}>
           {Object.keys(contextValue.Classes).length > 0 && (
             <>
               <div {...tableProps} className={cx(getTableClasses(namespace)?.artTable, tableProps.className)}>
@@ -885,8 +917,28 @@ export const BaseTable = (props: BaseTableProps) => {
               {renderStickyScroll()}
             </>
           )}
-        </EmotionThemeProvider>
-      </BaseTableContext.Provider>
-    </StyledArtTableWrapper>
+        </StyledArtTableWrapper>
+      </EmotionThemeProvider>
+    </BaseTableContext.Provider>
   )
 }
+
+const { makeImmutable } = createImmutable()
+
+export type ForwardGenericTable = (<RecordType extends Record<string, any> = any>(
+  props: BaseTableProps<RecordType> & { ref?: React.Ref<BaseTableRef> }
+) => React.ReactElement) & {
+  displayName?: string
+}
+
+const RefTable = React.forwardRef(BaseTable) as unknown as ForwardGenericTable
+
+if (process.env.NODE_ENV !== 'production') {
+  RefTable.displayName = 'BaseTable'
+}
+
+export function genTable(shouldTriggerRender?: CompareProps<typeof BaseTable>) {
+  return makeImmutable(RefTable, shouldTriggerRender) as ForwardGenericTable
+}
+
+export default RefTable

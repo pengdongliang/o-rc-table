@@ -95,6 +95,7 @@ export function HtmlTable({
             : internals.safeGetRowKey(rowKey, record, rowIndex)
         }
         data-rowindex={rowIndex}
+        data-row-key={internals.safeGetRowKey(rowKey, record, rowIndex)}
         data-role="table-row"
       >
         {visibleColumnDescriptor.map((descriptor) => {

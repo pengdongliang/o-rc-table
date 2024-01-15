@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { ArtColumn } from './interfaces'
 
 function safeRenderHeader(column: ArtColumn) {
@@ -11,8 +13,8 @@ function safeGetValue(column: ArtColumn, record: any, rowIndex: number) {
   return record[column.dataIndex]
 }
 
-function safeGetRowKey(rowKey: string | ((data: any) => string), record: any, rowIndex: number): string {
-  let key
+function safeGetRowKey(rowKey: string | ((data: any) => React.Key), record: any, rowIndex: number): React.Key {
+  let key: React.Key
   if (typeof rowKey === 'string') {
     key = record[rowKey]
   } else if (typeof rowKey === 'function') {

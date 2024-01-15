@@ -7,14 +7,14 @@ import { autoFillTableWidth, tableWidthKey } from './features/autoFill'
 
 type RowPropsGetter = TableProps['getRowProps']
 
-type InputType =
+type InputType<RecordType = Record<string, any>> =
   | {
-      dataSource: any[]
+      dataSource: RecordType[]
       columns: ArtColumn[]
       tableContext?: BaseTableContextProps
     }
   | {
-      dataSource?: any[]
+      dataSource?: RecordType[]
       columns?: ArtColumn[]
       tableContext: BaseTableContextProps
     }
@@ -54,7 +54,7 @@ export interface TablePipelineCtx {
  *
  * 4. snapshots，调用 pipeline.snapshot(name) 可以记录当前的状态，后续可以通过 name 来读取保存的状态
  * */
-export class TablePipeline {
+export class TablePipeline<RecordType = unknown> {
   ref?: React.MutableRefObject<any>
 
   private readonly _snapshots: { [key: string]: PipelineSnapshot } = {}
@@ -63,7 +63,7 @@ export class TablePipeline {
 
   private _tableProps: React.HTMLAttributes<HTMLTableElement> = {}
 
-  private _dataSource: any[]
+  private _dataSource: RecordType[]
 
   private _columns: any[]
 
@@ -173,7 +173,7 @@ export class TablePipeline {
   /**
    * 设置流水线的输入数据
    */
-  input(input: InputType) {
+  input(input: InputType<RecordType>) {
     if (this._dataSource != null || this._columns != null) {
       throw new Error('Input cannot be called twice')
     }
@@ -326,11 +326,11 @@ export class TablePipeline {
   }
 }
 
-export function useTablePipeline(ctx?: Partial<TablePipelineCtx>) {
+export function useTablePipeline<RecordType = unknown>(ctx?: Partial<TablePipelineCtx>) {
   const [state, setState] = useState<any>({})
   const ref = useRef<any>({ featureOptions: {} })
 
   const tableContext = useBaseTableContext()
 
-  return new TablePipeline({ state, setState, ctx, ref }).input({ tableContext })
+  return new TablePipeline<RecordType>({ state, setState, ctx, ref }).input({ tableContext })
 }

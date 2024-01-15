@@ -57,23 +57,23 @@ export interface Features {
   /** */
 }
 
-export interface ArtColumnDynamicPart {
+export interface ArtColumnDynamicPart<RecordType = unknown> {
   /** 自定义取数方法 */
-  getValue?(row: any, rowIndex: number): any
+  getValue?(row: RecordType, rowIndex: number): any
 
   /** 自定义渲染方法 */
-  render?(value: any, row: any, rowIndex: number): ReactNode
+  render?(value: any, row: RecordType, rowIndex: number): ReactNode
 
   /** 自定义的获取单元格 props 的方法 */
-  getCellProps?(value: any, row: any, rowIndex: number): CellProps
+  getCellProps?(value: any, row: RecordType, rowIndex: number): CellProps
 
   /** 自定义的获取单元格 SpanRect 方法 */
-  getSpanRect?(value: any, row: any, rowIndex: number): SpanRect
+  getSpanRect?(value: any, row: RecordType, rowIndex: number): SpanRect
 }
 
-export interface ArtColumn extends ArtColumnStaticPart, ArtColumnDynamicPart {
+export interface ArtColumn<RecordType = unknown> extends ArtColumnStaticPart, ArtColumnDynamicPart<RecordType> {
   /** 该列的子节点 */
-  children?: ArtColumn[]
+  children?: ArtColumn<RecordType>[]
 }
 
 /** SpanRect 用于描述合并单元格的边界
