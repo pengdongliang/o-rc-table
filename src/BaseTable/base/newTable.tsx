@@ -1,8 +1,9 @@
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react'
 import cx from 'classnames'
 import { getRichVisibleRectsStream } from 'o-rc-table/base/helpers/getRichVisibleRectsStream'
+import { BaseTableState } from 'o-rc-table/base/table'
 import React, { CSSProperties, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { BehaviorSubject, combineLatest, from, noop, Subject, Subscription } from 'rxjs'
+import { BehaviorSubject, combineLatest, from, Subject, Subscription } from 'rxjs'
 import * as op from 'rxjs/operators'
 
 import type { ArtColumn } from '../interfaces'
@@ -122,32 +123,32 @@ export interface BaseTableProps {
   }
 }
 
-export const BaseTable = (props: BaseTableProps) => {
+const BaseTable = (props: BaseTableProps) => {
   const {
     setTableWidth,
     setTableDomHelper,
     setRowHeightManager,
-    stickyScrollHeight = 'auto',
-    stickyTop = 0,
-    hasHeader = true,
-    estimatedRowHeight = 48,
-    dataSource = [],
+    stickyScrollHeight,
+    stickyTop,
+    hasHeader,
+    estimatedRowHeight,
+    dataSource,
     scrollLoad,
-    components = {},
+    components,
     footerDataSource = [],
-    getRowProps = noop as unknown as BaseTableProps['getRowProps'],
+    getRowProps,
     rowKey,
-    stickyBottom = 0,
-    hasStickyScroll = true,
+    stickyBottom,
+    hasStickyScroll,
     scrollbarWidth,
     className,
     style,
-    useOuterBorder = true,
-    isStickyHeader = true,
-    isStickyFooter = true,
-    getTableProps = noop as BaseTableProps['getTableProps'],
+    useOuterBorder,
+    isStickyHeader,
+    isStickyFooter,
+    getTableProps,
     bordered,
-    namespace = 'o-rc-table',
+    namespace,
     loading,
     emptyCellHeight,
     virtualDebugLabel,
@@ -161,7 +162,6 @@ export const BaseTable = (props: BaseTableProps) => {
   const resizeSubject = useRef<Subject<unknown>>(null)
   const resizeObserver = useRef<ResizeObserver>(null)
   const [, setForceUpdate] = useState(false)
-  const lastHasScroll = useRef(true)
   const [hasScroll, setHasScroll] = useState(true)
   const [hasScrollY, setHasScrollY] = useState(true)
   const [needRenderLock, setNeedRenderLock] = useState(true)
@@ -172,17 +172,10 @@ export const BaseTable = (props: BaseTableProps) => {
   // https://stackoverflow.com/questions/60026223/does-resizeobserver-invokes-initially-on-page-load
   const [maxRenderHeight, setMaxRenderHeight] = useState<number>(600)
   const [maxRenderWidth, setMaxRenderWidth] = useState<number>(800)
-
-  const contextValue = useMemo(() => {
-    return {
-      namespace,
-      Classes: getTableClasses(namespace),
-    }
-  }, [namespace])
-
-  const getScrollBarWidth = useCallback(() => {
-    return scrollbarWidth || getScrollbarSize().width
-  }, [scrollbarWidth])
+  const [contextValue, setContextValue] = useState<BaseTableContextProps>({
+    namespace: 'o-rc-table',
+    Classes: {},
+  })
 
   /**
    * 自定义滚动条宽度为table宽度，使滚动条滑块宽度相同
@@ -206,12 +199,10 @@ export const BaseTable = (props: BaseTableProps) => {
     if (artTableWidth >= innerTableWidth) {
       if (hasScroll) {
         setHasScroll(false)
-        lastHasScroll.current = true
       }
     } else if (!hasScroll && newStickyScrollHeight > 5) {
       // 考虑下mac下面隐藏滚动条的情况
       setHasScroll(true)
-      lastHasScroll.current = false
     }
     if (domHelper.current?.virtual.offsetHeight > domHelper.current?.tableBody.offsetHeight) {
       setHasScrollY(true)
@@ -223,100 +214,78 @@ export const BaseTable = (props: BaseTableProps) => {
     }
     // 设置子节点宽度
     stickyScrollItem.style.width = `${innerTableWidth + (hasScrollY ? getScrollBarWidth() : 0)}px`
-  }, [getScrollBarWidth, hasScroll, hasScrollY, setTableWidth, stickyScrollHeight])
+  }, [])
 
-  const renderTableHeader = useCallback(
-    (info: RenderInfo) => {
-      const renderHeader = getTableRenderTemplate('header')
-      if (typeof renderHeader === 'function') {
-        return renderHeader(info, props)
-      }
-      return (
+  const renderTableHeader = useCallback((info: RenderInfo) => {
+    const renderHeader = getTableRenderTemplate('header')
+    if (typeof renderHeader === 'function') {
+      return renderHeader(info, props)
+    }
+    return (
+      <div
+        className={cx(contextValue.Classes?.tableHeader, contextValue.Classes?.tableHeaderNoScrollbar)}
+        style={{
+          top: stickyTop === 0 ? undefined : stickyTop,
+          display: hasHeader ? undefined : 'none',
+        }}
+      >
+        <TableHeader info={info} />
         <div
-          className={cx(contextValue.Classes?.tableHeader, contextValue.Classes?.tableHeaderNoScrollbar)}
-          style={{
-            top: stickyTop === 0 ? undefined : stickyTop,
-            display: hasHeader ? undefined : 'none',
-          }}
-        >
-          <TableHeader info={info} />
-          <div
-            className={contextValue.Classes?.verticalScrollPlaceholder}
-            style={hasScrollY ? { width: getScrollBarWidth() } : undefined}
-          />
-        </div>
-      )
-    },
-    [
-      contextValue.Classes?.tableHeader,
-      contextValue.Classes?.tableHeaderNoScrollbar,
-      contextValue.Classes?.verticalScrollPlaceholder,
-      getScrollBarWidth,
-      hasHeader,
-      hasScrollY,
-      props,
-      stickyTop,
-    ]
-  )
+          className={contextValue.Classes?.verticalScrollPlaceholder}
+          style={hasScrollY ? { width: getScrollBarWidth() } : undefined}
+        />
+      </div>
+    )
+  }, [])
 
-  const updateOffsetX = useCallback(
-    (nextOffsetX: number) => {
-      if (lastInfo.current.useVirtual.horizontal) {
-        if (Math.abs(nextOffsetX - offsetX) >= OVERSCAN_SIZE / 2) {
-          setOffsetX(nextOffsetX)
-        }
+  const updateOffsetX = useCallback((nextOffsetX: number) => {
+    if (lastInfo.current.useVirtual.horizontal) {
+      if (Math.abs(nextOffsetX - offsetX) >= OVERSCAN_SIZE / 2) {
+        setOffsetX(nextOffsetX)
       }
-    },
-    [offsetX]
-  )
+    }
+  }, [])
 
-  const syncHorizontalScroll = useCallback(
-    (x: number) => {
-      updateOffsetX(x)
-
-      const { flat } = lastInfo.current
-
-      const leftLockShadow = domHelper.current.getLeftLockShadow()
-      if (leftLockShadow) {
-        const shouldShowLeftLockShadow = flat.left.length > 0 && needRenderLock && x > 0
-        if (shouldShowLeftLockShadow) {
-          leftLockShadow.classList.add('show-shadow')
-        } else {
-          leftLockShadow.classList.remove('show-shadow')
-        }
-      }
-
-      const rightLockShadow = domHelper.current.getRightLockShadow()
-      if (rightLockShadow) {
-        const shouldShowRightLockShadow =
-          flat.right.length > 0 &&
-          needRenderLock &&
-          x < domHelper.current.virtual.scrollWidth - domHelper.current.virtual.clientWidth
-        if (shouldShowRightLockShadow) {
-          rightLockShadow.classList.add('show-shadow')
-        } else {
-          rightLockShadow.classList.remove('show-shadow')
-        }
-      }
-    },
-    [needRenderLock, updateOffsetX]
-  )
-
-  const syncHorizontalScrollFromTableBody = useCallback(() => {
-    console.log(111111, domHelper.current.virtual.scrollLeft)
+  const syncHorizontalScrollFromTableBody = () => {
     syncHorizontalScroll(domHelper.current.virtual.scrollLeft)
-  }, [syncHorizontalScroll])
+  }
 
-  const getVerticalRenderRange = useCallback(
-    (virtualParams: ResolvedUseVirtual): VerticalRenderRange => {
-      const rowCount = dataSource.length
-      if (virtualParams.vertical) {
-        return rowHeightManager.current.getRenderRange(offsetY, maxRenderHeight, rowCount)
+  const syncHorizontalScroll = useCallback((x: number) => {
+    updateOffsetX(x)
+
+    const { flat } = lastInfo.current
+
+    const leftLockShadow = domHelper.current.getLeftLockShadow()
+    if (leftLockShadow) {
+      const shouldShowLeftLockShadow = flat.left.length > 0 && needRenderLock && x > 0
+      if (shouldShowLeftLockShadow) {
+        leftLockShadow.classList.add('show-shadow')
+      } else {
+        leftLockShadow.classList.remove('show-shadow')
       }
-      return getFullRenderRange(rowCount)
-    },
-    [dataSource.length, maxRenderHeight, offsetY]
-  )
+    }
+
+    const rightLockShadow = domHelper.current.getRightLockShadow()
+    if (rightLockShadow) {
+      const shouldShowRightLockShadow =
+        flat.right.length > 0 &&
+        needRenderLock &&
+        x < domHelper.current.virtual.scrollWidth - domHelper.current.virtual.clientWidth
+      if (shouldShowRightLockShadow) {
+        rightLockShadow.classList.add('show-shadow')
+      } else {
+        rightLockShadow.classList.remove('show-shadow')
+      }
+    }
+  }, [])
+
+  const getVerticalRenderRange = useCallback((useVirtual: ResolvedUseVirtual): VerticalRenderRange => {
+    const rowCount = dataSource.length
+    if (useVirtual.vertical) {
+      return rowHeightManager.current.getRenderRange(offsetY, maxRenderHeight, rowCount)
+    }
+    return getFullRenderRange(rowCount)
+  }, [])
 
   const handleRowMouseEnter = useCallback((e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
     const nodeList = domHelper.current.getRowNodeListByEvent(e)
@@ -334,174 +303,130 @@ export const BaseTable = (props: BaseTableProps) => {
       })
   }, [])
 
-  const renderTableBody = useCallback(
-    (info: RenderInfo) => {
-      const tableBodyClassName = cx(contextValue.Classes?.tableBody, contextValue.Classes?.horizontalScrollContainer)
+  const renderTableBody = useCallback((info: RenderInfo) => {
+    const tableBodyClassName = cx(contextValue.Classes?.tableBody, contextValue.Classes?.horizontalScrollContainer)
 
-      // 低版本Edge浏览器下也会出现双滚动条，这里设置overflow: 'hidden'，先去掉edge的方向键控制滚动条的功能
-      const virtualStyle = browserType.isIE || browserType.isEdge ? { overflow: 'hidden' } : {}
+    // 低版本Edge浏览器下也会出现双滚动条，这里设置overflow: 'hidden'，先去掉edge的方向键控制滚动条的功能
+    const virtualStyle = browserType.isIE || browserType.isEdge ? { overflow: 'hidden' } : {}
 
-      if (dataSource.length === 0) {
-        const { EmptyContent } = components ?? {}
-
-        return (
-          <div className={cx(tableBodyClassName, contextValue.Classes?.tableBodyEmpty)}>
-            <div className={contextValue.Classes?.virtual} tabIndex={-1} style={virtualStyle}>
-              <EmptyHtmlTable
-                descriptors={info.visible}
-                loading={loading}
-                EmptyContent={EmptyContent}
-                emptyCellHeight={emptyCellHeight}
-              />
-            </div>
-          </div>
-        )
-      }
-
-      const { topIndex, bottomBlank, topBlank, bottomIndex } = info.verticalRenderRange
-      const stickyRightOffset = hasScrollY ? getScrollBarWidth() : 0
-
-      const renderBody = getTableRenderTemplate('body')
-      if (typeof renderBody === 'function') {
-        return renderBody(info, props, {
-          rowProps: { onMouseEnter: handleRowMouseEnter, onMouseLeave: handleRowMouseLeave },
-          stickyRightOffset,
-        })
-      }
+    if (dataSource.length === 0) {
+      const { EmptyContent } = components
 
       return (
-        <div className={tableBodyClassName}>
+        <div className={cx(tableBodyClassName, contextValue.Classes?.tableBodyEmpty)}>
           <div className={contextValue.Classes?.virtual} tabIndex={-1} style={virtualStyle}>
-            {topBlank > 0 && (
-              <div
-                key="top-blank"
-                className={cx(contextValue.Classes?.virtualBlank, 'top')}
-                style={{ height: topBlank }}
-              />
-            )}
-            <HtmlTable
-              tbodyHtmlTag="tbody"
-              getRowProps={getRowProps}
-              rowKey={rowKey}
-              data={dataSource.slice(topIndex, bottomIndex)}
-              stickyRightOffset={stickyRightOffset}
-              horizontalRenderInfo={info}
-              verticalRenderInfo={{
-                first: 0,
-                offset: topIndex,
-                limit: bottomIndex,
-                last: dataSource.length - 1,
-              }}
+            <EmptyHtmlTable
+              descriptors={info.visible}
+              loading={loading}
+              EmptyContent={EmptyContent}
+              emptyCellHeight={emptyCellHeight}
             />
-            {bottomBlank > 0 && (
-              <div
-                key="bottom-blank"
-                className={cx(contextValue.Classes?.virtualBlank, 'bottom')}
-                style={{ height: bottomBlank }}
-              />
-            )}
           </div>
         </div>
       )
-    },
-    [
-      components,
-      contextValue.Classes?.horizontalScrollContainer,
-      contextValue.Classes?.tableBody,
-      contextValue.Classes?.tableBodyEmpty,
-      contextValue.Classes?.virtual,
-      contextValue.Classes?.virtualBlank,
-      dataSource,
-      emptyCellHeight,
-      getRowProps,
-      getScrollBarWidth,
-      handleRowMouseEnter,
-      handleRowMouseLeave,
-      hasScrollY,
-      loading,
-      props,
-      rowKey,
-    ]
-  )
+    }
 
-  const renderTableFooter = useCallback(
-    (info: RenderInfo) => {
-      const renderFooter = getTableRenderTemplate('footer')
-      if (typeof renderFooter === 'function') {
-        return renderFooter(info, props, {
-          rowProps: { onMouseEnter: handleRowMouseEnter, onMouseLeave: handleRowMouseLeave },
-        })
-      }
+    const { topIndex, bottomBlank, topBlank, bottomIndex } = info.verticalRenderRange
+    const stickyRightOffset = hasScrollY ? getScrollBarWidth() : 0
 
-      return (
-        <div
-          className={cx(contextValue.Classes?.tableFooter, contextValue.Classes?.horizontalScrollContainer)}
-          style={{ bottom: stickyBottom === 0 ? undefined : stickyBottom }}
-        >
+    const renderBody = getTableRenderTemplate('body')
+    if (typeof renderBody === 'function') {
+      return renderBody(info, props, {
+        rowProps: { onMouseEnter: handleRowMouseEnter, onMouseLeave: handleRowMouseLeave },
+        stickyRightOffset,
+      })
+    }
+
+    return (
+      <div className={tableBodyClassName}>
+        <div className={contextValue.Classes?.virtual} tabIndex={-1} style={virtualStyle}>
+          {topBlank > 0 && (
+            <div
+              key="top-blank"
+              className={cx(contextValue.Classes?.virtualBlank, 'top')}
+              style={{ height: topBlank }}
+            />
+          )}
           <HtmlTable
-            tbodyHtmlTag="tfoot"
-            data={footerDataSource}
-            horizontalRenderInfo={info}
+            tbodyHtmlTag="tbody"
             getRowProps={getRowProps}
             rowKey={rowKey}
+            data={dataSource.slice(topIndex, bottomIndex)}
+            stickyRightOffset={stickyRightOffset}
+            horizontalRenderInfo={info}
             verticalRenderInfo={{
-              offset: 0,
               first: 0,
-              last: footerDataSource.length - 1,
-              limit: Infinity,
+              offset: topIndex,
+              limit: bottomIndex,
+              last: dataSource.length - 1,
             }}
           />
-          {footerDataSource.length > 0 ? (
+          {bottomBlank > 0 && (
             <div
-              className={contextValue.Classes?.verticalScrollPlaceholder}
-              style={hasScrollY ? { width: getScrollBarWidth(), visibility: 'initial' } : undefined}
+              key="bottom-blank"
+              className={cx(contextValue.Classes?.virtualBlank, 'bottom')}
+              style={{ height: bottomBlank }}
             />
-          ) : null}
+          )}
         </div>
-      )
-    },
-    [
-      contextValue.Classes?.horizontalScrollContainer,
-      contextValue.Classes?.tableFooter,
-      contextValue.Classes?.verticalScrollPlaceholder,
-      footerDataSource,
-      getRowProps,
-      getScrollBarWidth,
-      handleRowMouseEnter,
-      handleRowMouseLeave,
-      hasScrollY,
-      props,
-      rowKey,
-      stickyBottom,
-    ]
-  )
+      </div>
+    )
+  }, [])
 
-  const renderLockShadows = useCallback(
-    (info: RenderInfo) => {
-      return (
-        <>
+  const renderTableFooter = useCallback((info: RenderInfo) => {
+    const renderFooter = getTableRenderTemplate('footer')
+    if (typeof renderFooter === 'function') {
+      return renderFooter(info, props, {
+        rowProps: { onMouseEnter: handleRowMouseEnter, onMouseLeave: handleRowMouseLeave },
+      })
+    }
+
+    return (
+      <div
+        className={cx(contextValue.Classes?.tableFooter, contextValue.Classes?.horizontalScrollContainer)}
+        style={{ bottom: stickyBottom === 0 ? undefined : stickyBottom }}
+      >
+        <HtmlTable
+          tbodyHtmlTag="tfoot"
+          data={footerDataSource}
+          horizontalRenderInfo={info}
+          getRowProps={getRowProps}
+          rowKey={rowKey}
+          verticalRenderInfo={{
+            offset: 0,
+            first: 0,
+            last: footerDataSource.length - 1,
+            limit: Infinity,
+          }}
+        />
+        {footerDataSource.length > 0 ? (
           <div
-            className={contextValue.Classes?.lockShadowMask}
-            style={{ left: 0, width: info.leftLockTotalWidth + LOCK_SHADOW_PADDING }}
-          >
-            <div className={cx(contextValue.Classes?.lockShadow, contextValue.Classes?.leftLockShadow)} />
-          </div>
-          <div
-            className={contextValue.Classes?.lockShadowMask}
-            style={{ right: 0, width: info.rightLockTotalWidth + LOCK_SHADOW_PADDING }}
-          >
-            <div className={cx(contextValue.Classes?.lockShadow, contextValue.Classes?.rightLockShadow)} />
-          </div>
-        </>
-      )
-    },
-    [
-      contextValue.Classes?.leftLockShadow,
-      contextValue.Classes?.lockShadow,
-      contextValue.Classes?.lockShadowMask,
-      contextValue.Classes?.rightLockShadow,
-    ]
-  )
+            className={contextValue.Classes?.verticalScrollPlaceholder}
+            style={hasScrollY ? { width: getScrollBarWidth(), visibility: 'initial' } : undefined}
+          />
+        ) : null}
+      </div>
+    )
+  }, [])
+
+  const renderLockShadows = useCallback((info: RenderInfo) => {
+    return (
+      <>
+        <div
+          className={contextValue.Classes?.lockShadowMask}
+          style={{ left: 0, width: info.leftLockTotalWidth + LOCK_SHADOW_PADDING }}
+        >
+          <div className={cx(contextValue.Classes?.lockShadow, contextValue.Classes?.leftLockShadow)} />
+        </div>
+        <div
+          className={contextValue.Classes?.lockShadowMask}
+          style={{ right: 0, width: info.rightLockTotalWidth + LOCK_SHADOW_PADDING }}
+        >
+          <div className={cx(contextValue.Classes?.lockShadow, contextValue.Classes?.rightLockShadow)} />
+        </div>
+      </>
+    )
+  }, [])
 
   const renderStickyScroll = useCallback(() => {
     return (
@@ -522,105 +447,37 @@ export const BaseTable = (props: BaseTableProps) => {
         </div>
       </div>
     )
-  }, [
-    contextValue.Classes?.horizontalScrollContainer,
-    contextValue.Classes?.horizontalStickyScrollContainer,
-    contextValue.Classes?.stickyScroll,
-    contextValue.Classes?.stickyScrollItem,
-    hasScroll,
-    hasStickyScroll,
-    stickyBottom,
-  ])
+  }, [])
 
-  const updateRowHeightManager = useCallback(() => {
-    const virtualTop = domHelper.current.getVirtualTop()
-    const virtualTopHeight = virtualTop?.clientHeight ?? 0
+  const getScrollBarWidth = useCallback(() => {
+    return scrollbarWidth || getScrollbarSize().width
+  }, [])
 
-    let maxTrRowIndex = -1
-    let maxTrBottom = -1
-    let zeroHeightRowCount = 0
-
-    for (const tr of domHelper.current.getTableRows()) {
-      const rowIndex = Number(tr.dataset.rowindex)
-      if (Number.isNaN(rowIndex)) {
-        continue
-      }
-      maxTrRowIndex = Math.max(maxTrRowIndex, rowIndex)
-      const offset = tr.offsetTop + virtualTopHeight
-      const size = tr.offsetHeight
-      if (size === 0) {
-        zeroHeightRowCount += 1
-      } else {
-        // 渲染出来的行高度为0，说明是display=none情况，行高不存在该种异常情况，不保存当前的高度
-        rowHeightManager.current.updateRow(rowIndex, offset, size)
-      }
-      maxTrBottom = Math.max(maxTrBottom, offset + size)
-    }
-
-    // 当 estimatedRowHeight 过大时，可能出现「渲染行数过少，无法覆盖可视范围」的情况
-    // 出现这种情况时，我们判断「下一次渲染能够渲染更多行」是否满足，满足的话就直接调用 forceUpdate
-    // zeroHeightRowCount === 0 用于确保当前没有 display=none 的情况
-    if (maxTrRowIndex !== -1 && zeroHeightRowCount === 0) {
-      if (maxTrBottom < offsetY + maxRenderHeight) {
-        const vertical = getVerticalRenderRange(lastInfo.current.useVirtual)
-        if (vertical.bottomIndex - 1 > maxTrRowIndex) {
-          setForceUpdate((v) => !v)
-        }
-      }
-    }
-  }, [getVerticalRenderRange, maxRenderHeight, offsetY])
-
-  /**
-   * 计算表格所有列的渲染宽度之和，判断表格是否需要渲染锁列
-   */
-  const adjustNeedRenderLock = useCallback(() => {
-    const { flat, hasLockColumn } = lastInfo.current
-
-    if (hasLockColumn) {
-      const sumOfColWidth = sum(flat.full.map((col) => col.width))
-      const nextNeedRenderLock = sumOfColWidth > domHelper.current.artTable.clientWidth
-      if (needRenderLock !== nextNeedRenderLock) {
-        setNeedRenderLock(nextNeedRenderLock)
-      }
-    } else if (needRenderLock) {
-      setNeedRenderLock(false)
-    }
-  }, [needRenderLock])
+  const didMountOrUpdate = useCallback(() => {
+    syncHorizontalScrollFromTableBody()
+    updateStickyScroll()
+    adjustNeedRenderLock()
+    updateRowHeightManager()
+    updateScrollLeftWhenLayoutChanged()
+  }, [])
 
   const updateScrollLeftWhenLayoutChanged = useCallback(
-    (prevProps?: Readonly<BaseTableProps>) => {
-      if (prevProps != null) {
-        if (!lastHasScroll.current && hasScroll) {
+    (prevProps?: Readonly<BaseTableProps>, prevState?: Readonly<BaseTableState>) => {
+      if (prevState != null) {
+        if (!prevState.hasScroll && hasScroll) {
           domHelper.current.stickyScroll.scrollLeft = 0
         }
       }
 
       if (prevProps != null) {
-        const prevHasFooter = prevProps.footerDataSource?.length > 0
+        const prevHasFooter = prevProps.footerDataSource.length > 0
         const currentHasFooter = footerDataSource.length > 0
         if (!prevHasFooter && currentHasFooter) {
           getTableScrollFooterDOM(domHelper.current).scrollLeft = domHelper.current.virtual.scrollLeft
         }
       }
     },
-    [footerDataSource.length, hasScroll]
-  )
-
-  const didMountOrUpdate = useCallback(
-    (prevProps?: Readonly<BaseTableProps>) => {
-      syncHorizontalScrollFromTableBody()
-      updateStickyScroll()
-      adjustNeedRenderLock()
-      updateRowHeightManager()
-      updateScrollLeftWhenLayoutChanged(prevProps)
-    },
-    [
-      adjustNeedRenderLock,
-      syncHorizontalScrollFromTableBody,
-      updateRowHeightManager,
-      updateScrollLeftWhenLayoutChanged,
-      updateStickyScroll,
-    ]
+    []
   )
 
   const initSubscriptions = useCallback(() => {
@@ -668,7 +525,7 @@ export const BaseTable = (props: BaseTableProps) => {
         props$.current.pipe(
           op.startWith(null),
           op.pairwise(),
-          op.filter(([prevProps, curProps]) => prevProps == null || (!prevProps.loading && curProps.loading))
+          op.filter(([prevProps, props]) => prevProps == null || (!prevProps.loading && props.loading))
         ),
       ]).subscribe(([clipRect]) => {
         const loadingIndicator = domHelper.current.getLoadingIndicator()
@@ -690,10 +547,10 @@ export const BaseTable = (props: BaseTableProps) => {
             const { horizontal, vertical } = lastInfo.current.useVirtual
             return horizontal || vertical
           }),
-          op.map(({ clipRect, offsetY: y }) => ({
+          op.map(({ clipRect, offsetY }) => ({
             maxRenderHeight: clipRect.bottom - clipRect.top,
             maxRenderWidth: clipRect.right - clipRect.left,
-            offsetY: y,
+            offsetY,
           })),
           op.distinctUntilChanged((x, y) => {
             // 如果表格区域被隐藏， 不需要触发组件重渲染
@@ -757,33 +614,73 @@ export const BaseTable = (props: BaseTableProps) => {
           scrollLoad?.callback(startIndex)
         })
     )
-  }, [
-    adjustNeedRenderLock,
-    dataSource.length,
-    offsetY,
-    scrollLoad,
-    setTableWidth,
-    syncHorizontalScroll,
-    updateStickyScroll,
-    virtualDebugLabel,
-  ])
+  }, [])
 
   /**
    * 更新 DOM 节点的引用，方便其他方法直接操作 DOM
    */
   const updateDOMHelper = useCallback(() => {
     domHelper.current = new TableDOMHelper(artTableWrapperRef.current, getTableClasses(namespace))
-  }, [namespace])
+  }, [])
+
+  const updateRowHeightManager = useCallback(() => {
+    const virtualTop = domHelper.current.getVirtualTop()
+    const virtualTopHeight = virtualTop?.clientHeight ?? 0
+
+    let maxTrRowIndex = -1
+    let maxTrBottom = -1
+    let zeroHeightRowCount = 0
+
+    for (const tr of domHelper.current.getTableRows()) {
+      const rowIndex = Number(tr.dataset.rowindex)
+      if (isNaN(rowIndex)) {
+        continue
+      }
+      maxTrRowIndex = Math.max(maxTrRowIndex, rowIndex)
+      const offset = tr.offsetTop + virtualTopHeight
+      const size = tr.offsetHeight
+      if (size === 0) {
+        zeroHeightRowCount += 1
+      } else {
+        // 渲染出来的行高度为0，说明是display=none情况，行高不存在该种异常情况，不保存当前的高度
+        rowHeightManager.current.updateRow(rowIndex, offset, size)
+      }
+      maxTrBottom = Math.max(maxTrBottom, offset + size)
+    }
+
+    // 当 estimatedRowHeight 过大时，可能出现「渲染行数过少，无法覆盖可视范围」的情况
+    // 出现这种情况时，我们判断「下一次渲染能够渲染更多行」是否满足，满足的话就直接调用 forceUpdate
+    // zeroHeightRowCount === 0 用于确保当前没有 display=none 的情况
+    if (maxTrRowIndex !== -1 && zeroHeightRowCount === 0) {
+      if (maxTrBottom < offsetY + maxRenderHeight) {
+        const vertical = getVerticalRenderRange(lastInfo.current.useVirtual)
+        if (vertical.bottomIndex - 1 > maxTrRowIndex) {
+          setForceUpdate((v) => !v)
+        }
+      }
+    }
+  }, [])
+
+  /**
+   * 计算表格所有列的渲染宽度之和，判断表格是否需要渲染锁列
+   */
+  const adjustNeedRenderLock = () => {
+    const { flat, hasLockColumn } = lastInfo.current
+
+    if (hasLockColumn) {
+      const sumOfColWidth = sum(flat.full.map((col) => col.width))
+      const nextNeedRenderLock = sumOfColWidth > domHelper.current.artTable.clientWidth
+      if (needRenderLock !== nextNeedRenderLock) {
+        setNeedRenderLock(nextNeedRenderLock)
+      }
+    } else if (needRenderLock) {
+      setNeedRenderLock(false)
+    }
+  }
 
   const info = useMemo(() => {
-    return calculateRenderInfo({
-      ...props,
-      offsetX,
-      maxRenderWidth,
-      getVerticalRenderRange,
-      useVirtual: props?.useVirtual ?? 'auto',
-    })
-  }, [getVerticalRenderRange, maxRenderWidth, offsetX, props])
+    return calculateRenderInfo({ ...props, offsetX, maxRenderWidth, getVerticalRenderRange })
+  }, [])
 
   const artTableWrapperClassName = useMemo(() => {
     return cx(
@@ -800,67 +697,38 @@ export const BaseTable = (props: BaseTableProps) => {
       },
       className
     )
-  }, [
-    bordered,
-    className,
-    contextValue.Classes?.artTableBordered,
-    contextValue.Classes?.hasFooter,
-    contextValue.Classes?.hasHeader,
-    contextValue.Classes?.iePolyfillWrapper,
-    contextValue.Classes?.lockWrapper,
-    contextValue.Classes?.outerBorder,
-    contextValue.Classes?.stickyFooter,
-    contextValue.Classes?.stickyHeader,
-    footerDataSource.length,
-    hasHeader,
-    info.hasLockColumn,
-    isStickyFooter,
-    isStickyHeader,
-    namespace,
-    useOuterBorder,
-  ])
+  }, [])
 
   useEffect(() => {
     lastInfo.current = info
   }, [info])
 
   useEffect(() => {
-    rootSubscription.current = new Subscription()
-    resizeSubject.current = new Subject()
-    updateDOMHelper()
-
-    props$.current = new BehaviorSubject(props)
-    initSubscriptions()
-    didMountOrUpdate()
-    // const { cssVariables, enableCSSVariables, bordered } = props
-    // cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
-    setTableWidth?.(domHelper.current.tableBody.clientWidth)
-    setTableDomHelper?.(domHelper.current)
-    setRowHeightManager?.(rowHeightManager)
+    // TODO 渲染异常, 部分样式未生成, 横向虚拟滚动失效
+    setContextValue({ namespace, Classes: getTableClasses(namespace) })
 
     return () => {
       resizeObserver.current?.disconnect()
       rootSubscription.current.unsubscribe()
       resizeSubject.current.unsubscribe()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // useEffect(() => {
-  //   // const { cssVariables, enableCSSVariables, bordered } = this.props
-  //   // if (!shallowEqual(prevProps?.cssVariables, this.props?.cssVariables)) {
-  //   //   cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
-  //   // }
-  //   updateDOMHelper()
-  //   props$.current.next(props)
-  //   didMountOrUpdate(props$.current.getValue())
-  // }, [didMountOrUpdate, props, updateDOMHelper])
-
   useEffect(() => {
-    updateDOMHelper()
-    props$.current.next(props)
-    didMountOrUpdate(props$.current.getValue())
-  })
+    if (Object.keys(contextValue.Classes)?.length > 0) {
+      rootSubscription.current = new Subscription()
+      resizeSubject.current = new Subject()
+      updateDOMHelper()
+      initSubscriptions()
+      didMountOrUpdate()
+      props$.current.next(props)
+      // const { cssVariables, enableCSSVariables, bordered } = this.props
+      // cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
+      setTableWidth?.(domHelper.current.tableBody.clientWidth)
+      setTableDomHelper?.(domHelper.current)
+      setRowHeightManager?.(rowHeightManager)
+    }
+  }, [])
 
   const artTableWrapperProps = {
     className: artTableWrapperClassName,
@@ -868,7 +736,7 @@ export const BaseTable = (props: BaseTableProps) => {
     [STYLED_REF_PROP]: artTableWrapperRef,
   }
 
-  const tableProps = getTableProps?.() || {}
+  const tableProps = getTableProps() || {}
 
   return (
     <StyledArtTableWrapper {...artTableWrapperProps}>
@@ -890,3 +758,4 @@ export const BaseTable = (props: BaseTableProps) => {
     </StyledArtTableWrapper>
   )
 }
+export default BaseTable

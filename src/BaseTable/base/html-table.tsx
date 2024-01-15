@@ -64,7 +64,7 @@ export function HtmlTable({
     const rowIndex = verInfo.offset + i
     spanManager.stripUpwards(rowIndex)
 
-    const rowProps = getRowProps(record, rowIndex)
+    const rowProps = getRowProps?.(record, rowIndex)
     const rowClass = cx(
       Classes?.tableRow,
       {

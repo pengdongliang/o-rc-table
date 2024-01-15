@@ -4,10 +4,11 @@ import {
   HorizontalRenderRange,
   RenderInfo,
   ResolvedUseVirtual,
+  VerticalRenderRange,
   VirtualEnum,
   VisibleColumnDescriptor,
 } from './interfaces'
-import { BaseTable } from './table'
+import { BaseTableProps } from './table'
 import { AUTO_VIRTUAL_THRESHOLD, OVERSCAN_SIZE, sum } from './utils'
 
 function resolveVirtualEnabled(virtualEnum: VirtualEnum, defaultValue: boolean) {
@@ -151,15 +152,22 @@ function getHorizontalRenderRange({
 
 // 表格本次渲染所需要的数据都给算出来
 // todo 可以考虑下将 header 部分的计算逻辑也放到这个文件中，目前应该有一些重复的计算逻辑
-export function calculateRenderInfo(table: BaseTable): RenderInfo {
-  const { offsetX, maxRenderWidth } = table.state
-
+export function calculateRenderInfo(
+  props: BaseTableProps & {
+    offsetX: number
+    maxRenderWidth: number
+    getVerticalRenderRange: (useVirtual: ResolvedUseVirtual) => VerticalRenderRange
+  }
+): RenderInfo {
   const {
+    offsetX,
+    maxRenderWidth,
+    getVerticalRenderRange,
     useVirtual: useVirtualProp,
     columns: columnsProp,
     dataSource: dataSourceProp,
     defaultColumnWidth,
-  } = table.props
+  } = props
 
   const columns = processColumns(columnsProp, defaultColumnWidth)
   const leftNestedLockCount = getLeftNestedLockCount(columns)
@@ -211,7 +219,7 @@ export function calculateRenderInfo(table: BaseTable): RenderInfo {
   }
 
   const horizontalRenderRange = getHorizontalRenderRange({ maxRenderWidth, offsetX, useVirtual, flat })
-  const verticalRenderRange = table.getVerticalRenderRange(useVirtual)
+  const verticalRenderRange = getVerticalRenderRange(useVirtual)
 
   const { leftBlank, leftIndex, rightBlank, rightIndex } = horizontalRenderRange
   const unfilteredVisibleColumnDescriptors: VisibleColumnDescriptor[] = [
