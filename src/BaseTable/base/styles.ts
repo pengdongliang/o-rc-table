@@ -23,7 +23,7 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     /** 单元格边框 */
     artTableBordered: `${prefix}-bordered`,
     /** 有表头 */
-    hasHeader: `${prefix}-has-header`,
+    showHeader: `${prefix}-has-header`,
     /** 具有sticky头部 */
     stickyHeader: `${prefix}-sticky-header`,
     /** 有表尾 */

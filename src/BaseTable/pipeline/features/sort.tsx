@@ -3,7 +3,7 @@ import cx from 'classnames'
 import React, { CSSProperties, ReactNode } from 'react'
 
 import { useBaseTableContext } from '../../base'
-import { ArtColumn, SortItem, SortOrder } from '../../interfaces'
+import { ColumnType, SortItem, SortOrder } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, console, isLeafNode, layeredSort, mergeCellProps, smartCompare } from '../../utils'
 import { TablePipeline } from '../pipeline'
@@ -70,7 +70,7 @@ function DefaultSortHeaderCell({ children, column, onToggle, sortOrder, sortInde
   )
 }
 
-function hasAnySortableColumns(cols: ArtColumn[]): boolean {
+function hasAnySortableColumns(cols: ColumnType[]): boolean {
   return cols.some(
     (col) => Boolean(col.features?.sortable) || (!isLeafNode(col) && hasAnySortableColumns(col.children))
   )
@@ -97,7 +97,7 @@ export interface SortHeaderCellProps {
   sortIndex: number
 
   /** 当前列的配置 */
-  column: ArtColumn
+  column: ColumnType
 
   /** 切换排序的回调 */
   onToggle(e: React.MouseEvent): void
@@ -250,10 +250,10 @@ export function sort(opts: SortFeatureOptions = {}) {
       }
     }
 
-    function processColumns(cols: ArtColumn[]) {
+    function processColumns(cols: ColumnType[]) {
       return cols.map(dfs)
 
-      function dfs(col: ArtColumn): ArtColumn {
+      function dfs(col: ColumnType): ColumnType {
         const result = { ...col }
 
         const sortable = col.dataIndex && (col.features?.sortable || sortMap.has(col.dataIndex))

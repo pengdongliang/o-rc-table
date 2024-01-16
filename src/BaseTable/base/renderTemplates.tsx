@@ -2,7 +2,7 @@ import cx from 'classnames'
 import React, { ReactNode, useEffect, useRef } from 'react'
 import ReactDom from 'react-dom'
 
-import { ArtColumn } from '../interfaces'
+import { ColumnType } from '../interfaces'
 import { browserType, getTreeDepth } from '../utils'
 import { BaseTableContextProps } from '.'
 import TableHeader from './header'
@@ -22,7 +22,7 @@ interface RowDetailOptions extends BaseTableContextProps {
 }
 
 function renderTableHeaderInIE(info: RenderInfo, props: BaseTableProps) {
-  const { stickyTop, hasHeader } = props
+  const { stickyTop, showHeader } = props
 
   const { flat, nested, visible, hasLockColumn, Classes } = info
   const { left, right } = flat
@@ -36,7 +36,7 @@ function renderTableHeaderInIE(info: RenderInfo, props: BaseTableProps) {
         className={cx(Classes?.tableHeaderMain, 'no-scrollbar')}
         style={{
           top: stickyTop === 0 ? undefined : stickyTop,
-          display: hasHeader ? undefined : 'none',
+          display: showHeader ? undefined : 'none',
         }}
       >
         <TableHeader info={info} theaderPosition={hasLockColumn ? 'center' : undefined} />
@@ -163,8 +163,8 @@ function renderTableBodyInIE(
               flat: {
                 center: left,
                 full: left,
-                left: [] as ArtColumn[],
-                right: [] as ArtColumn[],
+                left: [] as ColumnType[],
+                right: [] as ColumnType[],
               },
               visible: visible.slice(0, left.length),
             }}
@@ -190,8 +190,8 @@ function renderTableBodyInIE(
               flat: {
                 center: right,
                 full: right,
-                left: [] as ArtColumn[],
-                right: [] as ArtColumn[],
+                left: [] as ColumnType[],
+                right: [] as ColumnType[],
               },
               visible: visible.slice(visible.length - right.length),
             }}
@@ -251,8 +251,8 @@ function renderTableFooterInIE(
               flat: {
                 center: left,
                 full: left,
-                left: [] as ArtColumn[],
-                right: [] as ArtColumn[],
+                left: [] as ColumnType[],
+                right: [] as ColumnType[],
               },
               visible: visible.slice(0, left.length),
             }}
@@ -270,8 +270,8 @@ function renderTableFooterInIE(
               flat: {
                 center: right,
                 full: right,
-                left: [] as ArtColumn[],
-                right: [] as ArtColumn[],
+                left: [] as ColumnType[],
+                right: [] as ColumnType[],
               },
               visible: visible.slice(visible.length - right.length),
             }}

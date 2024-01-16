@@ -1,4 +1,4 @@
-import { ArtColumn, CellProps } from '../../interfaces'
+import { CellProps, ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, mergeCellProps, MULTI_SELECT_MARK_PROPNAME } from '../../utils'
 import { always, arrayUtils } from '../../utils/others'
@@ -33,7 +33,7 @@ export interface MultiSelectFeatureOptions {
   checkboxPlacement?: 'start' | 'end'
 
   /** 复选框所在列的 column 配置，可指定 width，fixed, title, align, features 等属性 */
-  checkboxColumn?: Partial<ArtColumn>
+  checkboxColumn?: Partial<ColumnType>
 
   /** 是否高亮被选中的行 */
   highlightRowWhenSelected?: boolean
@@ -114,7 +114,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
         />
       )
 
-      const checkboxColumn: ArtColumn = {
+      const checkboxColumn: ColumnType = {
         name: '是否选中',
         title: defaultCheckboxColumnTitle,
         width: 50,

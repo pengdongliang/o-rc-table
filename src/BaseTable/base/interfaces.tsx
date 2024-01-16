@@ -1,4 +1,4 @@
-import { ArtColumn } from '../interfaces'
+import { ColumnType } from '../interfaces'
 import { BaseTableContextProps } from '.'
 
 export type VirtualEnum = false | true | 'auto'
@@ -20,7 +20,7 @@ export interface HorizontalRenderRange {
 // VisibleColumnDescriptor 用于在表格内部描述「那些在页面中可见的列」
 export type VisibleColumnDescriptor =
   | { type: 'blank'; blankSide: 'left' | 'right'; width: number; isPlacehoder?: boolean }
-  | { type: 'normal'; colIndex: number; col: ArtColumn }
+  | { type: 'normal'; colIndex: number; col: ColumnType }
 
 export interface ResolvedUseVirtual {
   horizontal: boolean
@@ -33,8 +33,8 @@ export interface RenderInfo extends Partial<BaseTableContextProps> {
   horizontalRenderRange: HorizontalRenderRange
   visible: VisibleColumnDescriptor[]
 
-  flat: { full: ArtColumn[]; left: ArtColumn[]; center: ArtColumn[]; right: ArtColumn[] }
-  nested: { full: ArtColumn[]; left: ArtColumn[]; center: ArtColumn[]; right: ArtColumn[] }
+  flat: { full: ColumnType[]; left: ColumnType[]; center: ColumnType[]; right: ColumnType[] }
+  nested: { full: ColumnType[]; left: ColumnType[]; center: ColumnType[]; right: ColumnType[] }
   stickyLeftMap: Map<number, number>
   stickyRightMap: Map<number, number>
   useVirtual: ResolvedUseVirtual

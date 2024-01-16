@@ -3,7 +3,7 @@ import React from 'react'
 import { fromEvent } from 'rxjs'
 import { map, takeUntil } from 'rxjs/operators'
 
-import { ArtColumn, CellProps } from '../../interfaces'
+import { CellProps, ColumnType } from '../../interfaces'
 import { TablePipeline } from '../pipeline'
 
 interface RowDragEvent {
@@ -29,7 +29,7 @@ export interface RowDragFeatureOptions {
   isDisabled?: (row: any, rowIndex: number) => boolean
 
   /** 拖拽列定义 */
-  rowDragColumn?: ArtColumn
+  rowDragColumn?: ColumnType
 
   /** 行高 */
   rowHeight?: number
@@ -42,7 +42,7 @@ export const ROW_DRAG_COLUMN_CODE = '$_row_drag_column_&'
 export const rowDragKey = 'rowDragKey'
 const SCROLL_OFFSET = 30
 
-const defaultRowDragColumn = (pipeline: TablePipeline): ArtColumn => {
+const defaultRowDragColumn = (pipeline: TablePipeline): ColumnType => {
   return {
     name: '拖拽列',
     dataIndex: ROW_DRAG_COLUMN_CODE,
@@ -67,6 +67,7 @@ const defaultRowDragColumn = (pipeline: TablePipeline): ArtColumn => {
         >
           <path
             d="M298.688 192a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m298.624 0a64 64 0 1 0 128 0 64 64 0 0 0-128 0zM298.688 512a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m298.624 0a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m-298.624 320a64 64 0 1 0 128 0 64 64 0 0 0-128 0z m298.624 0a64 64 0 1 0 128 0 64 64 0 0 0-128 0z"
+            // eslint-disable-next-line react/no-unknown-property
             p-id="4278"
           />
         </svg>
@@ -192,8 +193,8 @@ export function rowDrag(opt: RowDragFeatureOptions) {
       )
 
       rowDrag$.subscribe({
-        next: ({ startRowInfo, endRowInfo, dragPosition }) => {
-          const dragMoveEvent = getDragEvent(startRowInfo, endRowInfo, { isFinished: false, dragPosition })
+        next: ({ startRowInfo: s, endRowInfo: e, dragPosition: d }) => {
+          const dragMoveEvent = getDragEvent(s, e, { isFinished: false, dragPosition: d })
           handleDragMove(dragMoveEvent)
         },
         complete() {
@@ -245,7 +246,7 @@ function getTargetRowInfo(
   while (target && tableBody.contains(target)) {
     if (target.getAttribute('data-role') === 'table-cell') {
       const dataIndex = target.getAttribute('data-index')
-      const rowIndex = parseInt(target.getAttribute('data-rowindex'))
+      const rowIndex = parseInt(target.getAttribute('data-rowindex'), 10)
       const row = record[rowIndex]
       const isFooterCell = isEleInFooter(target, pipeline)
 

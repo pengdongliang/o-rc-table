@@ -1,9 +1,9 @@
-import { ArtColumn } from '../interfaces'
+import { ColumnType } from '../interfaces'
 
 export const MULTI_SELECT_MARK_PROPNAME = 'checkboxSelection'
 export const SINGLE_SELECT_MARK_PROPNAME = 'radioSelection'
 
-export function isSelectColumn(column: ArtColumn): boolean {
+export function isSelectColumn(column: ColumnType): boolean {
   const features = column.features || {}
   return features[MULTI_SELECT_MARK_PROPNAME] === true || features[SINGLE_SELECT_MARK_PROPNAME] === true
 }

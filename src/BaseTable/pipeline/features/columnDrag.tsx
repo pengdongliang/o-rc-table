@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { ArtColumn, CellProps } from '../../interfaces'
+import { ColumnType, CellProps } from '../../interfaces'
 import { collectNodes, isLeafNode, isSelectColumn, makeRecursiveMapper, mergeCellProps } from '../../utils'
 import { TablePipeline } from '../pipeline'
 import { FILL_COLUMN_CODE } from './autoFill'
@@ -11,7 +11,7 @@ function disableSelect(event) {
   event.preventDefault()
 }
 export interface ColumnDragOptions {
-  onColumnDragStopped?: (columnMoved: boolean, columns: ArtColumn[]) => void
+  onColumnDragStopped?: (columnMoved: boolean, columns: ColumnType[]) => void
 }
 
 function sortColumns(columns: any[], sort: any) {
@@ -299,7 +299,7 @@ function enableMove({ fixed, dataIndex }) {
   return dataIndex && dataIndex !== FILL_COLUMN_CODE && !fixed
 }
 
-function getColumnWidth(col: ArtColumn): number {
+function getColumnWidth(col: ColumnType): number {
   if (col.children) {
     return col.children.reduce((acc, col) => {
       return acc + getColumnWidth(col)
@@ -308,7 +308,7 @@ function getColumnWidth(col: ArtColumn): number {
   return col.width
 }
 
-function moveAllChildren(cols: ArtColumn[], cloumnsTranslateData, width: number, isMinus?: boolean) {
+function moveAllChildren(cols: ColumnType[], cloumnsTranslateData, width: number, isMinus?: boolean) {
   cols.forEach((col) => {
     const { dataIndex, children } = col
     const movedWidth = cloumnsTranslateData[dataIndex] ?? 0

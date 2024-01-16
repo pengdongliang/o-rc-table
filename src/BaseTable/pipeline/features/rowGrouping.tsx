@@ -2,7 +2,7 @@ import cx from 'classnames'
 import React from 'react'
 
 import { ExpansionCell, icons, InlineFlexCell } from '../../common-views'
-import { ArtColumn } from '../../interfaces'
+import { ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, isLeafNode, mergeCellProps } from '../../utils'
 import { flatMap } from '../../utils/others'
@@ -86,7 +86,7 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
       })
     }
 
-    function processColumns(columns: ArtColumn[]) {
+    function processColumns(columns: ColumnType[]) {
       if (columns.length === 0) {
         return columns
       }

@@ -2,7 +2,7 @@ import cx from 'classnames'
 import React from 'react'
 
 import { ExpansionCell, icons, InlineFlexCell } from '../../common-views'
-import { ArtColumn } from '../../interfaces'
+import { ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
 import { isLeafNode as standardIsLeafNode, mergeCellProps } from '../../utils'
 import { TablePipeline } from '../pipeline'
@@ -117,7 +117,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
       return result
     }
 
-    function processColumns(columns: ArtColumn[]) {
+    function processColumns(columns: ColumnType[]) {
       if (columns.length === 0) {
         return columns
       }

@@ -193,12 +193,12 @@ export default () => {
 | 属性                 | 说明                    | 类型            | 默认值          | 可选值                   | 版本 |
 |--------------------|-----------------------|---------------|--------------|-----------------------|----|
 | useOuterBorder     | 是否带边框                 | boolean       | `true`       | `true` `false`        | -  |
-| columns            | 表格列的配置描述，具体项见下表       | ArtColumn[]1  | -            | -                     | -  |
+| columns            | 表格列的配置描述，具体项见下表       | ColumnType[]1  | -            | -                     | -  |
 | dataSource         | 数据数组                  | any[]         | -            | -                     | -  |
 | loading            | 表格是否在加载中              | boolean       | `false`      | `true` `false`        | -  |
 | style              | 自定义内联样式               | CSSProperties | `-`          | `-`                   | -  |
 | rowKey             | 主键                    | string        | -            | -                     | -  |
-| hasHeader          | 表格是否具有头部              | boolean       | `true`       | `true` `false`        | -  |
+| showHeader          | 表格是否具有头部              | boolean       | `true`       | `true` `false`        | -  |
 | emptyCellHeight    | 数据为空时，单元格的高度          | number        | -            | -                     | -  |
 | useVirtual         | 是否开启虚拟滚动              | boolean auto  | `auto`       | `true` `false` `auto` | -  |
 | estimatedRowHeight | 虚拟滚动开启情况下，表格中每一行的预估高度 | number        | `48`         | -                     | -  |
@@ -362,7 +362,7 @@ interface SortHeaderCellProps {
   sortIndex: number
 
   /** 当前列的配置 */
-  column: ArtColumn
+  column: ColumnType
 
   /** 切换排序的回调 */
   onToggle(): void
@@ -433,7 +433,7 @@ interface SortHeaderCellProps {
 | onDragMove    | 拖拽过程回调函数   | (event:RowDragEvent):void             | `-`  | `-` | -  |
 | onDragEnd     | 拖拽结束回调函数   | (event:RowDragEvent):void             | `-`  | `-` | -  |
 | isDisabled    | 判断某行拖拽是否禁用 | (row: any, rowIndex: number): boolean | `-`  | `-` | -  |
-| rowDragColumn | 拖拽列定义      | ArtColumn                             | `-`  | `-` | -  |
+| rowDragColumn | 拖拽列定义      | ColumnType                             | `-`  | `-` | -  |
 | rowHeight     | 行高         | number                                | `48` | `-` | -  |
 
 <br/>

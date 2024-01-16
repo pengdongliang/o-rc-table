@@ -1,5 +1,5 @@
 import { getLeftNestedLockCount } from '../../base/calculations'
-import { ArtColumn } from '../../interfaces'
+import { ColumnType } from '../../interfaces'
 import { isLeafNode, makeRecursiveMapper } from '../../utils'
 import { TablePipeline } from '../pipeline'
 import { COLUMN_SIZE_KEY, LAST_RESIZED_COLUMN_KEY, RESIZED_COLUMN_KEY } from './columnResizeWidth'
@@ -83,7 +83,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
     const result = new Map([[FLEX_COLUMN_COUNT, 0]])
     dfs(findPipeline.getColumns(), result)
     return result
-    function dfs(columns: ArtColumn[], newResult: Map<any, any>) {
+    function dfs(columns: ColumnType[], newResult: Map<any, any>) {
       columns.forEach((col) => {
         if (isLeafNode(col)) {
           if (isValidFlexColumn(col, findPipeline)) {
@@ -99,7 +99,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
 
 function getColumnWidthSum(pipeline: TablePipeline) {
   return dfs(pipeline.getColumns())
-  function dfs(columns: ArtColumn[]) {
+  function dfs(columns: ColumnType[]) {
     return columns.reduce((acc, col) => {
       const { width, dataIndex } = col
       if (isLeafNode(col) && dataIndex !== FILL_COLUMN_CODE) {
@@ -118,7 +118,7 @@ function getTableRemainingWidth(pipeline: TablePipeline) {
   return remainingWidth > 0 ? remainingWidth : 0
 }
 
-function isAfterLastResizeCol(column: ArtColumn, pipeline: TablePipeline) {
+function isAfterLastResizeCol(column: ColumnType, pipeline: TablePipeline) {
   const lastResizedColumnCode = pipeline.getFeatureOptions(LAST_RESIZED_COLUMN_KEY)
   if (lastResizedColumnCode === undefined) return true
   const lastResizedColumnIndex = pipeline.getColumns().findIndex((col) => col.dataIndex === lastResizedColumnCode)
@@ -126,7 +126,7 @@ function isAfterLastResizeCol(column: ArtColumn, pipeline: TablePipeline) {
   return colIndex > lastResizedColumnIndex
 }
 
-function isValidFlexColumn(col: ArtColumn, pipeline: TablePipeline) {
+function isValidFlexColumn(col: ColumnType, pipeline: TablePipeline) {
   const resizeColumn = pipeline.getFeatureOptions(RESIZED_COLUMN_KEY)
   // 拖拽列自动禁止flex
   if (resizeColumn?.has(col.dataIndex)) {

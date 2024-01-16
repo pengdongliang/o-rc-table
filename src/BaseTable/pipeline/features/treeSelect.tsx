@@ -1,4 +1,4 @@
-import { ArtColumn, CellProps } from '../../interfaces'
+import { CellProps, ColumnType } from '../../interfaces'
 import { always } from '../../utils/others'
 import StrictTreeDataHelper from '../../utils/tree-data-helpers/StrictTreeDataHelper'
 import TreeDataHelper from '../../utils/tree-data-helpers/TreeDataHelper'
@@ -26,7 +26,7 @@ export interface TreeSelectFeatureOptions {
   checkboxPlacement?: 'start' | 'end'
 
   /** 复选框所在列的 column 配置，可指定 width，fixed, title, align, features 等属性 */
-  checkboxColumn?: Partial<ArtColumn>
+  checkboxColumn?: Partial<ColumnType>
 
   /** 受控用法：当前选中的值 */
   value?: string[]
@@ -100,7 +100,7 @@ export function treeSelect(opts: TreeSelectFeatureOptions) {
       )
     }
 
-    const checkboxColumn: ArtColumn = {
+    const checkboxColumn: ColumnType = {
       name: '',
       width: 50,
       align: 'center',

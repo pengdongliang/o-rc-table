@@ -3,7 +3,7 @@ import { BaseTableContextProps, useBaseTableContext } from 'o-rc-table'
 import type { CSSProperties } from 'react'
 import React, { ReactNode } from 'react'
 
-import { ArtColumn } from '../interfaces'
+import { ColumnType } from '../interfaces'
 import { internals } from '../internals'
 import { Colgroup } from './colgroup'
 import SpanManager from './helpers/SpanManager'
@@ -113,7 +113,7 @@ export function HtmlTable({
   function renderBodyCell(
     record: any,
     rowIndex: number,
-    column: ArtColumn,
+    column: ColumnType,
     colIndex: number,
     Classes: BaseTableContextProps['Classes']
   ) {

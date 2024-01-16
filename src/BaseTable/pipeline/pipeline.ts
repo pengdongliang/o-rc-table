@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 
 import { BaseTableContextProps, RowKey, TableProps, useBaseTableContext } from '../base'
-import { ArtColumn, TableTransform, Transform } from '../interfaces'
+import { ColumnType, TableTransform, Transform } from '../interfaces'
 import { mergeCellProps } from '../utils'
 import { autoFillTableWidth, tableWidthKey } from './features/autoFill'
 
@@ -10,18 +10,18 @@ type RowPropsGetter = TableProps['getRowProps']
 type InputType<RecordType = Record<string, any>> =
   | {
       dataSource: RecordType[]
-      columns: ArtColumn[]
+      columns: ColumnType[]
       tableContext?: BaseTableContextProps
     }
   | {
       dataSource?: RecordType[]
-      columns?: ArtColumn[]
+      columns?: ColumnType[]
       tableContext: BaseTableContextProps
     }
 
 interface PipelineSnapshot {
   dataSource: any[]
-  columns: ArtColumn[]
+  columns: ColumnType[]
   rowPropsGetters: RowPropsGetter[]
   tableContext: BaseTableContextProps
 }
@@ -201,7 +201,7 @@ export class TablePipeline<RecordType = unknown> {
   /**
    * 设置 columns
    */
-  columns(cols: ArtColumn[]) {
+  columns(cols: ColumnType[]) {
     this._columns = cols
     return this
   }
@@ -264,7 +264,7 @@ export class TablePipeline<RecordType = unknown> {
   /**
    * 转换 columns
    */
-  mapColumns(mapper: Transform<ArtColumn[]>) {
+  mapColumns(mapper: Transform<ColumnType[]>) {
     return this.columns(mapper(this.getColumns()))
   }
 

@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 
 import getTableRenderTemplate from '../../base/renderTemplates'
 import { ExpansionCell, icons, InlineFlexCell } from '../../common-views'
-import { ArtColumn } from '../../interfaces'
+import { ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, mergeCellProps } from '../../utils'
 import console from '../../utils/console'
@@ -127,7 +127,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
         }
       })
 
-    function processColumns(columns: ArtColumn[]) {
+    function processColumns(columns: ColumnType[]) {
       if (columns.length === 0) {
         return columns
       }

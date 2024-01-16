@@ -1,19 +1,20 @@
 import React from 'react'
 
-import { ArtColumn } from './interfaces'
+import type { BaseTableProps } from './base/table'
+import type { ColumnType } from './interfaces'
 
-function safeRenderHeader(column: ArtColumn) {
+function safeRenderHeader(column: ColumnType) {
   return column.title ?? column.name
 }
 
-function safeGetValue(column: ArtColumn, record: any, rowIndex: number) {
+function safeGetValue(column: ColumnType, record: any, rowIndex: number) {
   if (column.getValue) {
     return column.getValue(record, rowIndex)
   }
   return record[column.dataIndex]
 }
 
-function safeGetRowKey(rowKey: string | ((data: any) => React.Key), record: any, rowIndex: number): React.Key {
+function safeGetRowKey(rowKey: BaseTableProps['rowKey'], record: any, rowIndex: number): React.Key {
   let key: React.Key
   if (typeof rowKey === 'string') {
     key = record[rowKey]
@@ -26,7 +27,7 @@ function safeGetRowKey(rowKey: string | ((data: any) => React.Key), record: any,
   return key
 }
 
-function safeGetCellProps(column: ArtColumn, record: any, rowIndex: number) {
+function safeGetCellProps(column: ColumnType, record: any, rowIndex: number) {
   if (column.getCellProps) {
     const value = safeGetValue(column, record, rowIndex)
     return column.getCellProps(value, record, rowIndex) || {}
@@ -34,7 +35,7 @@ function safeGetCellProps(column: ArtColumn, record: any, rowIndex: number) {
   return {}
 }
 
-function safeRender(column: ArtColumn, record: any, rowIndex: number) {
+function safeRender(column: ColumnType, record: any, rowIndex: number) {
   const value = safeGetValue(column, record, rowIndex)
   if (column.render) {
     return column.render(value, record, rowIndex)

@@ -17,7 +17,7 @@ import React, {
 import { BehaviorSubject, combineLatest, from, noop, Subject, Subscription } from 'rxjs'
 import * as op from 'rxjs/operators'
 
-import type { ArtColumn } from '../interfaces'
+import type { ColumnType } from '../interfaces'
 import { browserType } from '../utils'
 import { calculateRenderInfo } from './calculations'
 import type { BaseTableContextProps } from './context'
@@ -45,7 +45,7 @@ import {
 
 export type RowKey<RecordType = unknown> = string | keyof RecordType | ((record: RecordType) => React.Key)
 
-export interface BaseTableProps<RecordType = Record<string, any>> {
+export interface BaseTableProps<RecordType = any> {
   /** 主键 */
   rowKey?: RowKey<RecordType>
   /** 表格展示的数据源 */
@@ -53,7 +53,7 @@ export interface BaseTableProps<RecordType = Record<string, any>> {
   /** 表格页脚数据源 */
   footerDataSource?: any[]
   /** 表格的列配置 */
-  columns: ArtColumn<RecordType>[]
+  columns: ColumnType<RecordType>[]
   /**
    * @description 命名空间
    * @default o-rc-table
@@ -77,7 +77,7 @@ export interface BaseTableProps<RecordType = Record<string, any>> {
   /** 自定义内联样式 */
   style?: CSSProperties & BaseTableCSSVariables
   /** 表格是否具有头部 */
-  hasHeader?: boolean
+  showHeader?: boolean
   /** 表格是否具有横向的粘性滚动条 */
   hasStickyScroll?: boolean
   /** 横向粘性滚动条高度 */
@@ -146,7 +146,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     setRowHeightManager,
     stickyScrollHeight = 'auto',
     stickyTop = 0,
-    hasHeader = true,
+    showHeader = true,
     estimatedRowHeight = 48,
     dataSource = [],
     scrollLoad,
@@ -253,7 +253,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
           className={cx(contextValue.Classes?.tableHeader, contextValue.Classes?.tableHeaderNoScrollbar)}
           style={{
             top: stickyTop === 0 ? undefined : stickyTop,
-            display: hasHeader ? undefined : 'none',
+            display: showHeader ? undefined : 'none',
           }}
         >
           <TableHeader info={info} />
@@ -269,7 +269,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       contextValue.Classes?.tableHeaderNoScrollbar,
       contextValue.Classes?.verticalScrollPlaceholder,
       getScrollBarWidth,
-      hasHeader,
+      showHeader,
       hasScrollY,
       props,
       stickyTop,
@@ -807,7 +807,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       {
         [contextValue.Classes?.outerBorder]: useOuterBorder,
         [contextValue.Classes?.lockWrapper]: info.hasLockColumn,
-        [contextValue.Classes?.hasHeader]: hasHeader,
+        [contextValue.Classes?.showHeader]: showHeader,
         [contextValue.Classes?.stickyHeader]: isStickyHeader,
         [contextValue.Classes?.hasFooter]: footerDataSource.length > 0,
         [contextValue.Classes?.stickyFooter]: isStickyFooter,
@@ -821,14 +821,14 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     className,
     contextValue.Classes?.artTableBordered,
     contextValue.Classes?.hasFooter,
-    contextValue.Classes?.hasHeader,
+    contextValue.Classes?.showHeader,
     contextValue.Classes?.iePolyfillWrapper,
     contextValue.Classes?.lockWrapper,
     contextValue.Classes?.outerBorder,
     contextValue.Classes?.stickyFooter,
     contextValue.Classes?.stickyHeader,
     footerDataSource.length,
-    hasHeader,
+    showHeader,
     info.hasLockColumn,
     isStickyFooter,
     isStickyHeader,

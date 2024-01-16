@@ -71,9 +71,9 @@ export interface ArtColumnDynamicPart<RecordType = unknown> {
   getSpanRect?(value: any, row: RecordType, rowIndex: number): SpanRect
 }
 
-export interface ArtColumn<RecordType = unknown> extends ArtColumnStaticPart, ArtColumnDynamicPart<RecordType> {
+export interface ColumnType<RecordType = unknown> extends ArtColumnStaticPart, ArtColumnDynamicPart<RecordType> {
   /** 该列的子节点 */
-  children?: ArtColumn<RecordType>[]
+  children?: ColumnType<RecordType>[]
 }
 
 /** SpanRect 用于描述合并单元格的边界
@@ -103,7 +103,7 @@ export type Filters = FilterItem[]
 export type Transform<T> = (input: T) => T
 
 export type TableTransform = Transform<{
-  columns: ArtColumn[]
+  columns: ColumnType[]
   dataSource: any[]
 }>
 

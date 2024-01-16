@@ -2,7 +2,7 @@ import cx from 'classnames'
 import { useBaseTableContext } from 'o-rc-table'
 import type { CSSProperties } from 'react'
 
-import type { ArtColumn } from '../interfaces'
+import type { ColumnType } from '../interfaces'
 import { getTreeDepth, isLeafNode } from '../utils'
 import { HorizontalRenderRange, RenderInfo } from './interfaces'
 
@@ -18,7 +18,7 @@ type ColWithRenderInfo =
   | {
       type: 'normal'
       colIndex: number
-      col: ArtColumn
+      col: ColumnType
       colSpan: number
       isLeaf: boolean
       width: number
@@ -27,15 +27,15 @@ type ColWithRenderInfo =
 
 type IndexedCol = {
   colIndex: number
-  col: ArtColumn
+  col: ColumnType
   children?: IndexedCol[]
 }
 
 /** 根据当前横向虚拟滚动 对 nested.center 进行过滤，结果只保留当前视野内可见的那些列配置 */
-function filterNestedCenter(centerNested: ArtColumn[], hoz: HorizontalRenderRange, leftFlatCount: number) {
+function filterNestedCenter(centerNested: ColumnType[], hoz: HorizontalRenderRange, leftFlatCount: number) {
   return dfs(centerNested, leftFlatCount).filtered
 
-  function dfs(cols: ArtColumn[], startColIndex: number) {
+  function dfs(cols: ColumnType[], startColIndex: number) {
     let leafCount = 0
 
     const filtered: IndexedCol[] = []
@@ -110,10 +110,10 @@ function calculateLeveledAndFlat(inputNested: IndexedCol[], rowCount: number) {
 }
 
 /** 包装列配置，附加上 colIndex 属性 */
-function attachColIndex(inputNested: ArtColumn[], colIndexOffset: number) {
+function attachColIndex(inputNested: ColumnType[], colIndexOffset: number) {
   return dfs(inputNested, colIndexOffset).result
 
-  function dfs(input: ArtColumn[], startColIndex: number) {
+  function dfs(input: ColumnType[], startColIndex: number) {
     const result: IndexedCol[] = []
 
     let leafCount = 0

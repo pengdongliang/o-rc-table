@@ -57,7 +57,7 @@ const statisticToken = <T extends AnyObject>(token: T) => {
     proxy = new Proxy(token, {
       get(obj: any, prop: any) {
         if (recording) {
-          tokenKeys!.add(prop)
+          tokenKeys?.add(prop)
         }
         return obj[prop]
       },
@@ -65,7 +65,7 @@ const statisticToken = <T extends AnyObject>(token: T) => {
 
     flush = (componentName, componentToken) => {
       statistic[componentName] = {
-        global: Array.from(tokenKeys!),
+        global: Array.from(tokenKeys),
         component: {
           ...statistic[componentName]?.component,
           ...componentToken,

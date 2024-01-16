@@ -3,7 +3,7 @@ import React from 'react'
 import { fromEvent } from 'rxjs'
 import { map, takeUntil } from 'rxjs/operators'
 
-import { ArtColumn, CellProps } from '../../interfaces'
+import { CellProps, ColumnType } from '../../interfaces'
 import { collectNodes, isElementInEventPath, makeRecursiveMapper, mergeCellProps } from '../../utils'
 import { findByTree } from '../../utils/others'
 import { TablePipeline } from '../pipeline'
@@ -21,7 +21,7 @@ interface DragCell {
   rowIndex: number
   rowSpan: number
   dataIndex: string
-  column: ArtColumn
+  column: ColumnType
   isFooterCell: boolean
 }
 
@@ -33,8 +33,8 @@ interface FooterRowRange {
 interface CellRange {
   startRow: number
   endRow: number
-  columns: ArtColumn[]
-  startColumn: ArtColumn
+  columns: ColumnType[]
+  startColumn: ColumnType
   footerRowRange: FooterRowRange | null
 }
 export const rangeSelectionKey = 'rangeSelection'
@@ -54,12 +54,12 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
 
     const columns = pipeline.getColumns()
     const dataSource = pipeline.getDataSource()
-    const rangeSelectedChange = (rangeSelection: CellRange[], isFinished: boolean) => {
+    const rangeSelectedChange = (range: CellRange[], isFinished: boolean) => {
       if (isFinished) {
-        pipeline.setFeatureOptions(startSelectedCellRangesKey, rangeSelection)
+        pipeline.setFeatureOptions(startSelectedCellRangesKey, range)
       }
-      pipeline.setStateAtKey(rangeSelectionKey, rangeSelection)
-      opts?.rangeSelectedChange?.(rangeSelection, isFinished)
+      pipeline.setStateAtKey(rangeSelectionKey, range)
+      opts?.rangeSelectedChange?.(range, isFinished)
     }
 
     const setRangeSelection = (startDragCell: DragCell, draggingCell: DragCell, isFinished: boolean) => {
@@ -177,8 +177,8 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
 
       const rangeSelected$ = mousemove$.pipe(
         map((mouseMoveEvent: MouseEvent) => {
-          const target = mouseMoveEvent.target || mouseMoveEvent.srcElement
-          draggingCell = getTargetCell(target, columns, pipeline)
+          const tar = mouseMoveEvent.target || mouseMoveEvent.srcElement
+          draggingCell = getTargetCell(tar, columns, pipeline)
           const client = {
             clientX: mouseMoveEvent.clientX,
             clientY: mouseMoveEvent.clientY,
@@ -196,8 +196,8 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
       )
 
       rangeSelected$.subscribe({
-        next: ({ startDragCell, draggingCell }) => {
-          setRangeSelection(startDragCell, draggingCell, false)
+        next: ({ startDragCell: c, draggingCell: d }) => {
+          setRangeSelection(c, d, false)
         },
         complete() {
           setRangeSelection(startDragCell, draggingCell, true)
@@ -262,15 +262,15 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
   }
 }
 
-function getTargetCell(target: any, columns: ArtColumn[], pipeline: TablePipeline): DragCell {
+function getTargetCell(target: any, columns: ColumnType[], pipeline: TablePipeline): DragCell {
   while (target) {
     if (target.getAttribute('data-role') === 'table-cell') {
       const columnCode = target.getAttribute('data-index')
       const column = findByTree(columns, (item) => item.dataIndex === columnCode)
       if (!column) return null
       return {
-        rowIndex: parseInt(target.getAttribute('data-rowindex')),
-        rowSpan: parseInt(target.getAttribute('rowspan') || 1),
+        rowIndex: parseInt(target.getAttribute('data-rowindex'), 10),
+        rowSpan: parseInt(target.getAttribute('rowspan') || 1, 10),
         dataIndex: columnCode,
         column,
         isFooterCell: isEleInFooter(target, pipeline),
@@ -302,7 +302,7 @@ function isEleInFooter(
   return false
 }
 
-function getRangeColumns(startCell: DragCell, endCell: DragCell, columns: ArtColumn[]) {
+function getRangeColumns(startCell: DragCell, endCell: DragCell, columns: ColumnType[]) {
   const flatColumns = collectNodes(columns, 'leaf-only')
   const startIndex = flatColumns.findIndex((col) => col.dataIndex === startCell.dataIndex)
   const endIndex = flatColumns.findIndex((col) => col.dataIndex === endCell.dataIndex)
@@ -329,6 +329,7 @@ function getRangeSelectionRowInfo(startCell: DragCell, endCell: DragCell, dataSo
     }
   } else {
     // 一个单元格在表体，一个在表底
+    // eslint-disable-next-line no-lonely-if
     if (startCell.isFooterCell) {
       startRow = dataSource.length - 1
       endRow = endCell.rowIndex
@@ -417,7 +418,7 @@ function getElementEditable(target: any) {
 function isCellInRange(
   cellRange: { startRow: any; endRow: any; columns: any; footerRowRange: any },
   rowIndex: number,
-  col: ArtColumn,
+  col: ColumnType,
   isFooterCell: any
 ) {
   const { startRow, endRow, columns, footerRowRange } = cellRange
@@ -495,10 +496,10 @@ function getMatchBorderStyle(cellRanges: any, { isFooterCell, rowIndex, col }) {
       const matchCellRangeRight = col.dataIndex === endCol.dataIndex
 
       // 如果样式已经匹配上了，就不需要再取计算的样式
-      obj.matchCellRangeTop = obj.matchCellRangeTop || matchCellRangeTop
-      obj.matchCellRangeLeft = obj.matchCellRangeLeft || matchCellRangeLeft
-      obj.matchCellRangeBottom = obj.matchCellRangeBottom || matchCellRangeBottom
-      obj.matchCellRangeRight = obj.matchCellRangeRight || matchCellRangeRight
+      obj.matchCellRangeTop ||= matchCellRangeTop
+      obj.matchCellRangeLeft ||= matchCellRangeLeft
+      obj.matchCellRangeBottom ||= matchCellRangeBottom
+      obj.matchCellRangeRight ||= matchCellRangeRight
 
       return obj
     },

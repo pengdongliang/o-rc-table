@@ -4,7 +4,7 @@ import { fromEvent } from 'rxjs'
 import * as op from 'rxjs/operators'
 import styled from '@emotion/styled'
 
-import { ArtColumn } from '../../interfaces'
+import { ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, isGroupColumn, makeRecursiveMapper, mergeCellProps } from '../../utils'
 import { TablePipeline } from '../pipeline'
@@ -58,7 +58,7 @@ export interface ColumnResizeOptions {
   /** 列的最大宽度，默认为 1000 */
   maxSize?: number
 
-  doubleClickCallback?(e: React.MouseEvent<HTMLSpanElement>, col: ArtColumn): void
+  doubleClickCallback?(e: React.MouseEvent<HTMLSpanElement>, col: ColumnType): void
 
   onChangeSize?(nextSize: ColumnSize): void
   afterChangeSize?(nextSize: ColumnSize, changedColumnSize: ChangedColumnSize[]): void
@@ -105,11 +105,11 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
       })
     }
 
-    const handleDoubleClick = (e: React.MouseEvent<HTMLSpanElement>, col: ArtColumn) => {
+    const handleDoubleClick = (e: React.MouseEvent<HTMLSpanElement>, col: ColumnType) => {
       opts.doubleClickCallback?.(e, col)
     }
 
-    const handleMouseDown = (e: React.MouseEvent<HTMLSpanElement>, col: ArtColumn) => {
+    const handleMouseDown = (e: React.MouseEvent<HTMLSpanElement>, col: ColumnType) => {
       window.addEventListener('selectstart', disableSelect)
       const changedColumnSize = {}
       const startX = e.clientX

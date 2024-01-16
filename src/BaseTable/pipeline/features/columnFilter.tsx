@@ -2,7 +2,7 @@
 import cx from 'classnames'
 import React, { ReactNode } from 'react'
 
-import { AbstractTreeNode, ArtColumn, FilterItem, FilterPanel, Filters } from '../../interfaces'
+import { AbstractTreeNode, ColumnType, FilterItem, FilterPanel, Filters } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, isLeafNode } from '../../utils'
 import { TablePipeline } from '../pipeline'
@@ -64,10 +64,10 @@ export function filter(opts: FilterFeatureOptions = {}) {
     const inputFiltersMap = new Map(inputFilters.map((filterItem) => [filterItem.dataIndex, { ...filterItem }]))
     const { localeText } = pipeline.ctx
 
-    function processColumns(columns: ArtColumn[]) {
+    function processColumns(columns: ColumnType[]) {
       return columns.map(dfs)
 
-      function dfs(col: ArtColumn): ArtColumn {
+      function dfs(col: ColumnType): ColumnType {
         const result = { ...col }
 
         const filterable = col.dataIndex && col.features?.filterable

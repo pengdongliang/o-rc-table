@@ -1,3 +1,5 @@
+import type { PaginationProps } from 'antd'
+
 export interface TableLocale {
   filterTitle?: string
   filterConfirm?: React.ReactNode
@@ -16,4 +18,17 @@ export interface TableLocale {
   triggerDesc?: string
   triggerAsc?: string
   cancelSort?: string
+}
+
+type TablePaginationPosition =
+  | 'topLeft'
+  | 'topCenter'
+  | 'topRight'
+  | 'bottomLeft'
+  | 'bottomCenter'
+  | 'bottomRight'
+  | 'none'
+
+export interface TablePaginationConfig extends PaginationProps {
+  position?: TablePaginationPosition[]
 }

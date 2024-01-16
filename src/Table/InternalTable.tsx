@@ -6,19 +6,17 @@ import type { BaseTableProps } from 'o-rc-table/base/table'
 import * as React from 'react'
 
 import useCSSVarCls from '../ConfigProvider/hooks/useCSSVarCls'
-import { AnyObject } from '../theme/interface'
+import type { AnyObject } from '../theme/interface'
 import RcTable from './RcTable'
 import useStyle from './style'
 
 export type TableRef = ReturnType<typeof useTablePipeline>
 
-export interface TableProps<RecordType> extends Omit<BaseTableProps, 'loading'> {
+export interface TableProps<RecordType = any> extends Omit<BaseTableProps<RecordType>, 'loading'> {
   prefixCls?: string
   className?: string
   style?: React.CSSProperties
   loading?: boolean | SpinProps
-  // TODO 临时使用, 后续删除
-  TEST?: RecordType
 }
 
 /** Same as `TableProps` but we need record parent render times */
@@ -55,7 +53,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
 
   const wrapperClassNames = classNames(cssVarCls, rootCls, `${prefixCls}-wrapper`, className, hashId)
 
-  const pipeline = useTablePipeline().input({ dataSource, columns })
+  const pipeline = useTablePipeline<RecordType>().input({ dataSource, columns })
 
   React.useImperativeHandle(ref, () => pipeline)
 

@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import cx from 'classnames'
 import { CSSProperties, ReactNode } from 'react'
 
-import { ArtColumn } from '../../interfaces'
+import { ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
 import { makeRecursiveMapper } from '../../utils'
 import { TablePipeline } from '../pipeline'
@@ -41,16 +41,16 @@ export const colGroupExtendable =
   (pipeline: TablePipeline) => {
     const newColumns = pipeline.getColumns()
     const curState = opts.extendStatus ?? pipeline.getStateAtKey(stateKey) ?? {}
-    const processColumns = (columns: ArtColumn[]) => {
+    const processColumns = (columns: ColumnType[]) => {
       // 当组合列可伸缩，且处于收缩状态时，只渲染一个子列，其他不渲染
-      const toggle = (col: ArtColumn) => {
+      const toggle = (col: ColumnType) => {
         // 对应的 col 进行状态切换
         const changedValue = { [col.dataIndex]: !curState[col.dataIndex] }
         curState[col.dataIndex] = !curState[col.dataIndex]
         pipeline.setStateAtKey(stateKey, { ...curState })
         opts?.onChangeExtendStatus && opts.onChangeExtendStatus(curState, changedValue)
       }
-      const addIcon = (col: ArtColumn) => {
+      const addIcon = (col: ColumnType) => {
         const result = { ...col }
         const curColState = curState[col.dataIndex]
         const displaycolExtendIcon: ReactNode =
@@ -85,7 +85,7 @@ export const colGroupExtendable =
         result.title = addIconNode
         return result
       }
-      return makeRecursiveMapper((col: ArtColumn) => {
+      return makeRecursiveMapper((col: ColumnType) => {
         const { showExtendIcon } = col?.features || {}
         if (showExtendIcon === true && col.children?.length > 1) {
           col = addIcon(col)

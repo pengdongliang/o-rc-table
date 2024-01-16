@@ -1,4 +1,4 @@
-import { ArtColumn } from '../interfaces'
+import { ColumnType } from '../interfaces'
 import { collectNodes, console, isLeafNode } from '../utils'
 import {
   HorizontalRenderRange,
@@ -19,7 +19,7 @@ function resolveVirtualEnabled(virtualEnum: VirtualEnum, defaultValue: boolean) 
 }
 
 let lockColumnNeedSpecifiedWidthWarned = false
-function warnLockColumnNeedSpecifiedWidth(column: ArtColumn) {
+function warnLockColumnNeedSpecifiedWidth(column: ColumnType) {
   if (!lockColumnNeedSpecifiedWidthWarned) {
     lockColumnNeedSpecifiedWidthWarned = true
     console.warn('fixed=true 的列需要指定宽度', column)
@@ -27,7 +27,7 @@ function warnLockColumnNeedSpecifiedWidth(column: ArtColumn) {
 }
 
 let columnHiddenDeprecatedWarned = false
-function warnColumnHiddenDeprecated(column: ArtColumn) {
+function warnColumnHiddenDeprecated(column: ColumnType) {
   if (!columnHiddenDeprecatedWarned) {
     columnHiddenDeprecatedWarned = true
     console.warn('column.hidden 已经过时，如果需要隐藏该列，请将其从 columns 数组中移除', column)
@@ -35,14 +35,14 @@ function warnColumnHiddenDeprecated(column: ArtColumn) {
 }
 
 /** 检查列配置 & 设置默认宽度 & 剔除隐藏的列 */
-function processColumns(columns: ArtColumn[], defaultColumnWidth: number) {
+function processColumns(columns: ColumnType[], defaultColumnWidth: number) {
   if (columns == null || !Array.isArray(columns)) {
     console.warn('<BaseTable /> props.columns 需要传入一个数组', columns)
     columns = []
   }
 
-  function dfs(dfsColumns: ArtColumn[]): ArtColumn[] {
-    const result: ArtColumn[] = []
+  function dfs(dfsColumns: ColumnType[]): ColumnType[] {
+    const result: ColumnType[] = []
 
     // eslint-disable-next-line no-restricted-syntax
     for (let column of dfsColumns) {
@@ -75,7 +75,7 @@ function processColumns(columns: ArtColumn[], defaultColumnWidth: number) {
   return dfs(columns)
 }
 
-export function getLeftNestedLockCount(columns: ArtColumn[]) {
+export function getLeftNestedLockCount(columns: ColumnType[]) {
   let nestedCount = 0
 
   // eslint-disable-next-line no-restricted-syntax
@@ -88,7 +88,7 @@ export function getLeftNestedLockCount(columns: ArtColumn[]) {
   }
   return nestedCount
 
-  function isLock(col: ArtColumn): boolean {
+  function isLock(col: ColumnType): boolean {
     if (isLeafNode(col)) {
       return col.fixed
     }

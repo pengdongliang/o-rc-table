@@ -1,7 +1,7 @@
 import { noop } from 'rxjs'
 
 import { TableProps } from '../../base'
-import { ArtColumn } from '../../interfaces'
+import { ColumnType } from '../../interfaces'
 import { features, TablePipeline } from '../../pipeline'
 import { isLeafNode as standardIsLeafNode } from '../../utils'
 import {
@@ -72,7 +72,7 @@ export default function buildCrossTreeTable(
   }
 
   /** 获取表格的列配置 */
-  function getColumns(): ArtColumn[] {
+  function getColumns(): ColumnType[] {
     return [
       {
         ...primaryColumn,
@@ -98,8 +98,8 @@ export default function buildCrossTreeTable(
     function getDataPartColumns() {
       return dfs(topTree, { depth: 0 })
 
-      function dfs(nodes: TopCrossTreeNode[], ctx: { depth: number }): ArtColumn[] {
-        const result: ArtColumn[] = []
+      function dfs(nodes: TopCrossTreeNode[], ctx: { depth: number }): ColumnType[] {
+        const result: ColumnType[] = []
 
         for (const node of nodes) {
           if (standardIsLeafNode(node)) {
@@ -119,7 +119,7 @@ export default function buildCrossTreeTable(
       }
     }
 
-    function getDataColumn(topNode: TopCrossTreeNode, topDepth: number): ArtColumn {
+    function getDataColumn(topNode: TopCrossTreeNode, topDepth: number): ColumnType {
       const columnGetValue = (row: CrossTreeTableRenderRow) => {
         const leftDepth = row.nodes.length - 1
         const leftNode = row.node

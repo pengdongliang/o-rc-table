@@ -1,5 +1,5 @@
 import { TableProps } from '../../base'
-import { ArtColumn, SpanRect } from '../../interfaces'
+import { ColumnType, SpanRect } from '../../interfaces'
 import { getTreeDepth, isLeafNode } from '../../utils'
 import { ROW_KEY } from './constants'
 import { CrossTableProps } from './cross-table'
@@ -74,7 +74,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
       function leftHeaderGetCellPropsFactory(
         metaCol: CrossTableLeftMetaColumn,
         colIndex: number
-      ): ArtColumn['getCellProps'] {
+      ): ColumnType['getCellProps'] {
         return (_value: any, row: CrossTableRenderRow) => {
           const node = row.nodes[colIndex]
           return metaCol.getCellProps?.(node, colIndex)
@@ -84,7 +84,7 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
       function leftHeaderGetSpanRectFactory(
         _metaCol: CrossTableLeftMetaColumn,
         colIndex: number
-      ): ArtColumn['getSpanRect'] {
+      ): ColumnType['getSpanRect'] {
         return (_value: any, row: CrossTableRenderRow) => row.rects[colIndex]
       }
 

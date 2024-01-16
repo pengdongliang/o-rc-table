@@ -1,13 +1,13 @@
 import type XLSX_NS from 'xlsx'
 
 import SpanManager from '../base/helpers/SpanManager'
-import { ArtColumn, SpanRect } from '../interfaces'
+import { ColumnType, SpanRect } from '../interfaces'
 import { internals } from '../internals'
 import collectNodes from './collectNodes'
 import getTreeDepth from './getTreeDepth'
 import isLeafNode from './isLeafNode'
 
-function safeGetSpanRect(column: ArtColumn, record: any, rowIndex: number, colIndex: number): SpanRect {
+function safeGetSpanRect(column: ColumnType, record: any, rowIndex: number, colIndex: number): SpanRect {
   let colSpan = 1
   let rowSpan = 1
   if (column.getSpanRect) {
@@ -59,7 +59,7 @@ function sanitizeCellDatum(value: any): XlsxCellDatum {
 export default function exportTableAsExcel(
   xlsxPackage: typeof XLSX_NS,
   dataSource: any[],
-  columns: ArtColumn[],
+  columns: ColumnType[],
   filename: string
 ) {
   const sheet = xlsxPackage.utils.aoa_to_sheet([])
@@ -80,7 +80,7 @@ export default function exportTableAsExcel(
   function addTopHeaders(origin: CellAddress) {
     dfs(columns, 0, 0)
 
-    function dfs(cols: ArtColumn[], startDx: number, startDy: number) {
+    function dfs(cols: ColumnType[], startDx: number, startDy: number) {
       const start = move(origin, startDx, startDy)
       let offsetX = 0
 

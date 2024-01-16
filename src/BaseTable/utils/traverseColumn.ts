@@ -1,9 +1,9 @@
-import { ArtColumn, TableTransform } from '../interfaces'
+import { ColumnType, TableTransform } from '../interfaces'
 import isLeafNode from './isLeafNode'
 
 type NormalizeAsArrayInput<T> = null | T | T[]
 
-function normalizeAsArray(input: NormalizeAsArrayInput<ArtColumn>): ArtColumn[] {
+function normalizeAsArray(input: NormalizeAsArrayInput<ColumnType>): ColumnType[] {
   if (input == null) {
     return []
   }
@@ -16,16 +16,16 @@ function normalizeAsArray(input: NormalizeAsArrayInput<ArtColumn>): ArtColumn[] 
 /** @deprecated 该 API 已经过时，请使用 makeRecursiveMapper */
 export default function traverseColumn(
   fn: (
-    column: ArtColumn,
+    column: ColumnType,
     ctx: { range: { start: number; end: number }; dataSource: any[] }
-  ) => NormalizeAsArrayInput<ArtColumn>
+  ) => NormalizeAsArrayInput<ColumnType>
 ): TableTransform {
   return ({ columns, dataSource }) => {
     return { dataSource, columns: dfs(columns, 0).result }
 
-    function dfs(cols: ArtColumn[], parentStartColIndex: number): { flatColCount: number; result: ArtColumn[] } {
+    function dfs(cols: ColumnType[], parentStartColIndex: number): { flatColCount: number; result: ColumnType[] } {
       let flatColCount = 0
-      const result: ArtColumn[] = []
+      const result: ColumnType[] = []
 
       for (const col of cols) {
         const startColIndex = parentStartColIndex + flatColCount

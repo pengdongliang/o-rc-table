@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ArtColumn, CellProps } from '../../interfaces'
+import { CellProps, ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
 import { mergeCellProps, SINGLE_SELECT_MARK_PROPNAME } from '../../utils'
 import { always } from '../../utils/others'
@@ -26,7 +26,7 @@ export interface SingleSelectFeatureOptions {
   clickArea?: 'radio' | 'cell' | 'row'
 
   /** 单选框所在列的 column 配置，可指定 width，fixed 等属性 */
-  radioColumn?: Partial<ArtColumn>
+  radioColumn?: Partial<ColumnType>
 
   /** 单选框所在列的位置 */
   radioPlacement?: 'start' | 'end'
@@ -53,7 +53,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
       pipeline.setStateAtKey(stateKey, currentRowKey)
     }
 
-    const radioColumn: ArtColumn = {
+    const radioColumn: ColumnType = {
       name: '',
       width: 50,
       align: 'center',
