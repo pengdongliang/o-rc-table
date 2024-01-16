@@ -1,4 +1,4 @@
-import { useEvents, useTablePagination } from '@table/hooks'
+import { useEvents, usePipeline, useTablePagination } from '@table/hooks'
 import { Spin, type SpinProps } from 'antd'
 import { type ConfigConsumerProps, ConfigContext } from 'antd/es/config-provider'
 import { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/es/table/interface'
@@ -9,20 +9,27 @@ import * as React from 'react'
 
 import useCSSVarCls from '../ConfigProvider/hooks/useCSSVarCls'
 import type { AnyObject } from '../theme/interface'
-import type { TablePaginationConfig } from './interface'
+import type { TableFeaturesType, TablePaginationConfig } from './interface'
 import RcTable from './RcTable'
 import useStyle from './style'
 
 export type SizeType = 'small' | 'middle' | 'large' | undefined
 export type TableRef = ReturnType<typeof useTablePipeline>
 
-export interface TableProps<RecordType = any> extends Omit<BaseTableProps<RecordType>, 'loading'> {
+export interface TableProps<RecordType = any> extends Omit<BaseTableProps<RecordType>, 'loading'>, TableFeaturesType {
+  /** 前缀 */
   prefixCls?: string
+  /** class name */
   className?: string
+  /** style */
   style?: React.CSSProperties
+  /** 是否加载中 */
   loading?: boolean | SpinProps
+  /** 分页 */
   pagination?: false | TablePaginationConfig
+  /** 表格尺寸 */
   size?: SizeType
+  /** 分页、排序、筛选变化时触发 */
   onChange?: (
     pagination: TablePaginationConfig,
     filters: Record<string, FilterValue | null>,
@@ -40,7 +47,8 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
   props: InternalTableProps<RecordType>,
   ref: React.Ref<TableRef>
 ) => {
-  const pipeline = useTablePipeline<RecordType>().input({ dataSource: props?.dataSource, columns: props?.columns })
+  const pipeline = usePipeline(props)
+
   const finalProps = { ...props, ...pipeline.getProps() }
   const { prefixCls: customizePrefixCls, className, style, dataSource, columns, loading, ...rest } = finalProps
 

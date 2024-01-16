@@ -1,4 +1,5 @@
 import type { PaginationProps } from 'antd'
+import type { features } from 'o-rc-table'
 
 export interface TableLocale {
   filterTitle?: string
@@ -31,4 +32,11 @@ type TablePaginationPosition =
 
 export interface TablePaginationConfig extends PaginationProps {
   position?: TablePaginationPosition[]
+}
+
+export interface TableFeaturesType {
+  /** 拖拽列宽 */
+  dragColumnWidth?: boolean | features.ColumnResizeOptions
+  /** 自动高度 */
+  autoHeight?: boolean
 }

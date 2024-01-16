@@ -58,8 +58,6 @@ export interface Features {
 
   /** 是否开启过滤功能 */
   filterable?: boolean
-
-  /** */
 }
 
 export interface ArtColumnDynamicPart<RecordType = unknown> {

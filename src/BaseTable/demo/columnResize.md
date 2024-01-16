@@ -14,45 +14,77 @@ import { Table, useTablePipeline, features } from "o-rc-table";
 
 export default () => {
   const dataSource = [
-    {id: "1", "No":1,"order":"HK-FDF-24785-01","from":"11111111","to":"2222222","amount":"29400.00","balance":"1000.00"},
-    {id: "2", "No":2,"order":"HK-FDF-24785-01","from":"11111111","to":"2222222","amount":"239400.00","balance":"5000.00"},
-    {id: "3", "No":3,"order":"HK-FDF-24785-02","from":"11111111","to":"2222222","amount":"249400.00","balance":"3000.00"},
-    {id: "4", "No":4,"order":"AP-202009-00003","from":"11111111","to":"2222222","amount":"219400.00","balance":"4000.00"},
-    {id: "5", "No":5,"order":"AP-202009-00004","from":"11111111","to":"2222222","amount":"239400.00","balance":"5000.00"}
+    {
+      id: "1",
+      "No": 1,
+      "order": "HK-FDF-24785-01",
+      "from": "11111111",
+      "to": "2222222",
+      "amount": "29400.00",
+      "balance": "1000.00"
+    },
+    {
+      id: "2",
+      "No": 2,
+      "order": "HK-FDF-24785-01",
+      "from": "11111111",
+      "to": "2222222",
+      "amount": "239400.00",
+      "balance": "5000.00"
+    },
+    {
+      id: "3",
+      "No": 3,
+      "order": "HK-FDF-24785-02",
+      "from": "11111111",
+      "to": "2222222",
+      "amount": "249400.00",
+      "balance": "3000.00"
+    },
+    {
+      id: "4",
+      "No": 4,
+      "order": "AP-202009-00003",
+      "from": "11111111",
+      "to": "2222222",
+      "amount": "219400.00",
+      "balance": "4000.00"
+    },
+    {
+      id: "5",
+      "No": 5,
+      "order": "AP-202009-00004",
+      "from": "11111111",
+      "to": "2222222",
+      "amount": "239400.00",
+      "balance": "5000.00"
+    }
   ]
 
   const columns = [
     { dataIndex: 'No', name: '序号', width: 60, align: 'center' },
-    { dataIndex: 'order', name: '物流编码', width: 200, features: { sortable: true, filterable: true }},
+    { dataIndex: 'order', name: '物流编码', width: 200, features: { sortable: true, filterable: true } },
     { dataIndex: 'from', name: '发货地', width: 200, features: { sortable: true, filterable: true } },
     { dataIndex: 'to', name: '收货地', width: 200, features: { sortable: true, filterable: true } },
-    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right', features: { sortable: true, filterable: true } },
-    { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right', features: { sortable: true, filterable: true } }
+    {
+      dataIndex: 'amount',
+      name: '应付金额',
+      width: 100,
+      align: 'right',
+      features: { sortable: true, filterable: true }
+    },
+    {
+      dataIndex: 'balance',
+      name: '应收余额',
+      width: 100,
+      align: 'right',
+      features: { sortable: true, filterable: true }
+    }
   ]
 
-  const [selected, setSelected] = React.useState([])
   const [columnSize, setColumnSize] = React.useState({})
-  const handleChange = (v) => {
-    setSelected(v)
-  }
-  function SortIcon ({ size = 32, style, className, order }) {
-    return (
-      <svg
-        style={style}
-        className={className}
-        focusable="false"
-        preserveAspectRatio="xMidYMid meet"
-        width={size}
-        height={size}
-        viewBox="0 0 32 32"
-        aria-hidden="true"
-      >
-        <path fill={order === 'asc' ? '#23A3FF' : '#bfbfbf'} transform="translate(0, 6)" d="M8 8L16 0 24 8z" />
-        <path fill={order === 'desc' ? '#23A3FF' : '#bfbfbf'} transform="translate(0, -6)" d="M24 24L16 32 8 24z " />
-      </svg>
-    )
-  }
-    const pipeline = useTablePipeline()
+
+  const pipeline = useTablePipeline()
     .input({ dataSource: dataSource, columns: columns })
     .rowKey('id')
     .use(features.columnResize(
@@ -60,12 +92,14 @@ export default () => {
         maxSize: 200,
         columnSize,
         minSize: 100,
-        onChangeSize: (e) => { setColumnSize(e) }
+        onChangeSize: (e) => {
+          setColumnSize(e)
+        }
       }
     ))
 
   return (
-      <Table {...pipeline.getProps()} className="aaa" style={{ height: 200 }} />
+    <Table {...pipeline.getProps()} className="aaa" style={{ height: 200 }} />
   )
 }
 ```

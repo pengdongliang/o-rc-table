@@ -49,7 +49,9 @@ export default () => {
         columns={columns}
         bordered
         useVirtual
-        style={{ height: 600, width: 800, overflow: 'auto' }}
+        dragColumnWidth
+        autoHeight
+        style={{ height: 600, width: '100%' }}
       />
     </ConfigProvider>
   )
