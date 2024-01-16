@@ -1,5 +1,6 @@
 import type { PaginationProps } from 'antd'
 import type { features } from 'o-rc-table'
+import React from 'react'
 
 export interface TableLocale {
   filterTitle?: string
@@ -37,6 +38,10 @@ export interface TablePaginationConfig extends PaginationProps {
 export interface TableFeaturesType {
   /** 拖拽列宽 */
   dragColumnWidth?: boolean | features.ColumnResizeOptions
-  /** 自动高度 */
-  autoHeight?: boolean
+  /** 行高自适应 */
+  autoRowHeight?: boolean | React.StyleHTMLAttributes<HTMLDivElement>
+  /** 自动合并多行 */
+  autoRowSpan?: boolean
+  /** 拖拽列排序 */
+  columnDrag?: features.ColumnDragOptions
 }

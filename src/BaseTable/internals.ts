@@ -1,5 +1,3 @@
-import React from 'react'
-
 import type { BaseTableProps } from './base/table'
 import type { ColumnType } from './interfaces'
 
@@ -14,12 +12,12 @@ function safeGetValue(column: ColumnType, record: any, rowIndex: number) {
   return record[column.dataIndex]
 }
 
-function safeGetRowKey(rowKey: BaseTableProps['rowKey'], record: any, rowIndex: number): React.Key {
-  let key: React.Key
+function safeGetRowKey(rowKey: BaseTableProps['rowKey'], record: any, rowIndex: number): string {
+  let key: string
   if (typeof rowKey === 'string') {
     key = record[rowKey]
   } else if (typeof rowKey === 'function') {
-    key = rowKey(record)
+    key = rowKey(record) as string
   }
   if (key == null) {
     key = String(rowIndex)

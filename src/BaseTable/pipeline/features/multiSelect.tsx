@@ -133,7 +133,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
               style: { cursor: disabled ? 'not-allowed' : 'pointer' },
               onClick: disabled
                 ? undefined
-                : (e) => {
+                : (e: { stopPropagation: () => void; shiftKey: boolean }) => {
                     if (opts.stopClickEventPropagation) {
                       e.stopPropagation()
                     }

@@ -2,14 +2,14 @@
 import React from 'react'
 import { noop } from 'rxjs'
 
-import { Table, TableProps } from '../../base'
+import { Table, type TableProps, type TableRef } from '../../base'
 import { CellProps } from '../../interfaces'
 import { CrossTableLeftMetaColumn, LeftCrossTreeNode, ROW_KEY, TopCrossTreeNode } from '../cross-table'
 import buildCrossTreeTable from './buildCrossTreeTable'
 
 export interface CrossTreeTableProps extends Omit<TableProps, 'dataSource' | 'columns' | 'rowKey'> {
   BaseTableComponent?: any
-  baseTableRef?: React.Ref<Table>
+  baseTableRef?: React.Ref<TableRef>
   primaryColumn: CrossTableLeftMetaColumn
   leftTree: LeftCrossTreeNode[]
   topTree: TopCrossTreeNode[]
