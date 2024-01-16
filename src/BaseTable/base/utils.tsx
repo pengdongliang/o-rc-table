@@ -1,4 +1,5 @@
 import cssVars from 'css-vars-ponyfill'
+import type { CellEllipsisType, ColumnType } from 'o-rc-table'
 import React from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 import { asyncScheduler, BehaviorSubject, defer, fromEvent, Subscription } from 'rxjs'
@@ -214,4 +215,21 @@ export const cssPolifill = ({
     watch: true,
     silent: true,
   })
+}
+
+export const getTitleFromCellRenderChildren = ({
+  ellipsis,
+  rowType,
+  children,
+}: Pick<ColumnType, 'ellipsis'> & { rowType: 'header' | 'body' | 'footer'; children: React.ReactNode }) => {
+  let title: string
+  const ellipsisConfig: CellEllipsisType = ellipsis === true ? { showTitle: true } : ellipsis
+  if (ellipsisConfig && (ellipsisConfig.showTitle || rowType === 'header')) {
+    if (typeof children === 'string' || typeof children === 'number') {
+      title = children.toString()
+    } else if (React.isValidElement(children) && typeof children.props.children === 'string') {
+      title = children.props.children
+    }
+  }
+  return title
 }

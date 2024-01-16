@@ -6,6 +6,8 @@ export type ArtColumnVerticalAlign = 'top' | 'bottom' | 'middle'
 
 export type CellProps = React.TdHTMLAttributes<HTMLTableCellElement>
 
+export type CellEllipsisType = { showTitle?: boolean } | boolean
+
 export interface ArtColumnStaticPart {
   /** 列的名称 */
   name: string
@@ -39,6 +41,9 @@ export interface ArtColumnStaticPart {
 
   /** 表头单元格的 props */
   headerCellProps?: CellProps
+
+  /** 单元格自动省略 */
+  ellipsis?: CellEllipsisType
 
   /** 功能开关 */
   features?: { [key: string]: any }

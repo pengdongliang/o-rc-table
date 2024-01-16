@@ -62,6 +62,8 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     tableHeaderCell: `${prefix}-header-cell`,
     tableHeaderCellContent: `${prefix}-header-cell-content`,
     tableHeaderCellResize: `${prefix}-header-cell-resize`,
+    /** 单元格省略 */
+    tableCellEllipsis: `${prefix}-cell-ellipsis`,
     virtualBlank: `${prefix}-virtual-blank`,
 
     stickyScroll: `${prefix}-sticky-scroll`,
@@ -326,7 +328,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       display: flex;
       // justify-content: flex-start;
       align-items: center;
-      height: inherit;
+      height: initial;
     }
 
     .${Classes?.virtual} {

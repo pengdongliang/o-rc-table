@@ -52,7 +52,8 @@
     "@ctrl/tinycolor": "^3.6.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@rc-component/context": "^1.4.0"
+    "@rc-component/context": "^1.4.0",
+    "rc-pagination": "~4.0.4"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",

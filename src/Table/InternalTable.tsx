@@ -1,5 +1,7 @@
+import { useEvents, useTablePagination } from '@table/hooks'
 import { Spin, type SpinProps } from 'antd'
 import { type ConfigConsumerProps, ConfigContext } from 'antd/es/config-provider'
+import { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/es/table/interface'
 import classNames from 'classnames'
 import { useTablePipeline } from 'o-rc-table'
 import type { BaseTableProps } from 'o-rc-table/base/table'
@@ -7,9 +9,11 @@ import * as React from 'react'
 
 import useCSSVarCls from '../ConfigProvider/hooks/useCSSVarCls'
 import type { AnyObject } from '../theme/interface'
+import type { TablePaginationConfig } from './interface'
 import RcTable from './RcTable'
 import useStyle from './style'
 
+export type SizeType = 'small' | 'middle' | 'large' | undefined
 export type TableRef = ReturnType<typeof useTablePipeline>
 
 export interface TableProps<RecordType = any> extends Omit<BaseTableProps<RecordType>, 'loading'> {
@@ -17,6 +21,14 @@ export interface TableProps<RecordType = any> extends Omit<BaseTableProps<Record
   className?: string
   style?: React.CSSProperties
   loading?: boolean | SpinProps
+  pagination?: false | TablePaginationConfig
+  size?: SizeType
+  onChange?: (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<RecordType> | SorterResult<RecordType>[],
+    extra: TableCurrentDataSource<RecordType>
+  ) => void
 }
 
 /** Same as `TableProps` but we need record parent render times */
@@ -28,7 +40,9 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
   props: InternalTableProps<RecordType>,
   ref: React.Ref<TableRef>
 ) => {
-  const { prefixCls: customizePrefixCls, className, style, dataSource, columns, loading, ...rest } = props
+  const pipeline = useTablePipeline<RecordType>().input({ dataSource: props?.dataSource, columns: props?.columns })
+  const finalProps = { ...props, ...pipeline.getProps() }
+  const { prefixCls: customizePrefixCls, className, style, dataSource, columns, loading, ...rest } = finalProps
 
   const { getPrefixCls, table } = React.useContext<ConfigConsumerProps>(ConfigContext)
 
@@ -37,6 +51,8 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
   const rootCls = useCSSVarCls(prefixCls)
 
   const [wrapCSSVar, hashId, cssVarCls] = useStyle(prefixCls, rootCls)
+  const wrapperClassNames = classNames(cssVarCls, rootCls, `${prefixCls}-wrapper`, className, hashId)
+  const rootClassNames = classNames(cssVarCls, rootCls, `${prefixCls}-root`, className, hashId)
 
   // loading
   let spinProps: SpinProps | undefined = {}
@@ -51,24 +67,33 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
     }
   }
 
-  const wrapperClassNames = classNames(cssVarCls, rootCls, `${prefixCls}-wrapper`, className, hashId)
-
-  const pipeline = useTablePipeline<RecordType>().input({ dataSource, columns })
+  const { changeEventInfo, triggerOnChange } = useEvents<RecordType>(finalProps)
+  const { topPaginationNode, bottomPaginationNode } = useTablePagination<RecordType>({
+    ...finalProps,
+    changeEventInfo,
+    triggerOnChange,
+    prefixCls,
+  })
 
   React.useImperativeHandle(ref, () => pipeline)
 
   return wrapCSSVar(
-    <div className={wrapperClassNames} style={mergedStyle}>
-      <Spin spinning={false} {...spinProps}>
-        <RcTable
-          style={style}
-          loading={spinProps.spinning}
-          namespace={prefixCls}
-          {...rest}
-          className={classNames(cssVarCls, rootCls, hashId)}
-          {...pipeline.getProps()}
-        />
-      </Spin>
+    <div className={rootClassNames}>
+      {topPaginationNode}
+      <div className={wrapperClassNames} style={mergedStyle}>
+        <Spin spinning={false} {...spinProps}>
+          <RcTable
+            style={style}
+            loading={spinProps.spinning}
+            namespace={prefixCls}
+            {...rest}
+            className={classNames(cssVarCls, rootCls, hashId)}
+            dataSource={dataSource}
+            columns={columns}
+          />
+        </Spin>
+      </div>
+      {bottomPaginationNode}
     </div>
   )
 }

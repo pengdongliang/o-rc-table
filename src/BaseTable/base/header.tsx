@@ -1,5 +1,6 @@
 import cx from 'classnames'
 import { useBaseTableContext } from 'o-rc-table'
+import { getTitleFromCellRenderChildren } from 'o-rc-table/base/utils'
 import type { CSSProperties } from 'react'
 
 import type { ColumnType } from '../interfaces'
@@ -212,6 +213,13 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
 
         const justifyContent = col.align === 'right' ? 'flex-end' : col.align === 'center' ? 'center' : 'flex-start'
 
+        // ============================ title =============================
+        const title = getTitleFromCellRenderChildren({
+          rowType: 'header',
+          ellipsis: col.ellipsis,
+          children: col.title ?? col.name,
+        })
+
         const cell = (
           <th
             key={col.key}
@@ -235,7 +243,13 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
             data-index={col.dataIndex}
           >
             {theaderPosition === 'center' && positionStyle.position === 'sticky' ? null : (
-              <div className={tableContext.Classes?.tableHeaderCellContent} style={{ justifyContent }}>
+              <div
+                className={cx(tableContext.Classes?.tableHeaderCellContent, {
+                  [tableContext.Classes?.tableCellEllipsis]: col.ellipsis,
+                })}
+                style={{ justifyContent }}
+                title={title}
+              >
                 {col.title ?? col.name}
               </div>
             )}

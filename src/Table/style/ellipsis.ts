@@ -12,6 +12,10 @@ const genEllipsisStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
         ...textEllipsis,
         wordBreak: 'keep-all',
 
+        [`&${componentCls}-header-cell-content`]: {
+          display: 'block',
+        },
+
         // Fixed first or last should special process
         [`
           &${componentCls}-cell-fix-left-last,

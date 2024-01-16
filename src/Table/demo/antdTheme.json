@@ -104,9 +104,7 @@
       "controlPaddingHorizontalSM": 4,
       "marginXS": 9,
       "wireframe": true,
-      "itemSize": 24,
-      "itemActiveBg": "rgb(41, 141, 240)",
-      "colorPrimaryBorder": "rgb(41, 141, 240)"
+      "itemSize": 24
     },
     "Cascader": {
       "colorText": "#333333",

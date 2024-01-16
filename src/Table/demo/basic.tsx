@@ -22,7 +22,7 @@ export default () => {
 
   const columns = React.useMemo(() => {
     const baseColumns = [
-      { dataIndex: 'order', name: '物流编码', width: 200 },
+      { dataIndex: 'order', name: '物流编码(长标题)', width: 100, ellipsis: true },
       { dataIndex: 'from', name: '发货地', width: 200 },
       { dataIndex: 'to', name: '收货地', width: 200 },
       { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right' },
@@ -42,7 +42,6 @@ export default () => {
       .concat({ dataIndex: 'opt', name: '操作', width: 80, align: 'center', fixed: true })
   }, [])
 
-  // TODO 主题未应用需要看看ConfigProvider
   return (
     <ConfigProvider theme={antdTheme} prefixCls="ocloud">
       <Table

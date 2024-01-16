@@ -3,12 +3,13 @@ import { BaseTableContextProps, useBaseTableContext } from 'o-rc-table'
 import type { CSSProperties } from 'react'
 import React, { ReactNode } from 'react'
 
-import { ColumnType } from '../interfaces'
+import type { ColumnType } from '../interfaces'
 import { internals } from '../internals'
 import { Colgroup } from './colgroup'
 import SpanManager from './helpers/SpanManager'
 import { RenderInfo } from './interfaces'
 import { BaseTableProps } from './table'
+import { getTitleFromCellRenderChildren } from './utils'
 
 export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'getRowProps' | 'rowKey'>> {
   tbodyHtmlTag: 'tbody' | 'tfoot'
@@ -168,6 +169,13 @@ export function HtmlTable({
         hozInfo.stickyRightMap.get(colIndex) - (typeof stickyRightOffset === 'number' ? stickyRightOffset : 0)
     }
 
+    // ============================ title =============================
+    const title = getTitleFromCellRenderChildren({
+      rowType: 'body',
+      ellipsis: column.ellipsis,
+      children: cellContent,
+    })
+
     return React.createElement(
       'td',
       {
@@ -180,6 +188,7 @@ export function HtmlTable({
           [Classes?.lockLeft]: colIndex < leftFlatCount || tbodyPosition === 'left',
           [Classes?.lockRight]: colIndex >= fullFlatCount - rightFlatCount,
           [Classes?.rowSpan]: rowSpan > 1,
+          [Classes?.tableCellEllipsis]: column.ellipsis,
         }),
         ...(hasSpan ? { colSpan, rowSpan } : null),
         style: {
@@ -188,6 +197,7 @@ export function HtmlTable({
           ...cellProps.style,
           ...positionStyle,
         },
+        title,
         'data-role': 'table-cell',
         'data-rowindex': rowIndex,
         'data-index': column.dataIndex,

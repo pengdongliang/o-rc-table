@@ -6,9 +6,9 @@ import type { TableToken } from './index'
 const genPaginationStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
   const { componentCls, antCls, margin } = token
   return {
-    [`${componentCls}-wrapper`]: {
+    [`${componentCls}-root`]: {
       // ========================== Pagination ==========================
-      [`${componentCls}-pagination${antCls}-pagination`]: {
+      [`> ${componentCls}-pagination${antCls}-pagination`]: {
         margin: `${unit(margin)} 0`,
       },
 
