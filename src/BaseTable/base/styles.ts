@@ -79,6 +79,8 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
 
     /** 数据为空时表格内容的外层 div */
     emptyWrapper: `${prefix}-empty-wrapper`,
+    emptyImg: `${prefix}-empty-image`,
+    emptyDesc: `${prefix}-empty-description`,
 
     loadingWrapper: `${prefix}-loading-wrapper`,
     loadingContentWrapper: `${prefix}-loading-content-wrapper`,
@@ -283,7 +285,6 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
 
   return css`
     ${variableConst}
-
     * {
       box-sizing: border-box;
     }
@@ -588,14 +589,18 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       top: 50%;
       transform: translate(-50%, -50%);
 
-      .empty-image {
-        width: 50px;
-        height: 50px;
+      .${Classes.emptyImg} {
+        margin-bottom: 8px;
+
+        svg {
+          max-width: 100%;
+          height: 100%;
+          margin: auto;
+        }
       }
 
-      .empty-tips {
-        margin-top: 16px;
-        line-height: 1.5;
+      .${Classes.emptyDesc} {
+        color: rgba(0, 0, 0, 0.25);
       }
     }
 

@@ -102,7 +102,7 @@ export default () => {
 
 <embed src="baseTableDemo/cellSpan.md"></embed>
 
-## 拖拽列排序
+## 拖拽列位置
 
 <embed src="baseTableDemo/columnDrag.md"></embed>
 
@@ -110,11 +110,15 @@ export default () => {
 
 <embed src="baseTableDemo/columnFlex.md"></embed>
 
-## 列分组
+## 列分组展开收起
 
-<embed src="baseTableDemo/columnGroup.md"></embed>
+<embed src="baseTableDemo/columnGroupExpand.md"></embed>
 
-## 列锁定
+## 列高亮
+
+<embed src="baseTableDemo/columnHighlight.md"></embed>
+
+## 列固定
 
 <embed src="baseTableDemo/columnLock.md"></embed>
 

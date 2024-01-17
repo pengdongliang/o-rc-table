@@ -6,6 +6,7 @@ import Table from '../Table'
 import antdTheme from './antdTheme.json'
 
 export default () => {
+  const [ellipsis, setEllipsis] = useState(true)
   const [bordered, setBordered] = useState(true)
   const [useVirtual, setUseVirtual] = useState(true)
   const [dragColumnWidth, setDragColumnWidth] = useState(true)
@@ -13,6 +14,10 @@ export default () => {
   const [autoRowSpan, setAutoRowSpan] = useState(false)
   const [autoColSpan, setAutoColSpan] = useState(false)
   const [columnDrag, setColumnDrag] = useState<features.ColumnDragOptions>()
+  const [columnHighlight, setColumnHighlight] = useState<features.ColumnRangeHoverFeatureOptions>()
+  const [columnFixed, setColumnFixed] = useState(true)
+  const [sort, setSort] = useState(true)
+  const [filter, setFilter] = useState<features.FilterFeatureOptions>()
 
   const getDataSource = (count = 1000) => {
     return Array.from(Array(count)).map((_item, index) => ({
@@ -32,8 +37,19 @@ export default () => {
   const getColumns = useCallback(
     (count = 200) => {
       const baseColumns: TableProps['columns'] = [
-        { dataIndex: 'order', name: '物流编码(长标题)', width: 100, ellipsis: true },
-        { dataIndex: 'from', name: '发货地', width: 200, features: { autoRowSpan: true } },
+        {
+          dataIndex: 'order',
+          name: '物流编码(长标题)',
+          width: 100,
+          ellipsis,
+          features: { sortable: true, filterable: true },
+        },
+        {
+          dataIndex: 'from',
+          name: '发货地',
+          width: 200,
+          features: { autoRowSpan, sortable: true, filterable: true },
+        },
         {
           dataIndex: 'to',
           name: '收货地',
@@ -68,11 +84,11 @@ export default () => {
                 return { ...item, name: item.name + index }
               })
             ),
-          [{ dataIndex: 'No', name: '序号', width: 80, align: 'center', fixed: true }]
+          [{ dataIndex: 'No', name: '序号', width: 80, align: 'center', fixed: columnFixed }]
         )
-        .concat({ dataIndex: 'opt', name: '操作', width: 80, align: 'center', fixed: true })
+        .concat({ dataIndex: 'opt', name: '操作', width: 80, align: 'center', fixed: columnFixed })
     },
-    [autoColSpan]
+    [autoColSpan, autoRowSpan, columnFixed, ellipsis]
   )
 
   const columns = React.useMemo<ColumnType[]>(() => {
@@ -102,8 +118,11 @@ export default () => {
   return (
     <ConfigProvider theme={antdTheme} prefixCls="ocloud">
       <Form layout="inline" style={{ marginBottom: '10px' }}>
+        <Form.Item label="单元格自动省略">
+          <Switch value={ellipsis} onChange={setEllipsis} />
+        </Form.Item>
         <Form.Item label="单元格边框">
-          <Switch value={bordered} onChange={(v) => setBordered(v)} />
+          <Switch value={bordered} onChange={setBordered} />
         </Form.Item>
         <Form.Item label="虚拟滚动">
           <Switch
@@ -121,7 +140,7 @@ export default () => {
             }}
           />
         </Form.Item>
-        <Form.Item label="拖动列宽">
+        <Form.Item label="列宽拖拽">
           <Switch value={dragColumnWidth} onChange={(v) => setDragColumnWidth(v)} />
         </Form.Item>
         <Form.Item label="自动行高">
@@ -135,7 +154,7 @@ export default () => {
         <Form.Item label="自动合并单元格">
           <Switch value={autoColSpan} onChange={(v) => setAutoColSpan(v)} />
         </Form.Item>
-        <Form.Item label="拖拽列排序">
+        <Form.Item label="拖拽列位置">
           <Switch
             value={!!columnDrag}
             onChange={(v) => {
@@ -152,8 +171,48 @@ export default () => {
             }}
           />
         </Form.Item>
+        <Form.Item label="列高亮">
+          <Switch
+            value={!!columnHighlight}
+            onChange={(v) => {
+              if (v) {
+                setColumnHighlight({ headerHoverColor: '#75c5ea', hoverColor: '#75c5ea' })
+              } else {
+                setColumnHighlight(undefined)
+              }
+            }}
+          />
+        </Form.Item>
+        <Form.Item label="列固定">
+          <Switch value={columnFixed} onChange={setColumnFixed} />
+        </Form.Item>
+        <Form.Item label="排序">
+          <Switch value={sort} onChange={setSort} />
+        </Form.Item>
+        <Form.Item label="过滤">
+          <Switch
+            value={!!filter}
+            onChange={(v) => {
+              if (v) {
+                setFilter({
+                  mode: 'single',
+                  defaultFilters: [
+                    {
+                      dataIndex: 'order',
+                      filter: ['HK-FDF-24785-01'],
+                      filterCondition: 'contain',
+                    },
+                  ],
+                })
+              } else {
+                setFilter(undefined)
+              }
+            }}
+          />
+        </Form.Item>
       </Form>
       <Table
+        style={{ height: 600, width: '100%' }}
         dataSource={dataSource}
         columns={finalColumns}
         bordered={bordered}
@@ -162,7 +221,9 @@ export default () => {
         autoRowHeight={autoRowHeight}
         autoRowSpan={autoRowSpan}
         columnDrag={columnDrag}
-        style={{ height: 600, width: '100%' }}
+        columnHighlight={columnHighlight}
+        sort={sort}
+        filter={filter}
       />
     </ConfigProvider>
   )

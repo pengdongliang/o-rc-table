@@ -38,7 +38,7 @@
 - [ ] sortDirections 支持的排序方式, 有类似功能, 未抛出兼容的api控制
 - [ ] sticky 设置粘性头部和滚动条, 有类似功能, 未抛出兼容的api控制
 - [ ] summary 总结栏, 有类似功能, 未抛出兼容的api控制
-- [ ] tableLayout
+- [ ] tableLayout 表格元素的 table-layout 属性，设为 fixed 表示内容不会影响列的布局
 - [ ] title 表格标题
 - [ ] onChange 分页、排序、筛选变化时触发
 - [ ] onHeaderRow 设置头部行属性

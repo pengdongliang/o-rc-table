@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 
 import { BaseTableContextProps, RowKey, TableProps, useBaseTableContext } from '../base'
 import { ColumnType, TableTransform, Transform } from '../interfaces'
+import { internals } from '../internals'
 import { mergeCellProps } from '../utils'
 import { autoFillTableWidth, tableWidthKey } from './features/autoFill'
 
@@ -209,8 +210,8 @@ export class TablePipeline<RecordType = unknown> {
   /**
    * 设置主键
    */
-  rowKey(key: RowKey) {
-    this.ctx.rowKey = key
+  rowKey(key: RowKey<any>) {
+    this.ctx.rowKey = internals.safeGetRowKey(key, this.getDataSource()?.[0], 'id')
     return this
   }
 

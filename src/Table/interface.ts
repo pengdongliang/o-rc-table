@@ -42,6 +42,14 @@ export interface TableFeaturesType {
   autoRowHeight?: boolean | React.StyleHTMLAttributes<HTMLDivElement>
   /** 自动合并多行 */
   autoRowSpan?: boolean
-  /** 拖拽列排序 */
-  columnDrag?: features.ColumnDragOptions
+  /** 拖拽列位置 */
+  columnDrag?: boolean | features.ColumnDragOptions
+  /** 列分组展开收起 */
+  columnGroupExpand?: boolean | features.ColGroupExtendOption
+  /** 列高亮 */
+  columnHighlight?: boolean | features.ColumnRangeHoverFeatureOptions
+  /** 排序 */
+  sort?: boolean | features.SortFeatureOptions
+  /** 过滤 */
+  filter?: boolean | features.FilterFeatureOptions
 }

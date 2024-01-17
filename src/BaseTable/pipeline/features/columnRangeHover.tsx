@@ -25,7 +25,7 @@ export interface ColumnRangeHoverFeatureOptions {
 }
 
 export function columnRangeHover(opts: ColumnRangeHoverFeatureOptions = {}) {
-  const stateKey = 'columnHover'
+  const stateKey = 'columnRangeHover'
 
   return function columnRangeHoverStep(pipeline: TablePipeline) {
     const hoverRange = opts.hoverRange ?? pipeline.getStateAtKey(stateKey) ?? opts.defaultHoverRange ?? EMPTY_RANGE
@@ -57,7 +57,7 @@ export function columnRangeHover(opts: ColumnRangeHoverFeatureOptions = {}) {
               onMouseLeave() {
                 onChangeHoverRange(EMPTY_RANGE)
               },
-              style: { '--header-bgcolor': match ? headerHoverColor : undefined } as any,
+              style: { background: match ? headerHoverColor : undefined },
             }),
           }
         }
@@ -73,7 +73,7 @@ export function columnRangeHover(opts: ColumnRangeHoverFeatureOptions = {}) {
             onMouseLeave() {
               onChangeHoverRange(EMPTY_RANGE)
             },
-            style: { '--header-bgcolor': match ? headerHoverColor : undefined } as any,
+            style: { background: match ? headerHoverColor : undefined },
           }),
 
           getCellProps(value: any, record: any, rowIndex: number): CellProps {
@@ -86,7 +86,7 @@ export function columnRangeHover(opts: ColumnRangeHoverFeatureOptions = {}) {
               onMouseLeave() {
                 onChangeHoverRange(EMPTY_RANGE)
               },
-              style: { '--bgcolor': match ? hoverColor : undefined } as any,
+              style: { background: match ? hoverColor : undefined },
             })
           },
         }

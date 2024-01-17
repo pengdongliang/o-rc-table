@@ -1,5 +1,5 @@
 ---
-title: 列锁定
+title: 列固定
 order: 5
 ---
 

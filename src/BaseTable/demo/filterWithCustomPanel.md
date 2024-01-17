@@ -10,6 +10,7 @@ order: 23
 ```jsx
 import React from "react";
 import { Table, useTablePipeline, features } from "o-rc-table";
+import { Input, Space } from "antd";
 
 export default () => {
   const [ filters, setFilters ] = React.useState([{dataIndex:'order',filter:'AP-202009-00001'}])
@@ -43,7 +44,8 @@ export default () => {
       },[filterModel])
 
 
-      return (<div
+      return (<Space
+        direction="vertical"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -56,9 +58,11 @@ export default () => {
           value={filterValue}
           onChange={e => setFilterValue(e.target.value ? [e.target.value] : [])}
         />
-        <button type="primary" onClick={handleSearch} style={{marginLeft:'5px'}}>搜索</button>
-        <button  onClick={handleReset} style={{marginLeft:'5px'}}>重置</button>
-      </div>)
+        <Space>
+          <button type="primary" onClick={handleSearch} style={{marginLeft:'5px'}}>搜索</button>
+          <button  onClick={handleReset} style={{marginLeft:'5px'}}>重置</button>
+        </Space>
+      </Space>)
     }
     return {
       filterPanel

@@ -1,9 +1,10 @@
 ---
-title: 列分组
-order: 401
+title: 列高亮
+order: 402
 ---
 
 在 `columns.children=[...]` 中添加子节点，`<Table />` 会绘制相应的嵌套表头结构。
+
 ```jsx
 import React from "react";
 import { Table, useTablePipeline, features, proto } from "o-rc-table";
@@ -25,7 +26,7 @@ export default () => {
     rate2_2014: 0.33,
     rate2_2015: 0.48,
   }))
-  const [ expandStatus, setExpandStatus ] = React.useState({personTotal:true})
+  const [expandStatus, setExpandStatus] = React.useState({ personTotal: true })
   const col = proto.array({
     align: 'center',
     width: 80,
@@ -36,13 +37,13 @@ export default () => {
     {
       name: '人数',
       dataIndex: 'personTotal',
-      features:{
-         showExtendIcon:true,
+      features: {
+        showExtendIcon: true,
       },
       children: col([
         { dataIndex: 'hc_2014', name: '2014年' },
         { dataIndex: 'hc_2015', name: '2015年' },
-        { dataIndex: 'hc_lfl', name: '同比增长'}])
+        { dataIndex: 'hc_lfl', name: '同比增长' }])
     },
     {
       name: '年龄',
@@ -70,19 +71,13 @@ export default () => {
       ])
     }
   ])
-  const onChangeExtendStatus = (curStatus,changeValue) => {
-      setExpandStatus(curStatus)
+  const onChangeExtendStatus = (curStatus, changeValue) => {
+    setExpandStatus(curStatus)
   }
   const pipeline = useTablePipeline({})
     .input({ dataSource: dataSource, columns: columns })
-    // .use(features.columnRangeHover())
-    .use(features.columnResize())
-    .use(features.colGroupExtendable(
-      {
-       extendStatus:expandStatus,
-       onChangeExtendStatus:onChangeExtendStatus
-      }
-   ))
+    .use(features.columnRangeHover())
+
   return <Table className="bordered" {...pipeline.getProps()} />
 }
 ```
