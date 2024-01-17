@@ -305,7 +305,7 @@ function getColumnWidth(col: ColumnType): number {
       return acc + getColumnWidth(col)
     }, 0)
   }
-  return col.width
+  return col.width as number
 }
 
 function moveAllChildren(cols: ColumnType[], cloumnsTranslateData, width: number, isMinus?: boolean) {

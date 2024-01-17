@@ -593,7 +593,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     const { flat, hasLockColumn } = lastInfo.current
 
     if (hasLockColumn) {
-      const sumOfColWidth = sum(flat.full.map((col) => col.width))
+      const sumOfColWidth = sum(flat.full.map((col) => col.width as number))
       const nextNeedRenderLock = sumOfColWidth > domHelper.current.artTable.clientWidth
       if (needRenderLock !== nextNeedRenderLock) {
         setNeedRenderLock(nextNeedRenderLock)

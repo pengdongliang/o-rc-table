@@ -119,9 +119,9 @@ function getHorizontalRenderRange({
   const overscannedOffsetX = Math.max(0, offsetX - OVERSCAN_SIZE)
   while (leftIndex < flat.center.length) {
     const col = flat.center[leftIndex]
-    if (col.width + leftBlank < overscannedOffsetX) {
+    if ((col.width as number) + leftBlank < overscannedOffsetX) {
       leftIndex += 1
-      leftBlank += col.width
+      leftBlank += col.width as number
     } else {
       break
     }
@@ -133,7 +133,7 @@ function getHorizontalRenderRange({
   while (leftIndex + centerCount < flat.center.length) {
     const col = flat.center[leftIndex + centerCount]
     if (centerRenderWidth < minCenterRenderWidth) {
-      centerRenderWidth += col.width
+      centerRenderWidth += col.width as number
       centerCount += 1
     } else {
       break
@@ -141,7 +141,7 @@ function getHorizontalRenderRange({
   }
 
   const rightBlankCount = flat.center.length - leftIndex - centerCount
-  const rightBlank = sum(flat.center.slice(flat.center.length - rightBlankCount).map((col) => col.width))
+  const rightBlank = sum(flat.center.slice(flat.center.length - rightBlankCount).map((col) => col.width as number))
   return {
     leftIndex,
     leftBlank,
@@ -243,18 +243,18 @@ export function calculateRenderInfo(
   let stickyLeft = 0
   for (let i = 0; i < leftFlatCount; i++) {
     stickyLeftMap.set(i, stickyLeft)
-    stickyLeft += flat.full[i].width
+    stickyLeft += flat.full[i].width as number
   }
 
   const stickyRightMap = new Map<number, number>()
   let stickyRight = 0
   for (let i = 0; i < rightFlatCount; i++) {
     stickyRightMap.set(fullFlatCount - 1 - i, stickyRight)
-    stickyRight += flat.full[fullFlatCount - 1 - i].width
+    stickyRight += flat.full[fullFlatCount - 1 - i].width as number
   }
 
-  const leftLockTotalWidth = sum(flat.left.map((col) => col.width))
-  const rightLockTotalWidth = sum(flat.right.map((col) => col.width))
+  const leftLockTotalWidth = sum(flat.left.map((col) => col.width as number))
+  const rightLockTotalWidth = sum(flat.right.map((col) => col.width as number))
 
   return {
     horizontalRenderRange,

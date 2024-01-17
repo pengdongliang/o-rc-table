@@ -22,7 +22,7 @@ export interface ArtColumnStaticPart {
   title?: ReactNode[] | ReactNode
 
   /** 列的宽度，如果该列是锁定的，则宽度为必传项 */
-  width?: number
+  width?: number | string
 
   /** 单元格中的文本或内容的 对其方向 */
   align?: ArtColumnAlign

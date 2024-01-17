@@ -56,7 +56,7 @@ export default () => {
         {
           dataIndex: 'to',
           name: '收货地',
-          width: 200,
+          width: '200px',
           ...(autoColSpan
             ? {
                 getCellProps: (_value, _record, rowIndex) => {
@@ -87,7 +87,7 @@ export default () => {
                 return { ...item, name: item.name + index }
               })
             ),
-          [{ dataIndex: 'No', name: '序号', width: 80, align: 'center', fixed: columnFixed }]
+          [{ dataIndex: 'No', name: '序号', width: '80%', align: 'center', fixed: columnFixed }]
         )
         .concat({ dataIndex: 'opt', name: '操作', width: 80, align: 'center', fixed: columnFixed })
     },

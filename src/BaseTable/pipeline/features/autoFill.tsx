@@ -30,7 +30,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
             const { dataIndex, features = {} } = col
             const { flex, minWidth = 0, maxWidth = Number.MAX_SAFE_INTEGER } = features
             const usedRemainingWidth = Math.floor((remainingWidth * flex) / flexCount)
-            const preColWidth = col.width
+            const preColWidth = col.width as number
             // 如果当前已经是最后一个flex列，将剩余的宽度添加到该列，其他计算相应的列
             col.width = clamp(
               minWidth,

@@ -82,7 +82,7 @@ function calculateLeveledAndFlat(inputNested: IndexedCol[], rowCount: number) {
         leafCount += 1
         const wrapped = {
           type: 'normal' as const,
-          width: indexedCol.col.width,
+          width: indexedCol.col.width as number,
           col: indexedCol.col,
           colIndex: indexedCol.colIndex,
           colSpan: 1,
@@ -96,7 +96,7 @@ function calculateLeveledAndFlat(inputNested: IndexedCol[], rowCount: number) {
         if (dfsRes.leafCount > 0) {
           leveled[depth].push({
             type: 'normal',
-            width: indexedCol.col.width,
+            width: indexedCol.col.width as number,
             col: indexedCol.col,
             colIndex: indexedCol.colIndex,
             colSpan: dfsRes.leafCount,
