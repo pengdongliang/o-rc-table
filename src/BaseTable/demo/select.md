@@ -17,7 +17,7 @@ order: 10
 ```jsx 
 import React from 'react'
 import { Table, useTablePipeline, features } from 'o-rc-table'
-import { Checkbox, Radio } from "antd"
+import { Checkbox, Radio } from 'antd'
 
 export default () => {
   const [selected, setSelected] = React.useState([])
@@ -115,7 +115,9 @@ export default () => {
     pipeline.use(
       features.multiSelect({
         value: selected,
-        onChange: setSelected,
+        onChange: (v)=> {
+          setSelected(v)
+        },
         highlightRowWhenSelected: true,
         clickArea: 'row',
         checkboxPlacement: 'start',

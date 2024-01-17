@@ -2,7 +2,6 @@ import { useRef, useState } from 'react'
 
 import { BaseTableContextProps, RowKey, TableProps, useBaseTableContext } from '../base'
 import { ColumnType, TableTransform, Transform } from '../interfaces'
-import { internals } from '../internals'
 import { mergeCellProps } from '../utils'
 import { autoFillTableWidth, tableWidthKey } from './features/autoFill'
 
@@ -35,7 +34,7 @@ export interface TablePipelineIndentsConfig {
 }
 
 export interface TablePipelineCtx {
-  rowKey?: RowKey
+  rowKey?: RowKey<any>
   components: { [name: string]: any }
   indents: TablePipelineIndentsConfig
 
@@ -164,7 +163,7 @@ export class TablePipeline<RecordType = unknown> {
   /**
    * 确保 rowKey 已被设置，并返回 rowKey
    */
-  ensurePrimaryKey(hint?: string): RowKey {
+  ensurePrimaryKey(hint?: string): RowKey<any> {
     if (this.ctx.rowKey == null) {
       throw new Error(hint ? `RowKey must be set before using ${hint}` : 'Must be set first `rowKey`')
     }
@@ -211,7 +210,7 @@ export class TablePipeline<RecordType = unknown> {
    * 设置主键
    */
   rowKey(key: RowKey<any>) {
-    this.ctx.rowKey = internals.safeGetRowKey(key, this.getDataSource()?.[0], 'id')
+    this.ctx.rowKey = key
     return this
   }
 

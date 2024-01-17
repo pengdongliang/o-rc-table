@@ -1,4 +1,5 @@
-import { ConfigProvider, Form, Switch, Tooltip } from 'antd'
+import type { TableRowSelection } from '@table/interface'
+import { ConfigProvider, Form, Radio, Switch, Tooltip } from 'antd'
 import { ColumnType, type features, TableProps } from 'o-rc-table'
 import React, { useCallback, useEffect, useState } from 'react'
 
@@ -18,6 +19,7 @@ export default () => {
   const [columnFixed, setColumnFixed] = useState(true)
   const [sort, setSort] = useState(true)
   const [filter, setFilter] = useState<features.FilterFeatureOptions>()
+  const [rowSelection, setRowSelection] = useState<TableRowSelection>({ type: 'checkbox' })
 
   const getDataSource = (count = 1000) => {
     return Array.from(Array(count)).map((_item, index) => ({
@@ -210,6 +212,12 @@ export default () => {
             }}
           />
         </Form.Item>
+        <Form.Item label="行选择">
+          <Radio.Group onChange={(e) => setRowSelection({ type: e.target.value })} value={rowSelection.type}>
+            <Radio value="checkbox">多选</Radio>
+            <Radio value="radio">单选</Radio>
+          </Radio.Group>
+        </Form.Item>
       </Form>
       <Table
         style={{ height: 600, width: '100%' }}
@@ -224,6 +232,7 @@ export default () => {
         columnHighlight={columnHighlight}
         sort={sort}
         filter={filter}
+        rowSelection={{ columnWidth: 100, ...rowSelection }}
       />
     </ConfigProvider>
   )

@@ -1,3 +1,4 @@
+import { Checkbox, Input, Radio } from 'antd'
 import { features, makeRecursiveMapper, TablePipeline, useTablePipeline } from 'o-rc-table'
 import { useMemo } from 'react'
 
@@ -20,6 +21,8 @@ type PipeMapType = {
   sort: () => TablePipeline
   /** 过滤 */
   filter: () => TablePipeline
+  /** 行选择 */
+  rowSelection: () => TablePipeline
 }
 
 /**
@@ -30,7 +33,7 @@ export const usePipeline = (props: TableProps) => {
     components,
     dataSource,
     columns,
-    rowKey,
+    rowKey = 'id',
     dragColumnWidth,
     autoRowHeight,
     autoRowSpan,
@@ -39,9 +42,10 @@ export const usePipeline = (props: TableProps) => {
     columnHighlight,
     sort,
     filter,
+    rowSelection,
   } = props
 
-  const pipeline = useTablePipeline({ components })
+  const pipeline = useTablePipeline({ components: { Checkbox, Radio, Input, ...components } })
     .input({ dataSource, columns })
     .rowKey(rowKey)
     .use(features.columnResize())
@@ -93,8 +97,44 @@ export const usePipeline = (props: TableProps) => {
         const options = typeof filter === 'object' ? filter : {}
         return pipeline.use(features.filter(options))
       },
+      rowSelection: () => {
+        const { type = 'checkbox', selectedRowKeys, onChange, fixed = true, columnWidth = 0 } = rowSelection
+        const baseOptions: features.MultiSelectFeatureOptions = {
+          value: selectedRowKeys,
+          onChange: (rowKeys, rows, _key, _batchKeys, info) => {
+            onChange?.(rowKeys, rows, { type: info })
+          },
+          highlightRowWhenSelected: true,
+          clickArea: 'row',
+          placement: 'start',
+          columnProp: { fixed, width: columnWidth as number },
+        }
+
+        if (type === 'checkbox') {
+          return pipeline.use(
+            features.multiSelect({
+              ...baseOptions,
+            })
+          )
+        }
+        return pipeline.use(
+          features.singleSelect({
+            ...(baseOptions as features.SingleSelectFeatureOptions),
+          })
+        )
+      },
     }
-  }, [autoRowHeight, columnDrag, columnGroupExpand, columnHighlight, dragColumnWidth, pipeline, sort, filter])
+  }, [
+    autoRowHeight,
+    columnDrag,
+    columnGroupExpand,
+    columnHighlight,
+    dragColumnWidth,
+    pipeline,
+    sort,
+    filter,
+    rowSelection,
+  ])
 
   const runPipeline = (pipeNames: Record<string, any>) => {
     Object.keys(pipeNames).forEach((name) => {
@@ -111,6 +151,7 @@ export const usePipeline = (props: TableProps) => {
     columnHighlight,
     sort,
     filter,
+    rowSelection,
   })
 
   return pipeline

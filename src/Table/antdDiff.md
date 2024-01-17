@@ -74,3 +74,9 @@
 - [ ] onFilter 本地模式下，确定筛选的运行函数
 - [ ] onFilterDropdownOpenChange 自定义筛选菜单可见变化时调用
 - [ ] onHeaderCell 设置头部单元格属性
+
+#### rowSelection
+
+- [ ] checkStrictly `checkable` 状态下节点选择完全受控（父子数据选中状态不再关联）
+- [ ] columnTitle 自定义列表选择框标题
+- [ ] columnWidth 自定义列表选择框宽度

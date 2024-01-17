@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Key } from 'react'
 
 import { CellProps, ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
@@ -11,13 +11,19 @@ export interface SingleSelectFeatureOptions {
   highlightRowWhenSelected?: boolean
 
   /** 非受控用法：默认选中的值 */
-  defaultValue?: string
+  defaultValue?: Key[]
 
   /** 受控用法：当前选中的值 */
-  value?: string
+  value?: Key[]
 
   /** 受控用法：选中值改变回调 */
-  onChange?: (next: string) => void
+  onChange?: (
+    selectedRowKeys: Key[],
+    selectedRows: Record<string, any>[],
+    key: Key,
+    keys: Key[],
+    action: 'check'
+  ) => void
 
   /** 判断一行是否禁用 */
   isDisabled?(row: any, rowIndex: number): boolean
@@ -26,10 +32,10 @@ export interface SingleSelectFeatureOptions {
   clickArea?: 'radio' | 'cell' | 'row'
 
   /** 单选框所在列的 column 配置，可指定 width，fixed 等属性 */
-  radioColumn?: Partial<ColumnType>
+  columnProp?: Partial<ColumnType>
 
   /** 单选框所在列的位置 */
-  radioPlacement?: 'start' | 'end'
+  placement?: 'start' | 'end'
 
   /** 是否对触发 onChange 的 click 事件调用 event.stopPropagation() */
   stopClickEventPropagation?: boolean
@@ -47,19 +53,19 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
     const isDisabled = opts.isDisabled ?? always(false)
 
     const rowKey = pipeline.ensurePrimaryKey('singleSelect')
-    const value = opts.value ?? pipeline.getStateAtKey(stateKey) ?? opts.defaultValue
-    const onChange = (currentRowKey: string) => {
-      opts.onChange?.(currentRowKey)
-      pipeline.setStateAtKey(stateKey, currentRowKey)
+    const value = opts.value?.[0] ?? pipeline.getStateAtKey(stateKey) ?? opts.defaultValue?.[0]
+    const onChange: SingleSelectFeatureOptions['onChange'] = (nextValue, selectedRows, key, keys, action) => {
+      opts.onChange?.(nextValue, selectedRows, key, keys, action)
+      pipeline.setStateAtKey(stateKey, nextValue)
     }
 
-    const radioColumn: ColumnType = {
+    const columnProp: ColumnType = {
       name: '',
       width: 50,
       align: 'center',
-      ...opts.radioColumn,
+      ...opts.columnProp,
       getCellProps(val: any, row: any, rowIndex: number): CellProps {
-        const preCellProps = opts.radioColumn?.getCellProps?.(val, row, rowIndex)
+        const preCellProps = opts.columnProp?.getCellProps?.(val, row, rowIndex)
         if (clickArea === 'cell') {
           const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
           const disabled = isDisabled(row, rowIndex)
@@ -71,7 +77,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
                   if (opts.stopClickEventPropagation) {
                     e.stopPropagation()
                   }
-                  onChange(currentRowKey)
+                  onChange([currentRowKey], [row], currentRowKey, [currentRowKey], 'check')
                 },
           })
         }
@@ -84,7 +90,8 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
         const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
         return (
           <Radio
-            checked={value === currentRowKey}
+            style={{ marginRight: 0 }}
+            checked={value?.[0] === currentRowKey}
             disabled={isDisabled(row, rowIndex)}
             onChange={
               clickArea === 'radio'
@@ -93,7 +100,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
                     if (nativeEvent && opts.stopClickEventPropagation) {
                       nativeEvent.stopPropagation()
                     }
-                    onChange(currentRowKey)
+                    onChange([currentRowKey], [row], currentRowKey, [currentRowKey], 'check')
                   }
                 : undefined
             }
@@ -101,18 +108,18 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
         )
       },
       features: {
-        ...opts.radioColumn?.features,
+        ...opts.columnProp?.features,
         [SINGLE_SELECT_MARK_PROPNAME]: true,
       },
     }
 
     const nextColumns = pipeline.getColumns().slice()
 
-    const radioPlacement = opts.radioPlacement ?? 'start'
-    if (radioPlacement === 'start') {
-      nextColumns.unshift(radioColumn)
+    const placement = opts.placement ?? 'start'
+    if (placement === 'start') {
+      nextColumns.unshift(columnProp)
     } else {
-      nextColumns.push(radioColumn)
+      nextColumns.push(columnProp)
     }
 
     pipeline.columns(nextColumns)
@@ -125,7 +132,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
       let onClick: any
 
       if (opts.highlightRowWhenSelected) {
-        if (value === currentRowKey) {
+        if (value?.[0] === currentRowKey) {
           className = 'highlight'
         }
       }
@@ -135,7 +142,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
           if (opts.stopClickEventPropagation) {
             e.stopPropagation()
           }
-          onChange(currentRowKey)
+          onChange([currentRowKey], [row], currentRowKey, [currentRowKey], 'check')
         }
       }
 

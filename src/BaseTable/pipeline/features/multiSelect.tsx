@@ -1,3 +1,5 @@
+import { Key } from 'react'
+
 import { CellProps, ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, mergeCellProps, MULTI_SELECT_MARK_PROPNAME } from '../../utils'
@@ -10,30 +12,31 @@ const selectValueSetKey = 'selectValueSetKey'
 
 export interface MultiSelectFeatureOptions {
   /** 非受控用法：默认选中的值 */
-  defaultValue?: string[]
+  defaultValue?: Key[]
 
   /** 非受控用法：默认 lastKey */
-  defaultLastKey?: string
+  defaultLastKey?: Key
 
   /** 受控用法：当前选中的 keys */
-  value?: string[]
+  value?: Key[]
 
   /** 受控用法：上一次操作对应的 currentRowKey */
-  lastKey?: string
+  lastKey?: Key
 
   /** 受控用法：状态改变回调  */
   onChange?: (
-    nextValue: string[],
-    key: string,
-    keys: string[],
+    nextValue: Key[],
+    selectedRows: Record<string, any>[],
+    key: Key,
+    keys: Key[],
     action: 'check' | 'uncheck' | 'check-all' | 'uncheck-all'
   ) => void
 
   /** 复选框所在列的位置 */
-  checkboxPlacement?: 'start' | 'end'
+  placement?: 'start' | 'end'
 
   /** 复选框所在列的 column 配置，可指定 width，fixed, title, align, features 等属性 */
-  checkboxColumn?: Partial<ColumnType>
+  columnProp?: Partial<ColumnType>
 
   /** 是否高亮被选中的行 */
   highlightRowWhenSelected?: boolean
@@ -62,8 +65,8 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
 
     const value: string[] = opts.value ?? pipeline.getStateAtKey(stateKey)?.value ?? opts.defaultValue ?? []
     const lastKey: string = opts.lastKey ?? pipeline.getStateAtKey(stateKey)?.lastKey ?? opts.defaultLastKey ?? ''
-    const onChange: MultiSelectFeatureOptions['onChange'] = (nextValue, key, keys, action) => {
-      opts.onChange?.(nextValue, key, keys, action)
+    const onChange: MultiSelectFeatureOptions['onChange'] = (nextValue, selectedRows, key, keys, action) => {
+      opts.onChange?.(nextValue, selectedRows, key, keys, action)
       pipeline.setStateAtKey(stateKey, { value: nextValue, lastKey: key }, { keys, action })
     }
 
@@ -96,8 +99,15 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       }
     })
 
+    const getSelectedRows = (list: string[]) => {
+      return flatDataSource?.filter((r, index) => {
+        const keyValue = internals.safeGetRowKey(rowKey, r, index)
+        return list?.includes(keyValue)
+      })
+    }
+
     // todo: 暂使用hidden隐藏选择列 后续增加配置
-    const hiddenSelectColumn = opts.checkboxColumn && opts.checkboxColumn.hidden === true
+    const hiddenSelectColumn = opts.columnProp && opts.columnProp.hidden === true
     if (!hiddenSelectColumn) {
       const defaultCheckboxColumnTitle = (
         <Checkbox
@@ -106,24 +116,28 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
           onChange={() => {
             const keys = pipeline.getFeatureOptions(allEnableKeys)
             if (isAllChecked) {
-              onChange(arrayUtils.diff(value, keys), '', keys, 'uncheck-all')
+              const list = arrayUtils.diff(value, keys)
+              const selectedRows = getSelectedRows(list)
+              onChange(list, selectedRows, '', keys, 'uncheck-all')
             } else {
-              onChange(arrayUtils.merge(value, keys), '', keys, 'check-all')
+              const list = arrayUtils.merge(value, keys)
+              const selectedRows = getSelectedRows(list)
+              onChange(list, selectedRows, '', keys, 'check-all')
             }
           }}
         />
       )
 
-      const checkboxColumn: ColumnType = {
+      const columnProp: ColumnType = {
         name: '是否选中',
         title: defaultCheckboxColumnTitle,
         width: 50,
         align: 'center',
-        ...opts.checkboxColumn,
+        ...opts.columnProp,
         getCellProps(val: any, row: any, rowIndex: number): CellProps {
           const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
           let checkboxCellProps = {}
-          const preCellProps = opts.checkboxColumn?.getCellProps?.(val, row, rowIndex)
+          const preCellProps = opts.columnProp?.getCellProps?.(val, row, rowIndex)
           const fullRowsSet = pipeline.getFeatureOptions(fullRowsSetKey) || new Set<string>()
           const selectValueSet = pipeline.getFeatureOptions(selectValueSetKey) || new Set<string>()
           if (fullRowsSet.has(currentRowKey) && clickArea === 'cell') {
@@ -174,17 +188,17 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
           )
         },
         features: {
-          ...opts.checkboxColumn?.features,
+          ...opts.columnProp?.features,
           [MULTI_SELECT_MARK_PROPNAME]: true,
         },
       }
 
       const nextColumns = pipeline.getColumns().slice()
-      const checkboxPlacement = opts.checkboxPlacement ?? 'start'
-      if (checkboxPlacement === 'start') {
-        nextColumns.unshift(checkboxColumn)
+      const placement = opts.placement ?? 'start'
+      if (placement === 'start') {
+        nextColumns.unshift(columnProp)
       } else {
-        nextColumns.push(checkboxColumn)
+        nextColumns.push(columnProp)
       }
       pipeline.columns(nextColumns)
     }
@@ -245,9 +259,13 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       }
 
       if (prevChecked) {
-        onChange(arrayUtils.diff(value, batchKeys), key, batchKeys, 'uncheck')
+        const list = arrayUtils.diff(value, batchKeys)
+        const selectedRows = getSelectedRows(list)
+        onChange(list, selectedRows, key, batchKeys, 'uncheck')
       } else {
-        onChange(arrayUtils.merge(value, batchKeys), key, batchKeys, 'check')
+        const list = arrayUtils.merge(value, batchKeys)
+        const selectedRows = getSelectedRows(list)
+        onChange(list, selectedRows, key, batchKeys, 'check')
       }
     }
   }
