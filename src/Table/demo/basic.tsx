@@ -7,6 +7,7 @@ import Table from '../Table'
 import antdTheme from './antdTheme.json'
 
 export default () => {
+  const [dataCount, setDataCount] = useState(1000)
   const [ellipsis, setEllipsis] = useState(true)
   const [bordered, setBordered] = useState(true)
   const [useVirtual, setUseVirtual] = useState(true)
@@ -134,9 +135,11 @@ export default () => {
                 setColumnDrag(undefined)
                 setFinalColumns(getColumns())
                 setDataSource(getDataSource())
+                setDataCount(1000)
               } else {
-                setFinalColumns(getColumns(10))
+                setFinalColumns(getColumns(20))
                 setDataSource(getDataSource(20))
+                setDataCount(20)
               }
               setUseVirtual(v)
             }}
@@ -161,12 +164,14 @@ export default () => {
             value={!!columnDrag}
             onChange={(v) => {
               if (v) {
-                setFinalColumns(getColumns(10))
+                setFinalColumns(getColumns(20))
                 setDataSource(getDataSource(20))
+                setDataCount(20)
                 setUseVirtual(false)
               } else {
                 setFinalColumns(getColumns())
                 setDataSource(getDataSource())
+                setDataCount(1000)
                 setUseVirtual(true)
               }
               setColumnDrag(v ? { onColumnDragStopped: handleColumnDragStopped } : undefined)
@@ -219,6 +224,23 @@ export default () => {
           </Radio.Group>
         </Form.Item>
       </Form>
+      <div style={{ marginBottom: '8px' }}>
+        <Radio.Group
+          value={dataCount}
+          onChange={(e) => {
+            const count = e.target.value
+            setDataCount(count)
+            setFinalColumns(getColumns(count))
+            setDataSource(getDataSource(count))
+          }}
+        >
+          <Radio.Button value={20}>行与列的数量: 20</Radio.Button>
+          <Radio.Button value={100}>行与列的数量: 100</Radio.Button>
+          <Radio.Button value={1000}>行与列的数量: 1000</Radio.Button>
+          <Radio.Button value={5000}>行与列的数量: 5000</Radio.Button>
+          <Radio.Button value={10000}>行与列的数量: 10000</Radio.Button>
+        </Radio.Group>
+      </div>
       <Table
         style={{ height: 600, width: '100%' }}
         dataSource={dataSource}
@@ -232,7 +254,7 @@ export default () => {
         columnHighlight={columnHighlight}
         sort={sort}
         filter={filter}
-        rowSelection={{ columnWidth: 100, ...rowSelection }}
+        rowSelection={{ ...rowSelection }}
       />
     </ConfigProvider>
   )

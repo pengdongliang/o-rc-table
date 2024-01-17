@@ -131,9 +131,9 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       const columnProp: ColumnType = {
         name: '是否选中',
         title: defaultCheckboxColumnTitle,
-        width: 50,
         align: 'center',
         ...opts.columnProp,
+        width: opts.columnProp?.width ?? 50,
         getCellProps(val: any, row: any, rowIndex: number): CellProps {
           const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
           let checkboxCellProps = {}

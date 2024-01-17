@@ -61,9 +61,9 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
 
     const columnProp: ColumnType = {
       name: '',
-      width: 50,
       align: 'center',
       ...opts.columnProp,
+      width: opts.columnProp?.width ?? 50,
       getCellProps(val: any, row: any, rowIndex: number): CellProps {
         const preCellProps = opts.columnProp?.getCellProps?.(val, row, rowIndex)
         if (clickArea === 'cell') {

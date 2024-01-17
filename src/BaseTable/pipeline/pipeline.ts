@@ -180,7 +180,14 @@ export class TablePipeline<RecordType = unknown> {
 
     this._dataSource = input.dataSource
 
-    this._columns = input.columns?.map((col) => ({ ...col, key: this.guid() }))
+    this._columns = input.columns?.map((col) => {
+      let { width } = col ?? {}
+      if (typeof width === 'string') {
+        // 列宽度为百分比或者带单位的情况下看看如何更好地兼容成具体数值
+        width = Number((width as string).replace(/[^0-9]/g, ''))
+      }
+      return { ...col, key: this.guid(), width }
+    })
 
     if (input.tableContext) {
       this._tableContext = input.tableContext

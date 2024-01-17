@@ -17,7 +17,7 @@ order: 0
 
 指定表格的数据源 `dataSource` 和列的定义 `columns` ，二者均为一个数组。
 
-```tsx
+```tsx | pure
 import { columns, dataSource } from '@table/constant'
 import { Table, useTablePipeline } from 'o-rc-table'
 

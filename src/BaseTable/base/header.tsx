@@ -278,7 +278,7 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
 
   const colgroup = headerRenderInfo.flat.map((wrapped) => {
     if (wrapped.type === 'blank') {
-      if (wrapped.width > 0) {
+      if (typeof wrapped.width === 'string' || wrapped.width > 0) {
         return <col key={wrapped.blankSide} style={{ width: wrapped.width }} />
       }
       return null
