@@ -1,4 +1,4 @@
-import type { CheckboxProps, PaginationProps } from 'antd'
+import type { PaginationProps } from 'antd'
 import type { features } from 'o-rc-table'
 import React, { Key } from 'react'
 
@@ -51,7 +51,7 @@ export interface TableRowSelection<T = any> {
   selectedRowKeys?: Key[]
   defaultSelectedRowKeys?: Key[]
   onChange?: (selectedRowKeys: Key[], selectedRows: T[], info: { type: RowSelectMethod }) => void
-  getCheckboxProps?: (record: T) => Partial<Omit<CheckboxProps, 'checked' | 'defaultChecked'>>
+  getCheckboxProps?: features.MultiSelectFeatureOptions['getCheckboxProps']
   onSelect?: SelectionSelectFn<T>
   // selections?: INTERNAL_SELECTION_ITEM[] | boolean
   hideSelectAll?: boolean

@@ -1,3 +1,4 @@
+import type { RadioProps } from 'antd'
 import React, { Key } from 'react'
 
 import { CellProps, ColumnType } from '../../interfaces'
@@ -6,7 +7,7 @@ import { mergeCellProps, SINGLE_SELECT_MARK_PROPNAME } from '../../utils'
 import { always } from '../../utils/others'
 import { TablePipeline } from '../pipeline'
 
-export interface SingleSelectFeatureOptions {
+export interface SingleSelectFeatureOptions<RecordType = any> {
   /** 是否高亮被选中的行 */
   highlightRowWhenSelected?: boolean
 
@@ -17,35 +18,32 @@ export interface SingleSelectFeatureOptions {
   value?: Key[]
 
   /** 受控用法：选中值改变回调 */
-  onChange?: (
-    selectedRowKeys: Key[],
-    selectedRows: Record<string, any>[],
-    key: Key,
-    keys: Key[],
-    action: 'check'
-  ) => void
+  onChange?: (selectedRowKeys: Key[], selectedRows: RecordType[], key: Key, keys: Key[], action: 'check') => void
 
   /** 判断一行是否禁用 */
-  isDisabled?(row: any, rowIndex: number): boolean
+  isDisabled?(row: RecordType, rowIndex: number): boolean
 
   /** 点击事件的响应区域 */
   clickArea?: 'radio' | 'cell' | 'row'
 
   /** 单选框所在列的 column 配置，可指定 width，fixed 等属性 */
-  columnProp?: Partial<ColumnType>
+  columnProps?: Partial<ColumnType<RecordType>>
 
   /** 单选框所在列的位置 */
   placement?: 'start' | 'end'
 
   /** 是否对触发 onChange 的 click 事件调用 event.stopPropagation() */
   stopClickEventPropagation?: boolean
+
+  /** 选择框的默认属性配置 */
+  getCheckboxProps?: (record: RecordType) => Partial<Omit<RadioProps, 'checked' | 'defaultChecked'>>
 }
 
 export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
   return function singleSelectStep(pipeline: TablePipeline) {
     const { Radio } = pipeline.ctx.components
     if (Radio == null) {
-      throw new Error('使用 singleSelect 之前需要通过 pipeline context 设置 components.Radio')
+      throw new Error('Before using singleSelect, components need to be set through the pipeline context Radio')
     }
 
     const stateKey = 'singleSelect'
@@ -59,17 +57,18 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
       pipeline.setStateAtKey(stateKey, nextValue)
     }
 
-    const columnProp: ColumnType = {
+    const columnProps: ColumnType = {
       key: 'table-radio',
       name: '',
       align: 'center',
-      ...opts.columnProp,
-      width: opts.columnProp?.width ?? 50,
+      ...opts.columnProps,
+      width: opts.columnProps?.width ?? 50,
       getCellProps(val: any, row: any, rowIndex: number): CellProps {
-        const preCellProps = opts.columnProp?.getCellProps?.(val, row, rowIndex)
+        const preCellProps = opts.columnProps?.getCellProps?.(val, row, rowIndex)
         if (clickArea === 'cell') {
           const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
-          const disabled = isDisabled(row, rowIndex)
+          const checkboxProps = (opts.getCheckboxProps ? opts.getCheckboxProps(row) : null) || {}
+          const disabled = checkboxProps.disabled || isDisabled(row, rowIndex)
           return mergeCellProps(preCellProps, {
             style: { cursor: disabled ? 'not-allowed' : 'pointer' },
             onClick: disabled
@@ -89,11 +88,13 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
           return null
         }
         const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
+        const checkboxProps = (opts.getCheckboxProps ? opts.getCheckboxProps(row) : null) || {}
         return (
           <Radio
-            style={{ marginRight: 0 }}
-            checked={value === currentRowKey}
             disabled={isDisabled(row, rowIndex)}
+            style={{ marginRight: 0 }}
+            {...checkboxProps}
+            checked={value === currentRowKey}
             onChange={
               clickArea === 'radio'
                 ? (arg1: any, arg2: any) => {
@@ -109,7 +110,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
         )
       },
       features: {
-        ...opts.columnProp?.features,
+        ...opts.columnProps?.features,
         [SINGLE_SELECT_MARK_PROPNAME]: true,
       },
     }
@@ -118,9 +119,9 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
 
     const placement = opts.placement ?? 'start'
     if (placement === 'start') {
-      nextColumns.unshift(columnProp)
+      nextColumns.unshift(columnProps)
     } else {
-      nextColumns.push(columnProp)
+      nextColumns.push(columnProps)
     }
 
     pipeline.columns(nextColumns)

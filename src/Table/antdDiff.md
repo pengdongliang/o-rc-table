@@ -79,9 +79,8 @@
 
 - [ ] checkStrictly `checkable` 状态下节点选择完全受控（父子数据选中状态不再关联）
 - [ ] columnTitle 自定义列表选择框标题
-- [ ] getCheckboxProps 选择框的默认属性配置 <b style="color: purple;">有用到</b>
 - [ ] hideSelectAll 隐藏全选勾选框与自定义选择项
-- [ ] preserveSelectedRowKeys 当数据被删除时仍然保留选项的 `key` <b style="color: purple;">有用到</b>
+- [ ] preserveSelectedRowKeys 当数据被删除时仍然保留选项的 `key` <b style="color: purple;">有用到, 默认开启, 暂无法关闭</b>
 - [ ] selections 自定义选择项 配置项, 设为 `true` 时使用默认选择项 <b style="color: purple;">有用到</b>
 - [ ] onCell 设置单元格属性，用法与 `Column` 的 `onCell` 相同
 - [ ] onSelect 用户手动选择/取消选择某行的回调 <b style="color: purple;">有用到</b>

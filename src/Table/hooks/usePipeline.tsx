@@ -105,8 +105,10 @@ export const usePipeline = (props: TableProps) => {
           fixed = true,
           columnWidth,
           defaultSelectedRowKeys,
+          ...rowSelectionRest
         } = rowSelection
         const baseOptions: features.MultiSelectFeatureOptions = {
+          ...rowSelectionRest,
           value: selectedRowKeys,
           onChange: (rowKeys, rows, _key, _batchKeys, info) => {
             onChange?.(rowKeys, rows, { type: info })
@@ -115,7 +117,7 @@ export const usePipeline = (props: TableProps) => {
           highlightRowWhenSelected: false,
           clickArea: 'cell',
           placement: 'start',
-          columnProp: { fixed, width: columnWidth as number },
+          columnProps: { fixed, width: columnWidth as number },
         }
 
         if (type === 'checkbox') {

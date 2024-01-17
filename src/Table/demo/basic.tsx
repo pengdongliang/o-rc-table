@@ -255,6 +255,12 @@ export default () => {
         sort={sort}
         filter={filter}
         rowSelection={{
+          preserveSelectedRowKeys: false,
+          getCheckboxProps: (record) => {
+            return {
+              disabled: record.id === 1,
+            }
+          },
           defaultSelectedRowKeys: [0, 2, 3, 5],
           ...rowSelection,
         }}

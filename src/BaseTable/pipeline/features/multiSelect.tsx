@@ -1,3 +1,4 @@
+import type { CheckboxProps, RadioProps } from 'antd'
 import { Key } from 'react'
 
 import { CellProps, ColumnType } from '../../interfaces'
@@ -10,7 +11,7 @@ const fullRowsSetKey = 'fullRowsSetKey'
 const allEnableKeys = 'allEnableKeys'
 const selectValueSetKey = 'selectValueSetKey'
 
-export interface MultiSelectFeatureOptions {
+export interface MultiSelectFeatureOptions<RecordType = any> {
   /** 非受控用法：默认选中的值 */
   defaultValue?: Key[]
 
@@ -26,7 +27,7 @@ export interface MultiSelectFeatureOptions {
   /** 受控用法：状态改变回调  */
   onChange?: (
     nextValue: Key[],
-    selectedRows: Record<string, any>[],
+    selectedRows: RecordType[],
     key: Key,
     keys: Key[],
     action: 'check' | 'uncheck' | 'check-all' | 'uncheck-all'
@@ -36,19 +37,26 @@ export interface MultiSelectFeatureOptions {
   placement?: 'start' | 'end'
 
   /** 复选框所在列的 column 配置，可指定 width，fixed, title, align, features 等属性 */
-  columnProp?: Partial<ColumnType>
+  columnProps?: Partial<ColumnType>
 
   /** 是否高亮被选中的行 */
   highlightRowWhenSelected?: boolean
 
   /** 判断一行中的 checkbox 是否要禁用 */
-  isDisabled?(row: any, rowIndex: number): boolean
+  isDisabled?(row: RecordType, rowIndex: number): boolean
 
   /** 点击事件的响应区域 */
   clickArea?: 'checkbox' | 'cell' | 'row'
 
   /** 是否对触发 onChange 的 click 事件调用 event.stopPropagation() */
   stopClickEventPropagation?: boolean
+
+  /** 选择框的默认属性配置 */
+  getCheckboxProps?: (
+    record: RecordType
+  ) =>
+    | Partial<Omit<CheckboxProps, 'checked' | 'defaultChecked'>>
+    | Partial<Omit<RadioProps, 'checked' | 'defaultChecked'>>
 }
 
 export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
@@ -56,7 +64,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
     const stateKey = 'multiSelect'
     const { Checkbox } = pipeline.ctx.components
     if (Checkbox == null) {
-      throw new Error('使用 multiSelect 之前需要设置 pipeline.ctx.components.Checkbox')
+      throw new Error('Before using MultiSelect, you need to set pipeline.ctx.components.Checkbox')
     }
     const rowKey = pipeline.ensurePrimaryKey('multiSelect')
 
@@ -79,13 +87,17 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
     let set = new Set(value)
     let isAllChecked = set.size !== 0 // 当前不存在选中则默认为false
     let isAnyChecked = false
+    const checkboxPropsMap = new Map<Key, Partial<CheckboxProps>>()
 
     const flatDataSource = collectNodes(pipeline.getDataSource())
+
     flatDataSource.forEach((row, rowIndex) => {
       const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
       fullKeySet.add(currentRowKey)
+      const checkboxProps = (opts.getCheckboxProps ? opts.getCheckboxProps(row) : null) || {}
+      checkboxPropsMap.set(currentRowKey, checkboxProps)
       // 在 allKeys 中排除被禁用的 key
-      if (!isDisabled(row, rowIndex)) {
+      if (!checkboxProps.disabled && !isDisabled(row, rowIndex)) {
         allKeys.push(currentRowKey)
 
         // 存在一个非选中，则不再进行判断
@@ -106,8 +118,10 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       })
     }
 
+    const allDisabled = !allKeys.length
+
     // todo: 暂使用hidden隐藏选择列 后续增加配置
-    const hiddenSelectColumn = opts.columnProp && opts.columnProp.hidden === true
+    const hiddenSelectColumn = opts.columnProps && opts.columnProps.hidden === true
     if (!hiddenSelectColumn) {
       const defaultCheckboxColumnTitle = (
         <Checkbox
@@ -125,25 +139,28 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
               onChange(list, selectedRows, '', keys, 'check-all')
             }
           }}
+          disabled={flatDataSource.length === 0 || allDisabled}
+          skipGroup
         />
       )
 
-      const columnProp: ColumnType = {
+      const columnProps: ColumnType = {
         key: 'table-checkbox',
         name: '是否选中',
         title: defaultCheckboxColumnTitle,
         align: 'center',
-        ...opts.columnProp,
-        width: opts.columnProp?.width ?? 50,
+        ...opts.columnProps,
+        width: opts.columnProps?.width ?? 50,
         getCellProps(val: any, row: any, rowIndex: number): CellProps {
           const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
           let checkboxCellProps = {}
-          const preCellProps = opts.columnProp?.getCellProps?.(val, row, rowIndex)
+          const preCellProps = opts.columnProps?.getCellProps?.(val, row, rowIndex)
           const fullRowsSet = pipeline.getFeatureOptions(fullRowsSetKey) || new Set<string>()
           const selectValueSet = pipeline.getFeatureOptions(selectValueSetKey) || new Set<string>()
           if (fullRowsSet.has(currentRowKey) && clickArea === 'cell') {
             const prevChecked = selectValueSet.has(currentRowKey)
-            const disabled = isDisabled(row, rowIndex)
+            const checkboxProps = checkboxPropsMap.get(currentRowKey)
+            const disabled = checkboxProps?.disabled || isDisabled(row, rowIndex)
             checkboxCellProps = {
               style: { cursor: disabled ? 'not-allowed' : 'pointer' },
               onClick: disabled
@@ -165,10 +182,12 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
           const key = internals.safeGetRowKey(rowKey, row, rowIndex)
           const selectValueSet = pipeline.getFeatureOptions(selectValueSetKey) || new Set<string>()
           const checked = selectValueSet.has(key)
+          const checkboxProps = checkboxPropsMap.get(key)
           return (
             <Checkbox
-              checked={checked}
               disabled={isDisabled(row, rowIndex)}
+              {...checkboxProps}
+              checked={checked}
               onChange={
                 clickArea === 'checkbox'
                   ? (arg1: any, arg2: any) => {
@@ -189,7 +208,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
           )
         },
         features: {
-          ...opts.columnProp?.features,
+          ...opts.columnProps?.features,
           [MULTI_SELECT_MARK_PROPNAME]: true,
         },
       }
@@ -197,9 +216,9 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       const nextColumns = pipeline.getColumns().slice()
       const placement = opts.placement ?? 'start'
       if (placement === 'start') {
-        nextColumns.unshift(columnProp)
+        nextColumns.unshift(columnProps)
       } else {
-        nextColumns.push(columnProp)
+        nextColumns.push(columnProps)
       }
       pipeline.columns(nextColumns)
     }

@@ -183,7 +183,7 @@ export class TablePipeline<RecordType = unknown> {
     this._columns = input.columns?.map((col) => {
       let { width } = col ?? {}
       if (typeof width === 'string') {
-        // 列宽度为百分比或者带单位的情况下看看如何更好地兼容成具体数值
+        // TODO 列宽度为百分比或者带单位的情况下看看如何更好地兼容成具体数值
         width = Number((width as string).replace(/[^0-9]/g, ''))
       }
       return { ...col, key: this.guid(), width }
