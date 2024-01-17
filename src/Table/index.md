@@ -19,16 +19,14 @@ order: 0
 
 ```tsx | pure
 import { columns, dataSource } from '@table/constant'
-import { Table, useTablePipeline } from 'o-rc-table'
+import { Table } from 'o-rc-table'
 
 export default () => {
-  const pipeline = useTablePipeline().input({ dataSource, columns })
-
-  return <Table {...pipeline.getProps()} />
+  return <Table columns={columns} dataSource={dataSource} />
 }
 ```
 
 ## 代码演示
 
 <!-- prettier-ignore -->
-<code src="./demo/basic.tsx">基本用法</code>
+<code src="./demo/basic.tsx">动态控制表格属性</code>

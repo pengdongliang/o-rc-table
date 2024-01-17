@@ -98,12 +98,20 @@ export const usePipeline = (props: TableProps) => {
         return pipeline.use(features.filter(options))
       },
       rowSelection: () => {
-        const { type = 'checkbox', selectedRowKeys, onChange, fixed = true, columnWidth } = rowSelection
+        const {
+          type = 'checkbox',
+          selectedRowKeys,
+          onChange,
+          fixed = true,
+          columnWidth,
+          defaultSelectedRowKeys,
+        } = rowSelection
         const baseOptions: features.MultiSelectFeatureOptions = {
           value: selectedRowKeys,
           onChange: (rowKeys, rows, _key, _batchKeys, info) => {
             onChange?.(rowKeys, rows, { type: info })
           },
+          defaultValue: defaultSelectedRowKeys,
           highlightRowWhenSelected: false,
           clickArea: 'cell',
           placement: 'start',

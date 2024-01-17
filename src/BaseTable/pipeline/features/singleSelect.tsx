@@ -92,7 +92,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
         return (
           <Radio
             style={{ marginRight: 0 }}
-            checked={value?.[0] === currentRowKey}
+            checked={value === currentRowKey}
             disabled={isDisabled(row, rowIndex)}
             onChange={
               clickArea === 'radio'
@@ -133,7 +133,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
       let onClick: any
 
       if (opts.highlightRowWhenSelected) {
-        if (value?.[0] === currentRowKey) {
+        if (value === currentRowKey) {
           className = 'highlight'
         }
       }

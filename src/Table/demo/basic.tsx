@@ -18,7 +18,7 @@ export default () => {
   const [columnDrag, setColumnDrag] = useState<features.ColumnDragOptions>()
   const [columnHighlight, setColumnHighlight] = useState<features.ColumnRangeHoverFeatureOptions>()
   const [columnFixed, setColumnFixed] = useState(true)
-  const [sort, setSort] = useState(true)
+  const [sort, setSort] = useState(false)
   const [filter, setFilter] = useState<features.FilterFeatureOptions>()
   const [rowSelection, setRowSelection] = useState<TableRowSelection>({ type: 'checkbox' })
 
@@ -255,6 +255,7 @@ export default () => {
         sort={sort}
         filter={filter}
         rowSelection={{
+          defaultSelectedRowKeys: [0, 2, 3, 5],
           ...rowSelection,
         }}
       />
