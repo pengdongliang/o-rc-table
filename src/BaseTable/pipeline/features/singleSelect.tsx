@@ -60,6 +60,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
     }
 
     const columnProp: ColumnType = {
+      key: 'table-radio',
       name: '',
       align: 'center',
       ...opts.columnProp,

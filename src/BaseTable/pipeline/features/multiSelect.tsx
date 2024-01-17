@@ -129,6 +129,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       )
 
       const columnProp: ColumnType = {
+        key: 'table-checkbox',
         name: '是否选中',
         title: defaultCheckboxColumnTitle,
         align: 'center',

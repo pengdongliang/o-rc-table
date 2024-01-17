@@ -254,7 +254,9 @@ export default () => {
         columnHighlight={columnHighlight}
         sort={sort}
         filter={filter}
-        rowSelection={{ ...rowSelection }}
+        rowSelection={{
+          ...rowSelection,
+        }}
       />
     </ConfigProvider>
   )
