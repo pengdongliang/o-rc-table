@@ -63,7 +63,7 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
         background: tableExpandIconBg,
         border: tableBorder,
         borderRadius,
-        transform: `scale(${expandIconScale})`,
+        transform: `scale(${expandIconScale}) rotate(0deg) !important`,
         transition: `all ${motionDurationSlow}`,
         userSelect: 'none',
 
@@ -113,7 +113,7 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
         },
       },
 
-      [`${componentCls}-row-indent + ${componentCls}-row-expand-icon`]: {
+      [`${componentCls}-row-indent + ${componentCls}-row-expand-icon, ${componentCls}-row-expand-icon`]: {
         marginTop: expandIconMarginTop,
         marginInlineEnd: paddingXS,
       },

@@ -47,15 +47,14 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
   props: InternalTableProps<RecordType>,
   ref: React.Ref<TableRef>
 ) => {
-  const pipeline = usePipeline(props)
-
-  const finalProps = { ...props, ...pipeline.getProps() }
-  const { prefixCls: customizePrefixCls, className, style, dataSource, columns, loading, ...rest } = finalProps
-
   const { getPrefixCls, table } = React.useContext<ConfigConsumerProps>(ConfigContext)
+  const customizePrefixCls = getPrefixCls('table', props?.prefixCls)
+  const pipeline = usePipeline({ ...props, prefixCls: customizePrefixCls })
+
+  const finalProps = { ...props, ...pipeline.getProps(), prefixCls: customizePrefixCls }
+  const { prefixCls, className, style, dataSource, columns, loading, ...rest } = finalProps
 
   const mergedStyle: React.CSSProperties = { ...table?.style, ...style }
-  const prefixCls = getPrefixCls('table', customizePrefixCls)
   const rootCls = useCSSVarCls(prefixCls)
 
   const [wrapCSSVar, hashId, cssVarCls] = useStyle(prefixCls, rootCls)

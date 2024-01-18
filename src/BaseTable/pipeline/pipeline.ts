@@ -28,7 +28,7 @@ interface PipelineSnapshot {
 
 export interface TablePipelineIndentsConfig {
   iconIndent: number
-  iconWidth: 16
+  iconWidth: number
   iconGap: number
   indentSize: number
 }
@@ -72,10 +72,10 @@ export class TablePipeline<RecordType = unknown> {
   private _tableContext?: BaseTableContextProps
 
   static defaultIndents: TablePipelineIndentsConfig = {
-    iconIndent: -8,
-    iconWidth: 16,
-    iconGap: 0,
-    indentSize: 16,
+    iconIndent: 0,
+    iconWidth: 12,
+    iconGap: 8,
+    indentSize: 12,
   }
 
   readonly ctx: TablePipelineCtx = {

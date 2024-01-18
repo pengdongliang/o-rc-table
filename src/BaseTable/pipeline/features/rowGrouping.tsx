@@ -112,8 +112,8 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
         return (
           <ExpansionCell className={cx('expansion-cell', expandCls)}>
             <icons.CaretRight
-              className={cx('expansion-icon', expandCls)}
-              style={{ marginLeft: indents.iconIndent, marginRight: indents.iconGap }}
+              className={cx(pipeline.getTableContext().Classes?.expandIcon, expandCls)}
+              style={{ marginLeft: indents.iconIndent, marginInlineEnd: indents.iconGap }}
             />
             {row.groupTitle ?? content}
           </ExpansionCell>

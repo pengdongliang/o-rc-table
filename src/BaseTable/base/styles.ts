@@ -123,8 +123,11 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     rowSpan: `${prefix}-row-span`,
     leaf: `${prefix}-leaf`,
 
-    expanded: `${prefix}-expanded`,
-    collapsed: `${prefix}-collapsed`,
+    // ================= expand ==================
+    expandIcon: `${prefix}-row-expand-icon`,
+    expanded: `${prefix}-row-expand-icon-expanded`,
+    collapsed: `${prefix}-row-expand-icon-collapsed`,
+    // ================= expand ==================
 
     popup: `${prefix}-popup`,
     popupHeader: `${prefix}-popup-header`,

@@ -1,5 +1,5 @@
 import { Checkbox, Input, Radio } from 'antd'
-import { features, makeRecursiveMapper, TablePipeline, useTablePipeline } from 'o-rc-table'
+import { features, getTableClasses, makeRecursiveMapper, TablePipeline, useTablePipeline } from 'o-rc-table'
 import { useMemo } from 'react'
 
 import { TableProps } from '../InternalTable'
@@ -43,12 +43,21 @@ export const usePipeline = (props: TableProps) => {
     sort,
     filter,
     rowSelection,
+    prefixCls,
   } = props
 
   const pipeline = useTablePipeline({ components: { Checkbox, Radio, Input, ...components } })
-    .input({ dataSource, columns })
+    .input({ dataSource, columns, tableContext: { namespace: prefixCls, Classes: getTableClasses(prefixCls) } })
     .rowKey(rowKey)
     .use(features.columnResize())
+    .use(
+      features.treeMode({
+        icon: (iconProps) => {
+          const newProps = { ...iconProps, expanded: undefined }
+          return <button {...newProps} type="button" />
+        },
+      })
+    )
 
   const pipeMap = useMemo<PipeMapType>(() => {
     return {

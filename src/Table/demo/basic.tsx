@@ -22,6 +22,79 @@ export default () => {
   const [filter, setFilter] = useState<features.FilterFeatureOptions>()
   const [rowSelection, setRowSelection] = useState<TableRowSelection>({ type: 'checkbox' })
 
+  function makeChildren(prefix: number) {
+    return [
+      {
+        id: `${prefix}-1`,
+        No: '二级标题',
+        order: '应用部',
+        from: '云南大理',
+        amount: '29400.00',
+        balance: '1000.00',
+        opt: `操作${prefix}-1`,
+        children: [
+          {
+            id: `${prefix}-1-1`,
+            No: '三级标题',
+            order: '平台大前端-UED',
+            from: '云南大理',
+            amount: '29400.00',
+            balance: '1000.00',
+            opt: `操作${prefix}-1-1`,
+            children: [],
+          },
+          {
+            id: `${prefix}-1-2`,
+            No: '三级标题',
+            order: '平台大前端-前端',
+            from: '云南大理',
+            amount: '29400.00',
+            balance: '1000.00',
+            opt: `操作${prefix}-1-2`,
+          },
+        ],
+      },
+      {
+        id: `${prefix}-2`,
+        No: '二级标题',
+        order: '应用部',
+        from: '云南大理',
+        amount: '29400.00',
+        balance: '1000.00',
+        opt: `操作${prefix}-2`,
+        children: [
+          {
+            id: `${prefix}-2-1`,
+            No: '三级标题',
+            order: '平台大前端-UED',
+            from: '云南大理',
+            amount: '29400.00',
+            balance: '1000.00',
+            opt: `操作${prefix}-2-1`,
+          },
+          {
+            id: `${prefix}-2-2`,
+            No: '三级标题',
+            order: '平台大前端-前端',
+            from: '云南大理',
+            amount: '29400.00',
+            balance: '1000.00',
+            opt: `操作${prefix}-2-2`,
+          },
+        ],
+      },
+      {
+        id: `${prefix}-3`,
+        No: '二级标题',
+        order: '应用部',
+        from: '云南大理',
+        amount: '29400.00',
+        balance: '1000.00',
+        opt: `操作${prefix}-3`,
+      },
+    ]
+  }
+
   const getDataSource = (count = 1000) => {
     return Array.from(Array(count)).map((_item, index) => ({
       id: index,
@@ -32,6 +105,7 @@ export default () => {
       amount: '29400.00',
       balance: '1000.00',
       opt: `操作${index}`,
+      children: makeChildren(index),
     }))
   }
 
@@ -87,7 +161,7 @@ export default () => {
                 return { ...item, name: item.name + index }
               })
             ),
-          [{ dataIndex: 'No', name: '序号', width: '80%', align: 'center', fixed: columnFixed }]
+          [{ dataIndex: 'No', name: '序号', width: 150, fixed: columnFixed }]
         )
         .concat({ dataIndex: 'opt', name: '操作', width: 80, align: 'center', fixed: columnFixed })
     },

@@ -187,7 +187,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
                   marginLeft: indents.iconIndent,
                   marginRight: indents.iconGap,
                 }}
-                className={cx('expansion-icon', expandCls)}
+                className={cx(pipeline.getTableContext().Classes?.expandIcon, expandCls)}
                 onClick={clickArea === 'icon' ? onClick : undefined}
               />
             )}

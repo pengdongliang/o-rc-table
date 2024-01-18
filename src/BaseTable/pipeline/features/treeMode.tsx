@@ -12,6 +12,7 @@ export const treeMetaSymbol = Symbol('treeMetaSymbol')
 interface ExpandIconProps extends React.DOMAttributes<Element> {
   expanded: boolean
   style: React.CSSProperties
+  className?: string
 }
 
 export interface TreeModeFeatureOptions {
@@ -151,7 +152,6 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
           }
           toggle(currentRowKey)
         }
-
         const expandCls = expanded
           ? pipeline.getTableContext().Classes?.expanded
           : pipeline.getTableContext().Classes?.collapsed
@@ -166,21 +166,22 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
             {Icon ? (
               <Icon
                 expanded={expanded}
+                className={cx(pipeline.getTableContext().Classes?.expandIcon, expandCls)}
                 style={{
                   cursor: clickArea === 'icon' ? 'pointer' : undefined,
                   marginLeft: indent,
-                  marginRight: iconGap,
-                  width: iconWidth,
+                  marginInlineEnd: iconGap,
                 }}
                 onClick={clickArea === 'icon' ? onClick : undefined}
+                aria-expanded={expanded}
               />
             ) : (
               <icons.CaretRight
-                className={cx('expansion-icon', expandCls)}
+                className={cx(pipeline.getTableContext().Classes?.expandIcon, expandCls)}
                 style={{
                   cursor: clickArea === 'icon' ? 'pointer' : undefined,
                   marginLeft: indent,
-                  marginRight: iconGap,
+                  marginInlineEnd: iconGap,
                 }}
                 onClick={clickArea === 'icon' ? onClick : undefined}
               />

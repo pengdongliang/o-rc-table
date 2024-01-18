@@ -15,7 +15,7 @@ export const ExpansionCell = styled((props) => <InlineFlexCell {...props} />)(({
       cursor: default;
     }
 
-    .expansion-icon {
+    .${Classes.expandIcon} {
       fill: #999;
       flex: 0 0 16px;
       transition: transform 200ms;
