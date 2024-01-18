@@ -66,7 +66,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
       action: Parameters<SingleSelectFeatureOptions['onChange']>[4],
       e: React.MouseEvent | React.KeyboardEvent
     ) => void = (nextValue, selectedRows, key, keys, action, e) => {
-      opts.onSelect(selectedRows?.[0], action === 'check', selectedRows, e as unknown as Event)
+      opts.onSelect?.(selectedRows?.[0], action === 'check', selectedRows, e as unknown as Event)
       opts.onChange?.(nextValue, selectedRows, key, keys, action)
       pipeline.setStateAtKey(stateKey, nextValue)
     }

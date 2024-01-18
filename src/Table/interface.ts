@@ -88,4 +88,6 @@ export interface TableFeaturesType<RecordType = any> {
   filter?: boolean | features.FilterFeatureOptions
   /** 行选择 */
   rowSelection?: TableRowSelection<RecordType>
+  /** 树形数据 */
+  tree?: boolean | features.TreeModeFeatureOptions
 }

@@ -186,9 +186,13 @@ export default () => {
 
 <embed src="baseTableDemo/select.md"></embed>
 
-## 树形数据展示
+## 树形展示
 
 <embed src="baseTableDemo/tree.md"></embed>
+
+## 树形选择
+
+<embed src="baseTableDemo/treeSelect.md"></embed>
 
 ## API
 

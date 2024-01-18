@@ -101,7 +101,8 @@ export function treeSelect(opts: TreeSelectFeatureOptions) {
     }
 
     const checkboxColumn: ColumnType = {
-      name: '',
+      key: 'table-tree-select',
+      name: '选择',
       width: 50,
       align: 'center',
       title: opts.rootKey != null ? makeCheckbox(opts.rootKey, true) : undefined,

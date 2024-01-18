@@ -12,7 +12,7 @@ function safeGetValue(column: ColumnType, record: any, rowIndex: number) {
   return record[column.dataIndex]
 }
 
-function safeGetRowKey(rowKey: BaseTableProps['rowKey'], record: any, rowIndex: number | string): string {
+function safeGetRowKey(rowKey: BaseTableProps['rowKey'], record: any, rowIndex?: number | string): string {
   let key: string
   if (typeof rowKey === 'string') {
     key = record[rowKey]

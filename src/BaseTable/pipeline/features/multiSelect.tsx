@@ -44,7 +44,7 @@ export interface MultiSelectFeatureOptions<RecordType = any> {
   highlightRowWhenSelected?: boolean
 
   /** 判断一行中的 checkbox 是否要禁用 */
-  isDisabled?(row: RecordType, rowIndex: number): boolean
+  isDisabled?(row: RecordType, rowIndex?: number): boolean
 
   /** 点击事件的响应区域 */
   clickArea?: 'checkbox' | 'cell' | 'row'
@@ -75,7 +75,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
     if (Checkbox == null) {
       throw new Error('Before using MultiSelect, you need to set pipeline.ctx.components.Checkbox')
     }
-    const rowKey = pipeline.ensurePrimaryKey('multiSelect')
+    const rowKey = pipeline.ensurePrimaryKey(stateKey) as string
 
     const isDisabled = opts.isDisabled ?? always(false)
     const clickArea = opts.clickArea ?? 'checkbox'
@@ -141,10 +141,10 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
             const list = isAllChecked ? arrayUtils.diff(value, keys) : arrayUtils.merge(value, keys)
             const selectedRows = getSelectedRows(list)
             if (isAllChecked) {
-              opts.onSelect(selectedRows, true, selectedRows, e)
+              opts.onSelect?.(selectedRows, true, selectedRows, e)
               onChange(list, selectedRows, '', keys, 'uncheck-all')
             } else {
-              opts.onSelect(selectedRows, false, selectedRows, e)
+              opts.onSelect?.(selectedRows, false, selectedRows, e)
               onChange(list, selectedRows, '', keys, 'check-all')
             }
 
@@ -208,6 +208,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
           const selectValueSet = pipeline.getFeatureOptions(selectValueSetKey) || new Set<string>()
           const checked = selectValueSet.has(key)
           const checkboxProps = checkboxPropsMap.get(key)
+
           return (
             <Checkbox
               disabled={isDisabled(row, rowIndex)}
@@ -307,12 +308,12 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       if (prevChecked) {
         const list = arrayUtils.diff(value, batchKeys)
         const selectedRows = getSelectedRows(list)
-        opts.onSelect(row, !prevChecked, selectedRows, e)
+        opts.onSelect?.(row, !prevChecked, selectedRows, e)
         onChange(list, selectedRows, key, batchKeys, 'uncheck')
       } else {
         const list = arrayUtils.merge(value, batchKeys)
         const selectedRows = getSelectedRows(list)
-        opts.onSelect(row, !prevChecked, selectedRows, e)
+        opts.onSelect?.(row, !prevChecked, selectedRows, e)
         onChange(list, selectedRows, key, batchKeys, 'check')
       }
     }
