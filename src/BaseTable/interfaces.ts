@@ -10,7 +10,7 @@ export type CellEllipsisType = { showTitle?: boolean } | boolean
 
 export interface ArtColumnStaticPart {
   /** 列的名称 */
-  name: string
+  name?: string
 
   /** 列的唯一标识 */
   key?: string

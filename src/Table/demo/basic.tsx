@@ -116,14 +116,14 @@ export default () => {
       const baseColumns: TableProps['columns'] = [
         {
           dataIndex: 'order',
-          name: '物流编码(长标题)',
+          title: '物流编码(长标题)',
           width: 100,
           ellipsis,
           features: { sortable: true, filterable: true },
         },
         {
           dataIndex: 'from',
-          name: '发货地',
+          title: '发货地',
           width: 200,
           features: { autoRowSpan, sortable: true, filterable: true },
         },

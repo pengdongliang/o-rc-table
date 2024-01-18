@@ -44,6 +44,25 @@ export type GetComponentProps<DataType> = (
 ) => React.HTMLAttributes<any> & React.TdHTMLAttributes<any>
 export type SelectionSelectFn<T> = (record: T, selected: boolean, selectedRows: T[], nativeEvent: Event) => void
 
+export type ExpandedRowRender<ValueType> = (
+  record: ValueType,
+  index: number,
+  indent: number,
+  expanded: boolean
+) => React.ReactNode
+export type TriggerEventHandler<RecordType> = (record: RecordType, event: React.MouseEvent<HTMLElement>) => void
+
+export interface RenderExpandIconProps<RecordType> {
+  prefixCls: string
+  expanded: boolean
+  record: RecordType
+  expandable: boolean
+  onExpand: TriggerEventHandler<RecordType>
+}
+
+export type RenderExpandIcon<RecordType> = (props: RenderExpandIconProps<RecordType>) => React.ReactNode
+export type RowClassName<RecordType> = (record: RecordType, index: number, indent: number) => string
+
 export interface TableRowSelection<T = any> {
   /** Keep the selection keys in list even the key not exist in `dataSource` anymore */
   preserveSelectedRowKeys?: boolean
@@ -69,6 +88,27 @@ export interface TableRowSelection<T = any> {
   onSelectAll?: (selected: boolean, selectedRows: T[], changeRows: T[]) => void
 }
 
+export interface ExpandableConfig<RecordType> {
+  expandedRowKeys?: readonly Key[]
+  defaultExpandedRowKeys?: readonly Key[]
+  expandedRowRender?: ExpandedRowRender<RecordType>
+  columnTitle?: React.ReactNode
+  expandRowByClick?: boolean
+  expandIcon?: RenderExpandIcon<RecordType>
+  onExpand?: (expanded: boolean, record: RecordType) => void
+  onExpandedRowsChange?: (expandedKeys: readonly Key[]) => void
+  defaultExpandAllRows?: boolean
+  indentSize?: number
+  /** @deprecated Please use `EXPAND_COLUMN` in `columns` directly */
+  expandIconColumnIndex?: number
+  showExpandColumn?: boolean
+  expandedRowClassName?: RowClassName<RecordType>
+  childrenColumnName?: string
+  rowExpandable?: (record: RecordType) => boolean
+  columnWidth?: number | string
+  fixed?: FixedType
+}
+
 export interface TableFeaturesType<RecordType = any> {
   /** 拖拽列宽 */
   dragColumnWidth?: boolean | features.ColumnResizeOptions
@@ -90,4 +130,6 @@ export interface TableFeaturesType<RecordType = any> {
   rowSelection?: TableRowSelection<RecordType>
   /** 树形数据 */
   tree?: boolean | features.TreeModeFeatureOptions
+  /** 展开配置 */
+  expandable?: ExpandableConfig<RecordType>
 }
