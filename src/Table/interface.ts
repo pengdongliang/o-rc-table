@@ -1,4 +1,4 @@
-import type { PaginationProps } from 'antd'
+import type { CheckboxProps, PaginationProps, RadioProps } from 'antd'
 import type { features } from 'o-rc-table'
 import React, { Key } from 'react'
 
@@ -51,7 +51,11 @@ export interface TableRowSelection<T = any> {
   selectedRowKeys?: Key[]
   defaultSelectedRowKeys?: Key[]
   onChange?: (selectedRowKeys: Key[], selectedRows: T[], info: { type: RowSelectMethod }) => void
-  getCheckboxProps?: features.MultiSelectFeatureOptions['getCheckboxProps']
+  getCheckboxProps?: (
+    record: T
+  ) =>
+    | Partial<Omit<CheckboxProps, 'checked' | 'defaultChecked'>>
+    | Partial<Omit<RadioProps, 'checked' | 'defaultChecked'>>
   onSelect?: SelectionSelectFn<T>
   // selections?: INTERNAL_SELECTION_ITEM[] | boolean
   hideSelectAll?: boolean
@@ -61,6 +65,8 @@ export interface TableRowSelection<T = any> {
   checkStrictly?: boolean
   renderCell?: (value: boolean, record: T, index: number, originNode: React.ReactNode) => React.ReactNode
   onCell?: GetComponentProps<T>
+  /** @deprecated This function is deprecated and should use `onChange` instead */
+  onSelectAll?: (selected: boolean, selectedRows: T[], changeRows: T[]) => void
 }
 
 export interface TableFeaturesType<RecordType = any> {

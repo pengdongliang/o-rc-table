@@ -1,4 +1,4 @@
-import type { RadioProps } from 'antd'
+import type { TableRowSelection } from '@table/interface'
 import React, { Key } from 'react'
 
 import { CellProps, ColumnType } from '../../interfaces'
@@ -36,7 +36,13 @@ export interface SingleSelectFeatureOptions<RecordType = any> {
   stopClickEventPropagation?: boolean
 
   /** 选择框的默认属性配置 */
-  getCheckboxProps?: (record: RecordType) => Partial<Omit<RadioProps, 'checked' | 'defaultChecked'>>
+  getCheckboxProps?: TableRowSelection<RecordType>['getCheckboxProps']
+
+  /** 用户手动选择/取消选择某行的回调 */
+  onSelect?: TableRowSelection<RecordType>['onSelect']
+
+  /** 自定义列表选择框标题 */
+  columnTitle?: TableRowSelection<RecordType>['columnTitle']
 }
 
 export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
@@ -51,16 +57,35 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
     const isDisabled = opts.isDisabled ?? always(false)
 
     const rowKey = pipeline.ensurePrimaryKey('singleSelect')
-    const value = opts.value?.[0] ?? pipeline.getStateAtKey(stateKey) ?? opts.defaultValue?.[0]
-    const onChange: SingleSelectFeatureOptions['onChange'] = (nextValue, selectedRows, key, keys, action) => {
+    const value = opts.value?.[0] ?? pipeline.getStateAtKey(stateKey)?.[0] ?? opts.defaultValue?.[0]
+    const onChange: (
+      nextValue: Parameters<SingleSelectFeatureOptions['onChange']>[0],
+      selectedRows: Parameters<SingleSelectFeatureOptions['onChange']>[1],
+      key: Parameters<SingleSelectFeatureOptions['onChange']>[2],
+      keys: Parameters<SingleSelectFeatureOptions['onChange']>[3],
+      action: Parameters<SingleSelectFeatureOptions['onChange']>[4],
+      e: React.MouseEvent | React.KeyboardEvent
+    ) => void = (nextValue, selectedRows, key, keys, action, e) => {
+      opts.onSelect(selectedRows?.[0], action === 'check', selectedRows, e as unknown as Event)
       opts.onChange?.(nextValue, selectedRows, key, keys, action)
       pipeline.setStateAtKey(stateKey, nextValue)
+    }
+
+    const renderColumnTitle = () => {
+      if (!opts.columnTitle) {
+        return null
+      }
+      if (typeof opts.columnTitle === 'function') {
+        return opts.columnTitle(null)
+      }
+      return opts.columnTitle
     }
 
     const columnProps: ColumnType = {
       key: 'table-radio',
       name: '',
       align: 'center',
+      title: renderColumnTitle(),
       ...opts.columnProps,
       width: opts.columnProps?.width ?? 50,
       getCellProps(val: any, row: any, rowIndex: number): CellProps {
@@ -77,7 +102,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
                   if (opts.stopClickEventPropagation) {
                     e.stopPropagation()
                   }
-                  onChange([currentRowKey], [row], currentRowKey, [currentRowKey], 'check')
+                  onChange([currentRowKey], [row], currentRowKey, [currentRowKey], 'check', e)
                 },
           })
         }
@@ -98,11 +123,11 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
             onChange={
               clickArea === 'radio'
                 ? (arg1: any, arg2: any) => {
-                    const nativeEvent: MouseEvent = arg2?.nativeEvent ?? arg1?.nativeEvent
+                    const nativeEvent: React.MouseEvent = arg2?.nativeEvent ?? arg1?.nativeEvent
                     if (nativeEvent && opts.stopClickEventPropagation) {
                       nativeEvent.stopPropagation()
                     }
-                    onChange([currentRowKey], [row], currentRowKey, [currentRowKey], 'check')
+                    onChange([currentRowKey], [row], currentRowKey, [currentRowKey], 'check', nativeEvent)
                   }
                 : undefined
             }
@@ -144,7 +169,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
           if (opts.stopClickEventPropagation) {
             e.stopPropagation()
           }
-          onChange([currentRowKey], [row], currentRowKey, [currentRowKey], 'check')
+          onChange([currentRowKey], [row], currentRowKey, [currentRowKey], 'check', e)
         }
       }
 

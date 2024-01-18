@@ -255,7 +255,14 @@ export default () => {
         sort={sort}
         filter={filter}
         rowSelection={{
-          preserveSelectedRowKeys: false,
+          columnTitle: rowSelection.type === 'checkbox' ? null : <div>选择</div>,
+          onSelectAll: (selected, selectedRows, changeRows) => {
+            console.info('onSelectAll', selected, selectedRows, changeRows)
+          },
+          onSelect: (record, selected, selectedRows, nativeEvent) => {
+            console.info('onSelect', record, selected, selectedRows, nativeEvent)
+          },
+          onCell: (record) => ({ style: record.id === 2 ? { backgroundColor: '#ccc' } : {} }),
           getCheckboxProps: (record) => {
             return {
               disabled: record.id === 1,

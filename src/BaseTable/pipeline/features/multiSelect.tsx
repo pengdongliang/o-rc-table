@@ -1,4 +1,5 @@
-import type { CheckboxProps, RadioProps } from 'antd'
+import type { TableRowSelection } from '@table/interface'
+import type { CheckboxProps } from 'antd'
 import { Key } from 'react'
 
 import { CellProps, ColumnType } from '../../interfaces'
@@ -52,11 +53,19 @@ export interface MultiSelectFeatureOptions<RecordType = any> {
   stopClickEventPropagation?: boolean
 
   /** 选择框的默认属性配置 */
-  getCheckboxProps?: (
-    record: RecordType
-  ) =>
-    | Partial<Omit<CheckboxProps, 'checked' | 'defaultChecked'>>
-    | Partial<Omit<RadioProps, 'checked' | 'defaultChecked'>>
+  getCheckboxProps?: TableRowSelection<RecordType>['getCheckboxProps']
+
+  /** 用户手动选择/取消选择某行的回调 */
+  onSelect?: TableRowSelection<RecordType>['onSelect']
+
+  /** 自定义列表选择框标题 */
+  columnTitle?: TableRowSelection<RecordType>['columnTitle']
+
+  /** 隐藏全选勾选框与自定义选择项 */
+  hideSelectAll?: TableRowSelection<RecordType>['hideSelectAll']
+
+  /** 用户手动选择/取消选择所有行的回调 */
+  onSelectAll?: TableRowSelection<RecordType>['onSelectAll']
 }
 
 export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
@@ -127,27 +136,43 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
         <Checkbox
           checked={isAllChecked}
           indeterminate={!isAllChecked && isAnyChecked}
-          onChange={() => {
+          onChange={(e: Event) => {
             const keys = pipeline.getFeatureOptions(allEnableKeys)
+            const list = isAllChecked ? arrayUtils.diff(value, keys) : arrayUtils.merge(value, keys)
+            const selectedRows = getSelectedRows(list)
             if (isAllChecked) {
-              const list = arrayUtils.diff(value, keys)
-              const selectedRows = getSelectedRows(list)
+              opts.onSelect(selectedRows, true, selectedRows, e)
               onChange(list, selectedRows, '', keys, 'uncheck-all')
             } else {
-              const list = arrayUtils.merge(value, keys)
-              const selectedRows = getSelectedRows(list)
+              opts.onSelect(selectedRows, false, selectedRows, e)
               onChange(list, selectedRows, '', keys, 'check-all')
             }
+
+            const changeRows = selectedRows?.filter((r, index) => {
+              const keyValue = internals.safeGetRowKey(rowKey, r, index)
+              return !value?.includes(keyValue)
+            })
+            opts.onSelectAll?.(!isAllChecked, selectedRows, changeRows)
           }}
           disabled={flatDataSource.length === 0 || allDisabled}
           skipGroup
         />
       )
 
+      const renderColumnTitle = () => {
+        if (!opts.columnTitle) {
+          return !opts.hideSelectAll && defaultCheckboxColumnTitle
+        }
+        if (typeof opts.columnTitle === 'function') {
+          return opts.columnTitle(defaultCheckboxColumnTitle)
+        }
+        return opts.columnTitle
+      }
+
       const columnProps: ColumnType = {
         key: 'table-checkbox',
         name: '是否选中',
-        title: defaultCheckboxColumnTitle,
+        title: renderColumnTitle(),
         align: 'center',
         ...opts.columnProps,
         width: opts.columnProps?.width ?? 50,
@@ -169,7 +194,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
                     if (opts.stopClickEventPropagation) {
                       e.stopPropagation()
                     }
-                    onCheckboxChange(prevChecked, currentRowKey, e.shiftKey)
+                    onCheckboxChange(prevChecked, currentRowKey, e as MouseEvent, row)
                   },
             }
           }
@@ -199,7 +224,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
                         if (opts.stopClickEventPropagation) {
                           nativeEvent.stopPropagation()
                         }
-                        onCheckboxChange(checked, key, nativeEvent.shiftKey)
+                        onCheckboxChange(checked, key, nativeEvent, row)
                       }
                     }
                   : undefined
@@ -249,7 +274,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
             if (opts.stopClickEventPropagation) {
               e.stopPropagation()
             }
-            onCheckboxChange(checked, currentRowKey, e.shiftKey)
+            onCheckboxChange(checked, currentRowKey, e, row)
           }
         }
       }
@@ -267,7 +292,8 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
 
     return pipeline
 
-    function onCheckboxChange(prevChecked: boolean, key: string, batch: boolean) {
+    function onCheckboxChange(prevChecked: boolean, key: string, e: MouseEvent | KeyboardEvent, row: any) {
+      const batch = e.shiftKey
       let batchKeys = [key]
 
       if (batch && lastKey) {
@@ -281,10 +307,12 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       if (prevChecked) {
         const list = arrayUtils.diff(value, batchKeys)
         const selectedRows = getSelectedRows(list)
+        opts.onSelect(row, !prevChecked, selectedRows, e)
         onChange(list, selectedRows, key, batchKeys, 'uncheck')
       } else {
         const list = arrayUtils.merge(value, batchKeys)
         const selectedRows = getSelectedRows(list)
+        opts.onSelect(row, !prevChecked, selectedRows, e)
         onChange(list, selectedRows, key, batchKeys, 'check')
       }
     }
