@@ -10,6 +10,7 @@
     "dev": "dumi dev",
     "build": "father build",
     "build:watch": "father dev",
+    "dev:watch": "nodemon --watch dist/es/ -e js,ts --debug -x pnpm build && yalc push",
     "docs:build": "dumi build",
     "husky:prepare": "husky install && dumi setup",
     "commit": "./node_modules/cz-customizable/standalone.js",
