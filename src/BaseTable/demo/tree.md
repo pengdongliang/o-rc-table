@@ -8,7 +8,7 @@ order: 221
 [参数传送门](#treeMode)
 ```jsx
 import React from "react";
-import { Table, useTablePipeline, features, collectNodes, isLeafNode } from "o-rc-table";
+import { Table, useTablePipeline, features, collectNodes, isLeafNode } from 'baseTableDemo/demoUtil';
 
 export default () => {
   function renderOptions () {
@@ -83,13 +83,13 @@ export default () => {
   ]
   const columns = [
     { dataIndex: 'title', name: '标题', width: 200 },
-    { dataIndex: 'dept', name: '部门名称', width: 180 },
+    { dataIndex: 'dept', name: '部门名称', width: 180, align: 'center' },
     { dataIndex: 'dest', name: '团建目的地', width: 160 },
     { dataIndex: 'guide', name: '当地导游', width: 160 },
     { fixed: true, name: '操作', render: renderOptions, width: 200 }
   ]
   const [openKeys, onChangeOpenKeys] = React.useState(['4', '4-2'])
-  const pipeline = useTablePipeline({ })
+  const pipeline = useTablePipeline()
     .input({ dataSource: dataSource, columns: columns })
     .rowKey('id')
     .use(features.treeMode({ openKeys, onChangeOpenKeys }))

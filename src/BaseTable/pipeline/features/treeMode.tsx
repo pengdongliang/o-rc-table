@@ -1,10 +1,10 @@
 import cx from 'classnames'
 import React from 'react'
 
-import { ExpansionCell, icons, InlineFlexCell } from '../../common-views'
+import { ExpansionCell, InlineFlexCell } from '../../common-views'
 import { ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
-import { isLeafNode as standardIsLeafNode, mergeCellProps } from '../../utils'
+import { isLeafNode as standardIsLeafNode, mergeCellProps, renderExpandIcon } from '../../utils'
 import { TablePipeline } from '../pipeline'
 
 export const treeMetaSymbol = Symbol('treeMetaSymbol')
@@ -80,7 +80,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
       }
     }
     const isLeafNode = opts.isLeafNode ?? standardIsLeafNode
-    const clickArea = opts.clickArea ?? 'cell'
+    const clickArea = opts.clickArea ?? 'icon'
     const treeMetaKey = opts.treeMetaKey ?? treeMetaSymbol
     const stopClickEventPropagation = Boolean(opts.stopClickEventPropagation)
 
@@ -155,11 +155,13 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
         const expandCls = expanded
           ? pipeline.getTableContext().Classes?.expanded
           : pipeline.getTableContext().Classes?.collapsed
+
         return (
           <ExpansionCell
             className={cx('expansion-cell', expandCls)}
             style={{
               cursor: clickArea === 'content' ? 'pointer' : undefined,
+              justifyContent: 'unset',
             }}
             onClick={clickArea === 'content' ? onClick : undefined}
           >
@@ -176,15 +178,18 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
                 aria-expanded={expanded}
               />
             ) : (
-              <icons.CaretRight
-                className={cx(pipeline.getTableContext().Classes?.expandIcon, expandCls)}
-                style={{
+              renderExpandIcon({
+                Classes: pipeline.getTableContext().Classes,
+                expanded,
+                expandable: true,
+                record,
+                onExpand: clickArea === 'icon' ? onClick : undefined,
+                style: {
                   cursor: clickArea === 'icon' ? 'pointer' : undefined,
                   marginLeft: indent,
                   marginInlineEnd: iconGap,
-                }}
-                onClick={clickArea === 'icon' ? onClick : undefined}
-              />
+                },
+              })
             )}
             {content}
           </ExpansionCell>

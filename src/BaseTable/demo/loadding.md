@@ -7,8 +7,7 @@ order: 30
 
 ```jsx
 import React from "react";
-import { Table, useTablePipeline, features } from "o-rc-table";
-import Loading from 'o-rc-table/base/loading';
+import { Table, useTablePipeline, features, Loading } from 'baseTableDemo/demoUtil';
 
 export default () => {
 

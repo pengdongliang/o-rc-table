@@ -158,7 +158,15 @@ export default () => {
           (acc, _cur, index) =>
             acc.concat(
               baseColumns.map((item) => {
-                return { ...item, name: item.name + index }
+                return {
+                  ...item,
+                  name: (
+                    <>
+                      {item.name}
+                      {index}
+                    </>
+                  ),
+                }
               })
             ),
           [{ dataIndex: 'No', name: '序号', width: 150, fixed: columnFixed }]
@@ -344,6 +352,29 @@ export default () => {
           },
           defaultSelectedRowKeys: [0, 2, 3, 5],
           ...rowSelection,
+        }}
+        expandable={{
+          expandColumnDataIndex: '',
+          indentSize: 20,
+          onExpandedRowsChange: (expandedRows) => console.info('expandedRows', expandedRows),
+          onExpand: (expanded, record) => {
+            console.info('onExpand', expanded, record)
+          },
+          // rowExpandable: (record) => record.id === 1,
+          showExpandColumn: false,
+          // expandIcon: ({ onClick }) => <div onClick={onClick}>自定义展开图标</div>,
+          columnWidth: 60,
+          fixed: true,
+          columnTitle: '展开',
+          defaultExpandAllRows: true,
+          expandedRowRender(row) {
+            return (
+              <div style={{ margin: '8px', textAlign: 'left' }}>
+                <p>应付金额：{row.amount}</p>
+                <p>应收余额：{row.balance}</p>
+              </div>
+            )
+          },
         }}
       />
     </ConfigProvider>

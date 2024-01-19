@@ -3,10 +3,10 @@ title: 嵌套子表格
 order: 403
 ---
 
-通过 options.renderDetail 渲染 BaseTable 可以实现表格嵌套。
+通过 options.expandedRowRender 渲染 BaseTable 可以实现表格嵌套。
 ```jsx
 import React from "react";
-import { Table, useTablePipeline, features } from "o-rc-table";
+import { Table, useTablePipeline, features } from 'baseTableDemo/demoUtil';
 
 export default () => {
   const dataSource = [
@@ -30,8 +30,8 @@ export default () => {
   .rowKey('id')
   .use(
     features.rowDetail({
-      defaultOpenKeys: ['2'],
-      renderDetail() {
+      defaultExpandedRowKeys: ['2'],
+      expandedRowRender() {
         return (
           <Table
               style={{ boxShadow: '0 0 4px 1px #33333333', margin: 8 }}

@@ -385,18 +385,18 @@ interface SortHeaderCellProps {
 
 | 属性                        | 说明                                                     | 类型                                                                         | 默认值                    | 可选值                                         | 版本 |
 |---------------------------|--------------------------------------------------------|----------------------------------------------------------------------------|------------------------|---------------------------------------------|----|
-| defaultOpenAll            | (非受控用法) 是否默认展开所有详情单元格                                  | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
+| defaultExpandAllRows            | (非受控用法) 是否默认展开所有详情单元格                                  | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
 | defaultOpenKeys           | (非受控用法) 默认展开的 keys                                     | string[]                                                                   | `-`                    | `-`                                         | -  |
 | openKeys                  | (受控用法) 当前展开的 keys                                      | string[]                                                                   | `-`                    | `-`                                         | -  |
 | onChangeOpenKeys          | (受控用法) openKeys 改变的回调                                  | (nextKeys: string[], key: string, action: 'expand' &#124; 'collapse'):void | `-`                    | `-`                                         | -  |
-| renderDetail              | 详情单元格的渲染方法                                             | (row: any, rowIndex: number): ReactNode                                    | `-`                    | `-`                                         | -  |
-| hasDetail                 | 是否包含详情单元格                                              | (row: any, rowIndex: number): boolean                                      | `-`                    | `-`                                         | -  |
+| expandedRowRender              | 详情单元格的渲染方法                                             | (row: any, rowIndex: number): ReactNode                                    | `-`                    | `-`                                         | -  |
+| rowExpandable                 | 是否包含详情单元格                                              | (row: any, rowIndex: number): boolean                                      | `-`                    | `-`                                         | -  |
 | getDetailKey              | 获取详情单元格所在行的 key，默认为 `(row) => row[rowKey] + '_detail'` | (row: any, rowIndex: number): string                                       | `-`                    | `-`                                         | -  |
 | detailCellStyle           | 详情单元格 td 的额外样式                                         | React.CSSProperties                                                        | `-`                    | `-`                                         | -  |
 | clickArea                 | 点击事件的响应区域                                              | string                                                                     | `cell`                 | `'cell'` &#124; `'content'` &#124; `'icon'` | -  |
 | stopClickEventPropagation | 是否对触发展开/收拢的 click 事件调用 event.stopPropagation()         | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
 | rowDetailMetaKey          | 指定表格每一行元信息的记录字段                                        | string &#124; symbol                                                       | `Symbol('row-detail')` | `-`                                         | -  |
-| expandColumnCode          | 指定在哪一列设置展开按钮                                           | string                                                                     | `-`                    | `-`                                         | -  |
+| expandColumnDataIndex          | 指定在哪一列设置展开按钮                                           | string                                                                     | `-`                    | `-`                                         | -  |
 
 <br/>
 

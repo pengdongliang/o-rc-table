@@ -10,7 +10,7 @@ pipeline.use(features.columnDrag)
 
 ```jsx
 import React from "react";
-import { Table, useTablePipeline, features } from "o-rc-table";
+import { Table, useTablePipeline, features, SortIcon } from 'baseTableDemo/demoUtil';
 
 export default () => {
   const dataSource = [
@@ -70,24 +70,6 @@ export default () => {
     { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right', features: { sortable: true } }
   ]
   const [columns, setColumns] = React.useState(mockColumns)
-
-  function SortIcon({ size = 32, style, className, order }) {
-    return (
-      <svg
-        style={style}
-        className={className}
-        focusable="false"
-        preserveAspectRatio="xMidYMid meet"
-        width={size}
-        height={size}
-        viewBox="0 0 32 32"
-        aria-hidden="true"
-      >
-        <path fill={order === 'asc' ? '#23A3FF' : '#bfbfbf'} transform="translate(0, 6)" d="M8 8L16 0 24 8z" />
-        <path fill={order === 'desc' ? '#23A3FF' : '#bfbfbf'} transform="translate(0, -6)" d="M24 24L16 32 8 24z " />
-      </svg>
-    )
-  }
 
   const handleColumnDragStopped = (columnMoved, newColumns) => {
     if (columnMoved) {

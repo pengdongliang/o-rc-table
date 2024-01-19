@@ -9,7 +9,7 @@ order: 23
 
 ```jsx
 import React from "react";
-import { Table, useTablePipeline, features } from "o-rc-table";
+import { Table, useTablePipeline, features } from 'baseTableDemo/demoUtil';
 import { Input, Space } from "antd";
 
 export default () => {

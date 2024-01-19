@@ -29,7 +29,7 @@ function rowGroupingRowPropsGetter(row: any) {
 
 export interface RowGroupingFeatureOptions {
   /** 非受控用法：是否默认展开所有分组 */
-  defaultOpenAll?: boolean
+  defaultExpandAllRows?: boolean
 
   /** 非受控用法：默认展开的 keys */
   defaultOpenKeys?: string[]
@@ -57,7 +57,7 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
     const openKeys: string[] =
       opts.openKeys ??
       pipeline.getStateAtKey(stateKey) ??
-      (opts.defaultOpenAll ? pipeline.getDataSource().map((row) => row[rowKey]) : opts.defaultOpenKeys) ??
+      (opts.defaultExpandAllRows ? pipeline.getDataSource().map((row) => row[rowKey]) : opts.defaultOpenKeys) ??
       []
     const openKeySet = new Set(openKeys)
 

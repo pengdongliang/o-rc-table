@@ -7,7 +7,7 @@ order: 401
 
 ```jsx
 import React from "react";
-import { Table, useTablePipeline, features, proto } from "o-rc-table";
+import { Table, useTablePipeline, features, proto } from 'baseTableDemo/demoUtil';
 
 export default () => {
   const occupations = ['UED', '客服', '产品', '运营', '前端', '数据']

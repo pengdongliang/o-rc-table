@@ -8,7 +8,7 @@ order: 601
 除了 colSpan, rowSpan 之外，getCellProps 也可以返回 td 元素的其他 props，例如 className, style, onClick 等。
 ```jsx
 import React from "react";
-import { Table, useTablePipeline, features } from "o-rc-table";
+import { Table, useTablePipeline, features } from 'baseTableDemo/demoUtil';
 
 export default () => {
    const dataSource = [

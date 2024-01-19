@@ -11,20 +11,81 @@ export const ExpansionCell = styled((props) => <InlineFlexCell {...props} />)(({
   const { Classes = {} } = theme
 
   return css`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     &.${Classes?.leaf} {
       cursor: default;
     }
 
     .${Classes.expandIcon} {
-      fill: #999;
-      flex: 0 0 16px;
-      transition: transform 200ms;
+      color: inherit;
+      text-decoration: none;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      float: left;
+      box-sizing: border-box;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      line-height: 16px;
+      background: #ffffff;
+      border: 1px solid #f0f0f0;
+      border-radius: 2px;
+      transform: scale(0.9411764705882353);
+      user-select: none;
 
-      &.${Classes?.expanded} {
-        transform-origin: center center;
+      &:focus, &:hover, &:active {
+        borderColor: currentcolor;
+      }
+
+      &::before, &::after {
+        position: absolute;
+        background: currentcolor;
+        transition: transform 0.3s ease-out;
+        content: "";
+      }
+
+      &::before {
+        top: 7px;
+        inset-inline-end: 3px;
+        inset-inline-start: 3px;
+        height: 1px;
+      }
+
+      &::after {
+        top: 3px;
+        bottom: 3px;
+        inset-inline-start: 7px;
+        width: 1px;
         transform: rotate(90deg);
       }
-    }
+
+      // Motion effect
+
+      &-collapsed::before {
+        transform: rotate(-180deg);
+      }
+
+      &-collapsed::after {
+        transform: rotate(0deg);
+      }
+
+      &-spaced {
+        background: transparent;
+        border: 0;
+        visibility: hidden;
+
+        &::before, &::after {
+          display: none;
+          content: none;
+        }
+      }
   `
 })
 

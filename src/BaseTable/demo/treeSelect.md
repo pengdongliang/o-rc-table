@@ -9,7 +9,7 @@ order: 222
 
 ```jsx
 import React from "react";
-import { Table, useTablePipeline, features, collectNodes, isLeafNode } from "o-rc-table";
+import { Table, useTablePipeline, features, collectNodes, isLeafNode } from 'baseTableDemo/demoUtil';
 import { Checkbox } from "antd";
 
 export default () => {

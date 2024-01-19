@@ -113,7 +113,7 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
         },
       },
 
-      [`${componentCls}-row-indent + ${componentCls}-row-expand-icon, ${componentCls}-row-expand-icon`]: {
+      [`${componentCls}-row-indent + ${componentCls}-row-expand-icon`]: {
         marginTop: expandIconMarginTop,
         marginInlineEnd: paddingXS,
       },

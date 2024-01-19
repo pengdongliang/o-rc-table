@@ -17,7 +17,7 @@ const TEMPLATES = new Map()
 interface RowDetailOptions extends BaseTableContextProps {
   row: any
   rowIndex: number
-  renderDetail?(row: any, rowIndex: number): ReactNode
+  expandedRowRender?(row: any, rowIndex: number): ReactNode
   domHelper: TableDOMHelper
 }
 
@@ -293,7 +293,7 @@ function renderRowDetailInIE(params: RowDetailOptions) {
 
 function RowDetail(props: RowDetailOptions) {
   const detailRef = useRef(null)
-  const { row, rowIndex, domHelper, renderDetail, Classes } = props
+  const { row, rowIndex, domHelper, expandedRowRender, Classes } = props
   const { artTable } = domHelper
 
   useEffect(() => {
@@ -321,7 +321,7 @@ function RowDetail(props: RowDetailOptions) {
 
   return (
     <div ref={detailRef} className={Classes?.rowDetailItem}>
-      {renderDetail(row, rowIndex)}
+      {expandedRowRender(row, rowIndex)}
     </div>
   )
 }

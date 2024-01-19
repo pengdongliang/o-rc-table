@@ -8,7 +8,7 @@ order: 402
 [参数传送门](#rowDetail)
 ```jsx
 import React from "react";
-import { Table, useTablePipeline, features } from "o-rc-table";
+import { Table, useTablePipeline, features } from 'baseTableDemo/demoUtil';
 
 export default () => {
   const dataSource = [
@@ -32,13 +32,13 @@ export default () => {
   .rowKey('id')
   .use(
     features.rowDetail({
-      defaultOpenKeys: ['2'],
-      hasDetail(row) {
+      defaultExpandedRowKeys: ['2'],
+      rowExpandable(row) {
         return ['1', '2', '3'].includes(row.id)
       },
-      renderDetail(row) {
+      expandedRowRender(row) {
         return (
-          <div style={{ margin: '8px', textAlign: 'left' }}>
+          <div>
               <p>应付金额：{row.amount}</p>
               <p>应收余额：{row.balance}</p>
           </div>

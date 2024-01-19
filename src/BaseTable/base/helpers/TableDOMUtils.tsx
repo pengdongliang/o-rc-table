@@ -64,20 +64,24 @@ export class TableDOMHelper {
   readonly Classes: BaseTableContextProps['Classes']
 
   constructor(artTableWrapper: HTMLDivElement, Classes: BaseTableContextProps['Classes']) {
-    this.Classes = Classes
-    this.artTableWrapper = artTableWrapper
-    this.artTable = artTableWrapper.querySelector<HTMLDivElement>(`.${Classes?.artTable}`)
-    this.tableHeader = this.artTable.querySelector(`.${Classes?.tableHeader}`)
-    this.tableHeaderMain = this.artTable.querySelector(`.${Classes?.tableHeaderMain}`)
-    this.tableBody = this.artTable.querySelector(`.${Classes?.tableBody}`)
-    this.virtual = this.artTable.querySelector(`.${Classes?.virtual}`)
-    this.tableElement = this.artTable.querySelector(`.${Classes?.tableBody} table`)
-    this.tableFooter = this.artTable.querySelector(`.${Classes?.tableFooter}`)
-    this.tableFooterMain = this.artTable.querySelector(`.${Classes?.tableFooterMain}`)
+    try {
+      this.Classes = Classes
+      this.artTableWrapper = artTableWrapper
+      this.artTable = artTableWrapper.querySelector<HTMLDivElement>(`.${Classes?.artTable}`)
+      this.tableHeader = this.artTable.querySelector(`.${Classes?.tableHeader}`)
+      this.tableHeaderMain = this.artTable.querySelector(`.${Classes?.tableHeaderMain}`)
+      this.tableBody = this.artTable.querySelector(`.${Classes?.tableBody}`)
+      this.virtual = this.artTable.querySelector(`.${Classes?.virtual}`)
+      this.tableElement = this.artTable.querySelector(`.${Classes?.tableBody} table`)
+      this.tableFooter = this.artTable.querySelector(`.${Classes?.tableFooter}`)
+      this.tableFooterMain = this.artTable.querySelector(`.${Classes?.tableFooterMain}`)
 
-    const stickyScrollSelector = `.${Classes?.artTable} + .${Classes?.horizontalStickyScrollContainer} .${Classes?.stickyScroll}`
-    this.stickyScroll = artTableWrapper.querySelector<HTMLDivElement>(stickyScrollSelector)
-    this.stickyScrollItem = this.stickyScroll.querySelector(`.${Classes?.stickyScrollItem}`)
+      const stickyScrollSelector = `.${Classes?.artTable} + .${Classes?.horizontalStickyScrollContainer} .${Classes?.stickyScroll}`
+      this.stickyScroll = artTableWrapper.querySelector<HTMLDivElement>(stickyScrollSelector)
+      this.stickyScrollItem = this.stickyScroll.querySelector(`.${Classes?.stickyScrollItem}`)
+    } catch (err) {
+      console.error('`new TableDOMHelper` is error', err)
+    }
   }
 
   getVirtualTop(): HTMLDivElement {

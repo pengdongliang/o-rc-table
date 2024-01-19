@@ -85,19 +85,9 @@
 
 #### expandable
 
-- [ ] childrenColumnName 指定树形结构的列名 <b style="color: purple;">有用到, 直接在Table prop使用的需要改为expandale里</b>
-- [ ] columnTitle 自定义展开列表头 <b style="color: purple;">有用到</b>
-- [ ] columnWidth 自定义展开列宽度 <b style="color: purple;">有用到</b>
-- [ ] defaultExpandAllRows 初始时，是否展开所有行 <b style="color: purple;">有用到</b>
-- [ ] defaultExpandedRowKeys 默认展开的行 <b style="color: purple;">有用到</b>
+- [ ] childrenColumnName 指定树形结构的列名 <b style="color: red;">有用到, 直接在Table prop使用的需要改为expandale</b>
 - [ ] expandedRowClassName 展开行的 className
-- [ ] expandedRowKeys 展开的行，控制属性 <b style="color: purple;">有用到</b>
-- [ ] expandedRowRender 额外的展开行 <b style="color: purple;">有用到</b>
-- [ ] expandIcon 自定义展开图标
 - [ ] expandRowByClick 通过点击行来展开子行
-- [ ] fixed 控制展开图标是否固定 <b style="color: purple;">有用到</b>
-- [ ] indentSize 展示树形数据时，每层缩进的宽度，以 px 为单位
-- [ ] rowExpandable 设置是否允许行展开 <b style="color: purple;">有用到</b>
-- [ ] showExpandColumn 设置是否展示行展开列 <b style="color: purple;">有用到</b>
-- [ ] onExpand 点击展开图标时触发 <b style="color: purple;">有用到</b>
-- [ ] onExpandedRowsChange 展开的行变化时触发
+- [ ] indentSize 展示树形数据时，每层缩进的宽度，以 `px` 为单位 <b style="color: red;">不支持</b>
+- [ ] showExpandColumn 设置是否显示展开触发列 <b style="color: red;">用到了, 但是无意义, 需要删除</b>
+- [ ] expandIconColumnIndex 展开图标的列位置 <b style="color: red;">使用替换</b>

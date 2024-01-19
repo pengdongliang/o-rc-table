@@ -16,7 +16,7 @@ order: 10
 
 ```jsx 
 import React from 'react'
-import { Table, useTablePipeline, features } from 'o-rc-table'
+import { Table, useTablePipeline, features } from 'baseTableDemo/demoUtil'
 import { Checkbox, Radio } from 'antd'
 
 export default () => {

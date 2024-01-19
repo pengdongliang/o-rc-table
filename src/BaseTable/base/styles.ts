@@ -127,6 +127,8 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     expandIcon: `${prefix}-row-expand-icon`,
     expanded: `${prefix}-row-expand-icon-expanded`,
     collapsed: `${prefix}-row-expand-icon-collapsed`,
+    isExpandContentRow: `${prefix}-is-expand-content-row`,
+    expandSpaced: `${prefix}-row-expand-icon-spaced`,
     // ================= expand ==================
 
     popup: `${prefix}-popup`,
@@ -464,8 +466,12 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       position: relative;
     }
 
-    // 在 tr 上设置 .no-hover 可以禁用鼠标悬停效果
+    // 展开内容样式
+    .${Classes?.isExpandContentRow} {
+      z-index: 21;
+    }
 
+    // 在 tr 上设置 .no-hover 可以禁用鼠标悬停效果
     tr:not(.no-hover):hover > td {
       background: var(--hover-bgcolor);
     }

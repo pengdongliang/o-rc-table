@@ -12,6 +12,7 @@ export {
   isElementInEventPath,
   keepWithinBounds,
 } from './element'
+export * from './expandUtil'
 export { default as exportTableAsExcel } from './exportTableAsExcel'
 export { default as getTreeDepth } from './getTreeDepth'
 export { default as groupBy } from './groupBy'

@@ -1,39 +1,52 @@
+import { TriggerEventHandler } from '@table/interface'
 import cx from 'classnames'
-import React, { ReactNode } from 'react'
+import { intersectionWith } from 'lodash-es'
+import React, { Key } from 'react'
 
 import getTableRenderTemplate from '../../base/renderTemplates'
-import { ExpansionCell, icons, InlineFlexCell } from '../../common-views'
+import { ExpansionCell, InlineFlexCell } from '../../common-views'
 import { ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
-import { collectNodes, mergeCellProps } from '../../utils'
+import { collectNodes, mergeCellProps, renderExpandIcon } from '../../utils'
 import console from '../../utils/console'
 import { always, flatMap } from '../../utils/others'
 import { TablePipeline } from '../pipeline'
 
-interface expandIconProps extends React.SVGProps<SVGElement> {
+export interface RenderExpandIconProps<RecordType> extends Partial<React.StyleHTMLAttributes<HTMLElement>> {
+  prefixCls: string
   expanded: boolean
+  record: RecordType
+  expandable: boolean
+  onExpand: TriggerEventHandler<RecordType>
 }
-export interface RowDetailFeatureOptions {
+
+export type RenderExpandIcon<RecordType> = (props: RenderExpandIconProps<RecordType>) => React.ReactNode
+
+export type ExpandedRowRender<ValueType> = (
+  record: ValueType,
+  index: number,
+  indent: number,
+  expanded: boolean
+) => React.ReactNode
+
+export interface RowDetailFeatureOptions<RecordType = any> {
   /** 非受控用法：是否默认展开所有详情单元格 */
-  defaultOpenAll?: boolean
+  defaultExpandAllRows?: boolean
 
   /** 非受控用法：默认展开的 keys */
-  defaultOpenKeys?: string[]
+  defaultExpandedRowKeys?: Key[]
 
   /** 受控用法：当前展开的 keys */
-  openKeys?: string[]
-
-  /** 受控用法：openKeys 改变的回调 */
-  onChangeOpenKeys?(nextKeys: string[], key: string, action: 'expand' | 'collapse'): void
+  expandedRowKeys?: Key[]
 
   /** 详情单元格的渲染方法 */
-  renderDetail?(row: any, rowIndex: number): ReactNode
+  expandedRowRender?: ExpandedRowRender<RecordType>
 
   /** 是否包含详情单元格 */
-  hasDetail?(row: any, rowIndex: number): ReactNode
+  rowExpandable?(row: RecordType, rowIndex?: number): boolean
 
   /** 获取详情单元格所在行的 key，默认为 `(row) => row[rowKey] + '_detail'` */
-  getDetailKey?(row: any, rowIndex: number): string
+  getDetailKey?(row: RecordType, rowIndex: number): string
 
   /** 详情单元格 td 的额外样式 */
   detailCellStyle?: React.CSSProperties
@@ -48,10 +61,25 @@ export interface RowDetailFeatureOptions {
   rowDetailMetaKey?: string | symbol
 
   /** 指定在哪一列设置展开按钮 */
-  expandColumnCode?: string
+  expandColumnDataIndex?: string
 
   /** 自定义展开图标 */
-  expandIcon?: (props: expandIconProps) => JSX.Element
+  expandIcon?: RenderExpandIcon<RecordType>
+
+  /** 自定义展开列表头 */
+  columnTitle?: React.ReactNode
+
+  /** 控制展开图标是否固定 */
+  fixed?: boolean
+
+  /** 自定义展开列宽度 */
+  columnWidth?: ColumnType<RecordType>['width']
+
+  /** 点击展开图标时触发 */
+  onExpand?: (expanded: boolean, record: RecordType) => void
+
+  /** 展开的行变化时触发 */
+  onExpandedRowsChange?: (expandedKeys: readonly Key[]) => void
 }
 
 const rowDetailSymbol = Symbol('row-detail')
@@ -59,7 +87,7 @@ const rowDetailSymbol = Symbol('row-detail')
 const fallbackRenderDetail = () => (
   <div style={{ margin: '8px 24px' }}>
     <b style={{ color: 'indianred' }}>
-      设置 <code>rowDetail.renderDetail</code> 来自定义详情内容
+      Set <code>[rowDetail.expandedRowRender]</code> to customize the details
     </b>
   </div>
 )
@@ -74,41 +102,47 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
 
     const { indents } = pipeline.ctx
     const textOffset = indents.iconIndent + indents.iconWidth + indents.iconGap
-    const clickArea = opts.clickArea ?? 'cell'
+    const clickArea = opts.clickArea ?? 'icon'
 
     const getDetailKey =
       opts.getDetailKey ?? ((row, rowIndex) => `${internals.safeGetRowKey(rowKey, row, rowIndex)}_detail`)
-    const renderDetail = opts.renderDetail ?? fallbackRenderDetail
-    const hasDetail = opts.hasDetail ?? always(true)
+    const expandedRowRender = opts.expandedRowRender ?? fallbackRenderDetail
+    const rowExpandable = opts.rowExpandable ?? always(true)
 
-    const openKeys: string[] =
-      opts.openKeys ??
+    const expandedRowKeys =
+      opts.expandedRowKeys ??
       pipeline.getStateAtKey(stateKey) ??
-      (opts.defaultOpenAll
+      (opts.defaultExpandAllRows
         ? pipeline
             .getDataSource()
-            .filter(hasDetail)
+            .filter(rowExpandable)
             .map((row, rowIndex) => internals.safeGetRowKey(rowKey, row, rowIndex))
-        : opts.defaultOpenKeys) ??
+        : opts.defaultExpandedRowKeys) ??
       []
-    const onChangeOpenKeys: RowDetailFeatureOptions['onChangeOpenKeys'] = (nextKeys, key, action) => {
-      opts.onChangeOpenKeys?.(nextKeys, key, action)
+    const onExpandedRowsChange = (nextKeys: React.Key[], key: React.Key, action: string) => {
+      const expandedRows = intersectionWith(
+        pipeline.getDataSource(),
+        nextKeys,
+        (prev: { id: string }, nextv: string) => prev?.id === nextv
+      )
+      opts.onExpandedRowsChange?.(expandedRows)
       pipeline.setStateAtKey(stateKey, nextKeys, { key, action })
     }
 
-    const openKeySet = new Set(openKeys)
+    const openKeySet = new Set(expandedRowKeys)
 
-    const toggle = (currentRowKey: string) => {
+    const toggle = (currentRowKey: Key, record: any) => {
       const expanded = openKeySet.has(currentRowKey)
       if (expanded) {
-        onChangeOpenKeys(
-          openKeys.filter((key) => key !== currentRowKey),
+        onExpandedRowsChange(
+          expandedRowKeys.filter((key) => key !== currentRowKey),
           currentRowKey,
           'collapse'
         )
       } else {
-        onChangeOpenKeys([...openKeys, currentRowKey], currentRowKey, 'expand')
+        onExpandedRowsChange([...expandedRowKeys, currentRowKey], currentRowKey, 'expand')
       }
+      opts.onExpand?.(!expanded, record)
     }
     const detailPrimaryKey = typeof rowKey === 'string' ? rowKey : `${rowDetailMetaKey.toString()}RowKey`
     return pipeline
@@ -123,7 +157,10 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
       .columns(processColumns(pipeline.getColumns()))
       .appendRowPropsGetter((row) => {
         if (row[rowDetailMetaKey]) {
-          return { className: 'no-hover', 'data-row-detail-key': row[detailPrimaryKey] }
+          return {
+            className: cx('no-hover', pipeline.getTableContext().Classes?.isExpandContentRow),
+            'data-row-detail-key': row[detailPrimaryKey],
+          }
         }
       })
 
@@ -131,11 +168,11 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
       if (columns.length === 0) {
         return columns
       }
-      let expandColumnIndex = 0
-      if (opts.expandColumnCode) {
-        expandColumnIndex = columns.findIndex((col) => col.dataIndex === opts.expandColumnCode)
+      let expandColumnIndex: number
+      if (opts.expandColumnDataIndex) {
+        expandColumnIndex = columns.findIndex((col) => col.dataIndex === opts.expandColumnDataIndex)
         if (expandColumnIndex < 0) {
-          console.warn('没找到可展开的列，请检查设置的展开列code')
+          console.warn('No expandable column found, please check the set expanded column code')
           return columns
         }
       }
@@ -143,35 +180,33 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
       const tableColumns = [...columns]
 
       const render = (_value: any, row: any, rowIndex: number) => {
+        const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
+        const expanded = openKeySet.has(currentRowKey)
         if (row[rowDetailMetaKey]) {
-          // 第一列内容已经渲染
-          if (expandColumnIndex !== 0) return
           const renderRowDetail = getTableRenderTemplate('rowDetail')
           if (typeof renderRowDetail === 'function') {
-            return renderRowDetail({ row, rowIndex, domHelper: pipeline.ref.current.domHelper, renderDetail })
+            return renderRowDetail({ row, rowIndex, domHelper: pipeline.ref.current.domHelper, expandedRowRender })
           }
-          return renderDetail(row, rowIndex)
+          return expandedRowRender(row, rowIndex, indents.iconIndent, expanded)
         }
-
-        const content = internals.safeRender(expandCol, row, rowIndex)
-
-        if (!hasDetail(row, rowIndex)) {
+        const content = expandCol ? internals.safeRender(expandCol, row, rowIndex) : null
+        if (!rowExpandable(row, rowIndex)) {
           return <InlineFlexCell style={{ marginLeft: textOffset }}>{content}</InlineFlexCell>
         }
 
-        const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
-        const expanded = openKeySet.has(currentRowKey)
         const onClick = (e: React.MouseEvent) => {
           if (opts.stopClickEventPropagation) {
             e.stopPropagation()
           }
-          toggle(currentRowKey)
+          toggle(currentRowKey, row)
         }
 
         const expandCls = expanded
           ? pipeline.getTableContext().Classes?.expanded
           : pipeline.getTableContext().Classes?.collapsed
         const ExpandIcon = opts.expandIcon
+        const recordExpandable = typeof rowExpandable === 'function' ? rowExpandable(row, rowIndex) : true
+
         return (
           <ExpansionCell
             className={cx('expansion-cell', expandCls)}
@@ -179,17 +214,22 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
             onClick={clickArea === 'content' ? onClick : undefined}
           >
             {opts.expandIcon ? (
-              <ExpandIcon expanded={expanded} onClick={clickArea === 'icon' ? onClick : undefined} />
-            ) : (
-              <icons.CaretRight
-                style={{
-                  cursor: clickArea === 'icon' ? 'pointer' : undefined,
-                  marginLeft: indents.iconIndent,
-                  marginRight: indents.iconGap,
-                }}
-                className={cx(pipeline.getTableContext().Classes?.expandIcon, expandCls)}
+              <ExpandIcon
+                expanded={expanded}
+                prefixCls={pipeline.getTableContext().namespace}
+                record={row}
+                expandable={recordExpandable}
+                onExpand={clickArea === 'icon' ? onClick : undefined}
                 onClick={clickArea === 'icon' ? onClick : undefined}
               />
+            ) : (
+              renderExpandIcon({
+                Classes: pipeline.getTableContext().Classes,
+                expanded,
+                expandable: recordExpandable,
+                record: row,
+                onExpand: clickArea === 'icon' ? onClick : undefined,
+              })
             )}
             {content}
           </ExpansionCell>
@@ -207,9 +247,9 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
           }
         }
 
-        const prevProps = expandCol.getCellProps?.(value, row, rowIndex)
+        const prevProps = expandCol?.getCellProps?.(value, row, rowIndex)
 
-        if (!hasDetail(row, rowIndex)) {
+        if (!rowExpandable(row, rowIndex)) {
           return prevProps
         }
 
@@ -218,28 +258,31 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
             if (opts.stopClickEventPropagation) {
               e.stopPropagation()
             }
-            toggle(internals.safeGetRowKey(rowKey, row, rowIndex))
+            toggle(internals.safeGetRowKey(rowKey, row, rowIndex), row)
           },
           style: { cursor: 'pointer' },
         })
       }
 
       const [firstCol] = tableColumns
+
       const firstColRender = (_value: any, row: any, rowIndex: number) => {
         if (row[rowDetailMetaKey]) {
           const renderRowDetail = getTableRenderTemplate('rowDetail')
           if (typeof renderRowDetail === 'function') {
-            return renderRowDetail({ row, rowIndex, domHelper: pipeline.ref.current.domHelper, renderDetail })
+            return renderRowDetail({ row, rowIndex, domHelper: pipeline.ref.current.domHelper, expandedRowRender })
           }
-          return renderDetail(row, rowIndex)
+          const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
+          const expanded = openKeySet.has(currentRowKey)
+          return expandedRowRender(row, rowIndex, indents.iconIndent, expanded)
         }
         const content = internals.safeRender(firstCol, row, rowIndex)
         return content
       }
 
-      tableColumns[0] = {
-        ...firstCol,
-        render: firstColRender,
+      const baseColumn = {
+        title: opts.columnTitle,
+        getCellProps: clickArea === 'cell' ? getCellProps : expandCol?.getCellProps,
         getSpanRect(_value: any, row: any, rowIndex: number) {
           if (row[rowDetailMetaKey]) {
             // detail 总是成一行
@@ -253,25 +296,43 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
         },
       }
 
-      tableColumns[expandColumnIndex] = {
-        ...expandCol,
-        title: (
-          <div style={{ display: 'inline-block', marginLeft: textOffset }}>{internals.safeRenderHeader(expandCol)}</div>
-        ),
+      const detailColumn: ColumnType = {
+        ...baseColumn,
+        key: 'table-expand',
+        align: 'center',
+        width: opts.columnWidth ?? 50,
+        fixed: opts.fixed,
         render,
-        getCellProps: clickArea === 'cell' ? getCellProps : expandCol.getCellProps,
-        getSpanRect(_value: any, row: any, rowIndex: number) {
-          if (row[rowDetailMetaKey]) {
-            // detail 总是成一行
-            return {
-              top: rowIndex,
-              bottom: rowIndex + 1,
-              left: 0,
-              right: collectNodes(pipeline.getColumns(), 'leaf-only').length,
-            }
-          }
-        },
       }
+
+      if (expandColumnIndex !== undefined) {
+        tableColumns[expandColumnIndex] = {
+          ...expandCol,
+          ...baseColumn,
+          title: (
+            <div style={{ display: 'inline-block', marginLeft: textOffset }}>
+              {internals.safeRenderHeader(expandCol)}
+            </div>
+          ),
+          render,
+        }
+      } else if (['table-checkbox', 'table-radio'].includes(tableColumns?.[0]?.key)) {
+        const selectColumn = tableColumns.splice(0, 1, detailColumn)
+        if (selectColumn?.[0]) {
+          tableColumns.unshift(selectColumn?.[0])
+          const newColumns = { ...baseColumn }
+          delete newColumns.title
+          tableColumns[0] = {
+            ...firstCol,
+            ...newColumns,
+            getCellProps: tableColumns[0].getCellProps,
+            render: firstColRender,
+          }
+        }
+      } else {
+        tableColumns.unshift(detailColumn)
+      }
+
       return tableColumns
     }
   }

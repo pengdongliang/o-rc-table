@@ -320,7 +320,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   )
 
   const syncHorizontalScrollFromTableBody = useCallback(() => {
-    syncHorizontalScroll(domHelper.current.virtual.scrollLeft)
+    syncHorizontalScroll(domHelper.current?.virtual.scrollLeft)
   }, [syncHorizontalScroll])
 
   const getVerticalRenderRange = useCallback(
@@ -788,7 +788,9 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
    * 更新 DOM 节点的引用，方便其他方法直接操作 DOM
    */
   const updateDOMHelper = useCallback(() => {
-    domHelper.current = new TableDOMHelper(artTableWrapperRef.current, getTableClasses(namespace))
+    if (artTableWrapperRef.current) {
+      domHelper.current = new TableDOMHelper(artTableWrapperRef.current, getTableClasses(namespace))
+    }
   }, [namespace])
 
   const info = useMemo(() => {

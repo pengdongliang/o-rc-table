@@ -23,6 +23,8 @@ type PipeMapType = {
   filter: () => TablePipeline
   /** 行选择 */
   rowSelection: () => TablePipeline
+  /** 展开配置 */
+  expandable: () => TablePipeline
 }
 
 /**
@@ -44,20 +46,16 @@ export const usePipeline = (props: TableProps) => {
     filter,
     rowSelection,
     prefixCls,
+    expandable,
   } = props
+
+  const { expandRowByClick } = expandable ?? {}
 
   const pipeline = useTablePipeline({ components: { Checkbox, Radio, Input, ...components } })
     .input({ dataSource, columns, tableContext: { namespace: prefixCls, Classes: getTableClasses(prefixCls) } })
     .rowKey(rowKey)
     .use(features.columnResize())
-    .use(
-      features.treeMode({
-        icon: (iconProps) => {
-          const newProps = { ...iconProps, expanded: undefined }
-          return <button {...newProps} type="button" />
-        },
-      })
-    )
+    .use(features.treeMode({ clickArea: expandRowByClick ? 'cell' : 'icon' }))
 
   const pipeMap = useMemo<PipeMapType>(() => {
     return {
@@ -147,17 +145,22 @@ export const usePipeline = (props: TableProps) => {
           })
         )
       },
+      expandable: () => {
+        return pipeline.use(features.rowDetail({ ...expandable, clickArea: expandRowByClick ? 'cell' : 'icon' }))
+      },
     }
   }, [
+    dragColumnWidth,
+    pipeline,
     autoRowHeight,
     columnDrag,
     columnGroupExpand,
     columnHighlight,
-    dragColumnWidth,
-    pipeline,
     sort,
     filter,
     rowSelection,
+    expandable,
+    expandRowByClick,
   ])
 
   const runPipeline = (pipeNames: Record<string, any>) => {
@@ -176,6 +179,7 @@ export const usePipeline = (props: TableProps) => {
     sort,
     filter,
     rowSelection,
+    expandable,
   })
 
   return pipeline
