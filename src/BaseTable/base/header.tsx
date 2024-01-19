@@ -182,6 +182,7 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
   const { nested, flat, stickyLeftMap, stickyRightMap } = info
   const rowCount = _rowCount ?? getTreeDepth(nested.full) + 1
   const headerRenderInfo = calculateHeaderRenderInfo(info, rowCount)
+  console.log('header', headerRenderInfo.leveled)
 
   const tableContext = useBaseTableContext()
 
@@ -199,6 +200,7 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
     const headerCells = _wrappedCols.map((wrapped) => {
       if (wrapped.type === 'normal') {
         const { colIndex, colSpan, isLeaf, col } = wrapped
+        const finalColSpan = col.colSpan ?? colSpan
 
         const headerCellProps = col.headerCellProps ?? {}
 
@@ -224,15 +226,15 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
           <th
             key={col.key}
             {...headerCellProps}
-            className={cx(tableContext.Classes?.tableHeaderCell, headerCellProps.className, {
+            className={cx(tableContext.Classes?.tableHeaderCell, col.className, headerCellProps.className, {
               [tableContext.Classes?.first]: colIndex === 0,
-              [tableContext.Classes?.last]: colIndex + colSpan === fullFlatCount,
+              [tableContext.Classes?.last]: colIndex + finalColSpan === fullFlatCount,
               [tableContext.Classes?.lockLeft]: colIndex < leftFlatCount || theaderPosition === 'left',
               [tableContext.Classes?.lockRight]:
                 colIndex >= fullFlatCount - rightFlatCount || theaderPosition === 'right',
               [tableContext.Classes?.leaf]: wrapped.isLeaf,
             })}
-            colSpan={colSpan}
+            colSpan={finalColSpan}
             rowSpan={isLeaf ? rowCount - level : undefined}
             style={{
               textAlign: col.align,

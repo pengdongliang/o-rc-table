@@ -47,7 +47,7 @@
 #### Column
 
 - [ ] onRow 设置行属性
-- [ ] colSpan 有类型功能, 未抛出兼容的api控制
+- [ ] colSpan <b style="color: purple;">设置为 0 时，也会渲染</b>
 - [ ] defaultFilteredValue 默认筛选值
 - [ ] filterResetToDefaultFilteredValue 点击重置按钮的时候，是否恢复默认筛选值
 - [ ] defaultSortOrder 默认排序顺序

@@ -121,6 +121,8 @@ export default () => {
           ellipsis,
           features: { sortable: true, filterable: true },
         },
+        { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right', className: 'test-table-cell', colSpan: 1 },
+        { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right' },
         {
           dataIndex: 'from',
           title: '发货地',
@@ -149,8 +151,6 @@ export default () => {
               }
             : {}),
         },
-        { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right' },
-        { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right' },
       ]
 
       return Array.from(Array(count))

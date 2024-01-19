@@ -124,6 +124,7 @@ export function HtmlTable({
 
     const value = internals.safeGetValue(column, record, rowIndex)
     const cellProps = column.getCellProps?.(value, record, rowIndex) ?? {}
+    console.log('body', column)
 
     let cellContent: ReactNode = value
     if (column.render) {
@@ -139,6 +140,9 @@ export function HtmlTable({
     } else {
       if (cellProps.colSpan != null) {
         colSpan = cellProps.colSpan
+      }
+      if (column.colSpan != null) {
+        colSpan = column.colSpan
       }
       if (cellProps.rowSpan != null) {
         rowSpan = cellProps.rowSpan
@@ -181,7 +185,7 @@ export function HtmlTable({
       {
         key: colIndex,
         ...cellProps,
-        className: cx(Classes?.tableCell, cellProps.className, {
+        className: cx(Classes?.tableCell, column.className, cellProps.className, {
           // class
           [Classes?.first]: colIndex === 0,
           [Classes?.last]: colIndex + colSpan === fullFlatCount,

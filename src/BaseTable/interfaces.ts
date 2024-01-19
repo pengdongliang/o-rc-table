@@ -8,7 +8,7 @@ export type CellProps = React.TdHTMLAttributes<HTMLTableCellElement>
 
 export type CellEllipsisType = { showTitle?: boolean } | boolean
 
-export interface ArtColumnStaticPart {
+export interface ArtColumnStaticPart<RecordType = any> {
   /** 列的名称 */
   name?: string
 
@@ -50,6 +50,12 @@ export interface ArtColumnStaticPart {
 
   /** 表头设置操作项到自定义操作区 */
   renderHeader?: (title: ReactNode, opr: ReactNode) => ReactNode
+
+  /** 列样式类名 */
+  className?: string
+
+  /** 表头列合并 */
+  colSpan?: number
 }
 
 export interface Features {
