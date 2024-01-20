@@ -101,6 +101,8 @@ export const useTableParamsData = (props: TableProps): UseTableParamsDataResultT
 
       const paramsData = {
         [currentFieldName]: current,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         [pageSizeFieldName]: pageSize,
         ...initParams,
         ...extraParams,

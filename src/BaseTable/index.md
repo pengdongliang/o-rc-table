@@ -198,19 +198,20 @@ export default () => {
 
 ### Table
 
-| 属性                 | 说明                    | 类型            | 默认值          | 可选值                   | 版本 |
-|--------------------|-----------------------|---------------|--------------|-----------------------|----|
-| useOuterBorder     | 是否带边框                 | boolean       | `true`       | `true` `false`        | -  |
-| columns            | 表格列的配置描述，具体项见下表       | ColumnType[]1 | -            | -                     | -  |
-| dataSource         | 数据数组                  | any[]         | -            | -                     | -  |
-| loading            | 表格是否在加载中              | boolean       | `false`      | `true` `false`        | -  |
-| style              | 自定义内联样式               | CSSProperties | `-`          | `-`                   | -  |
-| rowKey             | 主键                    | string        | -            | -                     | -  |
-| showHeader         | 表格是否具有头部              | boolean       | `true`       | `true` `false`        | -  |
-| emptyCellHeight    | 数据为空时，单元格的高度          | number        | -            | -                     | -  |
-| useVirtual         | 是否开启虚拟滚动              | boolean auto  | `auto`       | `true` `false` `auto` | -  |
-| estimatedRowHeight | 虚拟滚动开启情况下，表格中每一行的预估高度 | number        | `48`         | -                     | -  |
-| namespace          | 命名空间                  | string        | `o-rc-table` | -                     | -  |
+| 属性                   | 说明                    | 类型            | 默认值          | 可选值                   | 版本 |
+|----------------------|-----------------------|---------------|--------------|-----------------------|----|
+| useOuterBorder       | 是否带边框                 | boolean       | `true`       | `true` `false`        | -  |
+| columns              | 表格列的配置描述，具体项见下表       | ColumnType[]1 | -            | -                     | -  |
+| dataSource           | 数据数组                  | any[]         | -            | -                     | -  |
+| loading              | 表格是否在加载中              | boolean       | `false`      | `true` `false`        | -  |
+| style                | 自定义内联样式               | CSSProperties | `-`          | `-`                   | -  |
+| rowKey               | 主键                    | string        | -            | -                     | -  |
+| showHeader           | 表格是否具有头部              | boolean       | `true`       | `true` `false`        | -  |
+| emptyCellHeight      | 数据为空时，单元格的高度          | number        | -            | -                     | -  |
+| useVirtual           | 是否开启虚拟滚动              | boolean auto  | `auto`       | `true` `false` `auto` | -  |
+| estimatedRowHeight   | 虚拟滚动开启情况下，表格中每一行的预估高度 | number        | `48`         | -                     | -  |
+| namespace            | 命名空间                  | string        | `o-rc-table` | -                     | -  |
+| autoVirtualThreshold | 自动虚拟阈值                | number        | `80`         | -                     | -  |
 
 ### Column
 
@@ -224,7 +225,7 @@ export default () => {
 | verticalAlign      | 单元格中的文本或内容的 垂直水平轴对其方向             | string                  | `middle` | `top` `bottom` `middle` | -  |
 | hidden             | 是否隐藏                              | boolean                 | `false`  | `true` `false`          | -  |
 | fixed              | 是否锁列                              | boolean                 | -        | `HTMLTableCellElement`  | -  |
-| onHeaderCell    | 表头单元格的 props                      | (column)=> column       | -        | -                       | -  |
+| onHeaderCell       | 表头单元格的 props                      | (column)=> column       | -        | -                       | -  |
 | features           | 功能开关, 具体项见下表                      | 	{ [key: string]: any } | -        | -                       | -  |
 | estimatedRowHeight | 虚拟滚动开启情况下，表格中每一行的预估高度             | number                  | `48`     | -                       | -  |
 | filterable         | 是否开启过滤功能                          | boolean                 | `false`  | `true` `false`          | -  |

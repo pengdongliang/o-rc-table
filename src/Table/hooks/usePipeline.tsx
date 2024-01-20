@@ -148,7 +148,9 @@ export const usePipeline = (props: TableProps) => {
         )
       },
       expandable: () => {
-        return pipeline.use(features.rowDetail({ ...expandable, clickArea: expandRowByClick ? 'cell' : 'icon' }))
+        return pipeline.use(
+          features.rowDetail({ fixed: true, clickArea: expandRowByClick ? 'cell' : 'icon', ...expandable })
+        )
       },
     }
   }, [

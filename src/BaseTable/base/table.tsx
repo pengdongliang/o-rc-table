@@ -14,7 +14,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { BehaviorSubject, combineLatest, from, noop, Subject, Subscription } from 'rxjs'
+import { BehaviorSubject, noop, Subject, Subscription } from 'rxjs'
 import * as op from 'rxjs/operators'
 
 import type { ColumnType } from '../interfaces'
@@ -36,7 +36,6 @@ import {
   getTableScrollFooterDOM,
   getTableScrollHeaderDOM,
   OVERSCAN_SIZE,
-  shallowEqual,
   STYLED_REF_PROP,
   sum,
   syncScrollLeft,
@@ -108,6 +107,15 @@ export interface BaseTableProps<RecordType = any> {
   /** 虚拟滚动调试标签，用于表格内部调试使用 */
   virtualDebugLabel?: string
 
+  /**
+   * @description 自动虚拟阈值
+   * @default 80
+   */
+  autoVirtualThreshold?: number
+
+  /** 行高管理器 */
+  rowHeightManager?: any
+
   /** 设置行属性 */
   onRow?(record: any, rowIndex: number): React.HTMLAttributes<HTMLTableRowElement>
 
@@ -145,9 +153,8 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     stickyScrollHeight = 'auto',
     stickyTop = 0,
     showHeader = true,
-    estimatedRowHeight = 48,
+    estimatedRowHeight = 40,
     dataSource = [],
-    scrollLoad,
     components = {},
     footerDataSource = [],
     onRow = noop as unknown as BaseTableProps['onRow'],
@@ -673,28 +680,28 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     ).pipe(op.shareReplay())
 
     // 每当可见部分发生变化的时候，调整 loading icon 的未知（如果 loading icon 存在的话）
-    rootSubscription.current.add(
-      combineLatest([
-        richVisibleRects$.pipe(
-          op.map((p) => p.clipRect),
-          op.distinctUntilChanged(shallowEqual)
-        ),
-        props$.current.pipe(
-          op.startWith(null as any),
-          op.pairwise(),
-          op.filter(([prevProps, curProps]) => prevProps == null || (!prevProps.loading && curProps.loading))
-        ),
-      ]).subscribe(([clipRect]) => {
-        const loadingIndicator = domHelper.current.getLoadingIndicator()
-        if (!loadingIndicator) {
-          return
-        }
-        const height = clipRect.bottom - clipRect.top
-        // fixme 这里的定位在有些特殊情况下可能会出错
-        loadingIndicator.style.top = `${height / 2}px`
-        loadingIndicator.style.marginTop = `${height / 2}px`
-      })
-    )
+    // rootSubscription.current.add(
+    //   combineLatest([
+    //     richVisibleRects$.pipe(
+    //       op.map((p) => p.clipRect),
+    //       op.distinctUntilChanged(shallowEqual)
+    //     ),
+    //     props$.current.pipe(
+    //       op.startWith(null as any),
+    //       op.pairwise(),
+    //       op.filter(([prevProps, curProps]) => prevProps == null || (!prevProps.loading && curProps.loading))
+    //     ),
+    //   ]).subscribe(([clipRect]) => {
+    //     const loadingIndicator = domHelper.current.getLoadingIndicator()
+    //     if (!loadingIndicator) {
+    //       return
+    //     }
+    //     const height = clipRect.bottom - clipRect.top
+    //     // fixme 这里的定位在有些特殊情况下可能会出错
+    //     loadingIndicator.style.top = `${height / 2}px`
+    //     loadingIndicator.style.marginTop = `${height / 2}px`
+    //   })
+    // )
 
     // 每当可见部分发生变化的时候，如果开启了虚拟滚动，则重新触发 render
     rootSubscription.current.add(
@@ -704,11 +711,13 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
             const { horizontal, vertical } = lastInfo.current.useVirtual
             return horizontal || vertical
           }),
-          op.map(({ clipRect, offsetY: y }) => ({
-            maxRenderHeight: clipRect.bottom - clipRect.top,
-            maxRenderWidth: clipRect.right - clipRect.left,
-            offsetY: y,
-          })),
+          op.map(({ clipRect, offsetY: y }) => {
+            return {
+              maxRenderHeight: clipRect.bottom - clipRect.top,
+              maxRenderWidth: clipRect.right - clipRect.left,
+              offsetY: y,
+            }
+          }),
           op.distinctUntilChanged((x, y) => {
             // 如果表格区域被隐藏， 不需要触发组件重渲染
             if (y.maxRenderHeight === 0 && y.maxRenderWidth === 0) {
@@ -729,58 +738,49 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
         })
     )
 
-    rootSubscription.current.add(
-      richVisibleRects$
-        .pipe(
-          op.map(({ clipRect, offsetY: y }) => ({
-            maxRenderHeight: clipRect.bottom - clipRect.top,
-            maxRenderWidth: clipRect.right - clipRect.left,
-            offsetY: y,
-          })),
-          op.distinctUntilChanged((x, y) => {
-            return x.offsetY - y.offsetY === 0
-          }),
-          // 计算得到当前行索引对应的数据块，blocks改成数组的形式，兼容快速拖动可视区域出现两个数据块的情况
-          op.map((sizeAndOffset) => {
-            const { offsetY: y, maxRenderHeight: h } = sizeAndOffset
-            const scrollDirection = y - offsetY >= 0 ? 'down' : 'up'
-            setOffsetY(y)
-
-            const rowCount = dataSource.length
-            const vertical = rowHeightManager.current.getRenderRange(offsetY, h, rowCount)
-            const { topIndex, bottomIndex } = vertical
-            const blockSize = scrollLoad?.blockSize || 200
-
-            const topBlockStartIndex = Math.floor(Math.max(topIndex - 1, 0) / blockSize) * blockSize
-            const bottomBlockStartIndex = Math.floor((bottomIndex + 1) / blockSize) * blockSize
-            return scrollDirection === 'down'
-              ? [topBlockStartIndex, bottomBlockStartIndex]
-              : [bottomBlockStartIndex, topBlockStartIndex]
-          }),
-          op.distinctUntilChanged((x, y) => {
-            return x[0] === y[0] && x[1] === y[1]
-          }),
-          op.switchMap((startIndexs) => {
-            const event$ = from(startIndexs)
-            return event$.pipe(op.map((startIndex) => startIndex))
-          }),
-          // 过滤掉重复掉值
-          op.distinctUntilChanged()
-        )
-        .subscribe((startIndex) => {
-          scrollLoad?.callback(startIndex)
-        })
-    )
-  }, [
-    adjustNeedRenderLock,
-    dataSource.length,
-    offsetY,
-    scrollLoad,
-    setTableWidth,
-    syncHorizontalScroll,
-    updateStickyScroll,
-    virtualDebugLabel,
-  ])
+    // rootSubscription.current.add(
+    //   richVisibleRects$
+    //     .pipe(
+    //       op.map(({ clipRect, offsetY: y }) => ({
+    //         maxRenderHeight: clipRect.bottom - clipRect.top,
+    //         maxRenderWidth: clipRect.right - clipRect.left,
+    //         offsetY: y,
+    //       })),
+    //       op.distinctUntilChanged((x, y) => {
+    //         return x.offsetY - y.offsetY === 0
+    //       }),
+    //       // 计算得到当前行索引对应的数据块，blocks改成数组的形式，兼容快速拖动可视区域出现两个数据块的情况
+    //       op.map((sizeAndOffset) => {
+    //         const { offsetY: y, maxRenderHeight: h } = sizeAndOffset
+    //         const scrollDirection = y - offsetY >= 0 ? 'down' : 'up'
+    //         setOffsetY(y)
+    //
+    //         const rowCount = dataSource.length
+    //         const vertical = rowHeightManager.current.getRenderRange(offsetY, h, rowCount)
+    //         const { topIndex, bottomIndex } = vertical
+    //         const blockSize = scrollLoad?.blockSize || 200
+    //
+    //         const topBlockStartIndex = Math.floor(Math.max(topIndex - 1, 0) / blockSize) * blockSize
+    //         const bottomBlockStartIndex = Math.floor((bottomIndex + 1) / blockSize) * blockSize
+    //         return scrollDirection === 'down'
+    //           ? [topBlockStartIndex, bottomBlockStartIndex]
+    //           : [bottomBlockStartIndex, topBlockStartIndex]
+    //       }),
+    //       op.distinctUntilChanged((x, y) => {
+    //         return x[0] === y[0] && x[1] === y[1]
+    //       }),
+    //       op.switchMap((startIndexs) => {
+    //         const event$ = from(startIndexs)
+    //         return event$.pipe(op.map((startIndex) => startIndex))
+    //       }),
+    //       // 过滤掉重复掉值
+    //       op.distinctUntilChanged()
+    //     )
+    //     .subscribe((startIndex) => {
+    //       scrollLoad?.callback(startIndex)
+    //     })
+    // )
+  }, [adjustNeedRenderLock, setTableWidth, syncHorizontalScroll, updateStickyScroll, virtualDebugLabel])
 
   /**
    * 更新 DOM 节点的引用，方便其他方法直接操作 DOM

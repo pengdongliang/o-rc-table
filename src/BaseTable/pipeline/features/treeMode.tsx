@@ -95,6 +95,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
     return pipeline.mapDataSource(processDataSource).mapColumns(processColumns)
 
     function processDataSource(input: any[]) {
+      if (!Array.isArray(input?.[0]?.children)) return input ?? []
       const result: any[] = []
       dfs(input, 0)
 
@@ -221,11 +222,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
 
       columns[expandColIndex] = {
         ...expandCol,
-        title: (
-          <span style={{ marginLeft: iconIndent + iconWidth + iconGap, display: 'flex' }}>
-            {internals.safeRenderHeader(expandCol)}
-          </span>
-        ),
+        title: internals.safeRenderHeader(expandCol),
         render,
         onCell: clickArea === 'cell' ? onCell : expandCol.onCell,
       }

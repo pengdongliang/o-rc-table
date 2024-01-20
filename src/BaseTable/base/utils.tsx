@@ -15,8 +15,6 @@ export const STYLED_REF_PROP = 'ref'
 
 export const OVERSCAN_SIZE = 100
 
-export const AUTO_VIRTUAL_THRESHOLD = 100
-
 export function sum(arr: number[]) {
   let result = 0
   arr.forEach((x) => {

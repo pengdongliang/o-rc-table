@@ -92,7 +92,7 @@ export const useTableColumns = <T = Record<string, any>,>(props: UseTableColumns
         key: dataIndex as TableColumnTypes<T>['key'],
         width: getTableTextWidth(title as string),
         ...(dataIndex === 'opt'
-          ? { className: `${namespace}-table-cell_text_align_center`, fixed: 'right' }
+          ? { className: `${namespace}-table-cell_text_align_center`, fixed: 'right', align: 'center' }
           : { ellipsis: true }),
         ...col,
       }
@@ -160,9 +160,10 @@ export const useTableColumns = <T = Record<string, any>,>(props: UseTableColumns
       mapCol.unshift({
         title: numberFormat,
         dataIndex: 'serial$number',
-        width: getTableTextWidth(numberFormat) + 20,
+        width: getTableTextWidth(numberFormat) + 10,
         fixed: !!mapCol[0]?.fixed,
-        render: (_text, _record, index) => {
+        align: 'center',
+        render: (_text: any, _record: any, index: number) => {
           return index + (typeof serialNumber === 'number' ? serialNumber : 1)
         },
         key: 'serial$number',

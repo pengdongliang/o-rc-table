@@ -294,6 +294,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       box-sizing: border-box;
     }
 
+    width: 100%;
     position: relative;
     filter: none;
     overflow: auto;

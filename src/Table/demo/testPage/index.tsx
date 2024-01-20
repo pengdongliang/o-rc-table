@@ -13,8 +13,8 @@ import dataSourceMock from './dataSourceMock.json'
  */
 export function getUrlpar(data: any) {
   if (!data) return ''
-  let params: any = Object.keys(data).map(function (key) {
-    if ((data[key] == '' || !data[key]) && data[key] !== 0 && data[key] !== false) {
+  let params: any = Object.keys(data).map((key) => {
+    if ((data[key] === '' || !data[key]) && data[key] !== 0 && data[key] !== false) {
       return null
     }
     return `${key}=${data[key]}`
@@ -64,8 +64,6 @@ const STOSingleProductionDeliveryPlan = () => {
       },
       {
         title: '物料名称',
-        fixed: 'left',
-        ellipsis: true,
         dataIndex: 'materialName',
         width: 120,
       },
@@ -264,18 +262,20 @@ const STOSingleProductionDeliveryPlan = () => {
     // 截取前80，解决卡顿问题
     let refDataList = []
     if (record?.refResList[0]?.dailyDetailsResList && record?.refResList[0]?.dailyDetailsResList.length) {
-      refDataList = record?.refResList[0]?.dailyDetailsResList.slice(0, 80)
+      refDataList = record?.refResList[0]?.dailyDetailsResList // .slice(0, 80)
     }
     const arr =
       refDataList?.map((res: any, index: number) => {
         return {
           title: res.date,
           width: 120,
+          dataIndex: res.date,
           render: (_text: any, row: any) => {
-            return <>{row.dailyDetailsResList[index].qty || 0}</>
+            return <>{row?.dailyDetailsResList?.[index]?.qty || 0}</>
           },
         }
       }) || []
+
     return (
       <ProTable
         columns={[
@@ -301,7 +301,7 @@ const STOSingleProductionDeliveryPlan = () => {
         containerNode="div"
         showSearchBar={false}
         pagination={false}
-        scroll={{ y: record.refResList.length > 7 ? 600 : record.refResList.length * 40 }}
+        style={{ width: '1000px' }}
       />
     )
   }
@@ -323,13 +323,23 @@ const STOSingleProductionDeliveryPlan = () => {
     >
       <ProTable
         proTable
+        containerNode="div"
+        style={{ height: '500px' }}
         initPaginationConfig={{ pageSize: 500 }}
         ref={tableRef}
         columns={columns}
         useTableForm={useTableForm}
         request={() => {
           return new Promise((resolve) => {
-            resolve(dataSourceMock)
+            setTimeout(() => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              const firstData = dataSourceMock.data.list.splice(0, 1)
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              dataSourceMock.data.list = firstData.concat(dataSourceMock.data.list.sort(() => Math.random() - 0.5))
+              resolve(dataSourceMock)
+            }, 300)
           })
         }}
         responseDataHandler={(data: any) => {

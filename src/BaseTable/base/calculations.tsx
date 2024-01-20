@@ -9,7 +9,7 @@ import {
   VisibleColumnDescriptor,
 } from './interfaces'
 import { BaseTableProps } from './table'
-import { AUTO_VIRTUAL_THRESHOLD, OVERSCAN_SIZE, sum } from './utils'
+import { OVERSCAN_SIZE, sum } from './utils'
 
 function resolveVirtualEnabled(virtualEnum: VirtualEnum, defaultValue: boolean) {
   if (virtualEnum == null || virtualEnum === 'auto') {
@@ -168,8 +168,10 @@ export function calculateRenderInfo(
     dataSource: dataSourceProp,
     defaultColumnWidth,
     onHeaderRow,
+    autoVirtualThreshold,
   } = props
 
+  const AUTO_VIRTUAL_THRESHOLD = autoVirtualThreshold ?? 80
   const columns = processColumns(columnsProp, defaultColumnWidth)
   const leftNestedLockCount = getLeftNestedLockCount(columns)
   const fullFlat = collectNodes(columns, 'leaf-only')
