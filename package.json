@@ -1,6 +1,6 @@
 {
   "name": "o-rc-table",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "description": "Table ui component for react",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -10,6 +10,7 @@
     "dev": "dumi dev",
     "build": "father build",
     "build:watch": "father dev",
+    "dev:publish": "yalc publish",
     "dev:watch": "nodemon --watch dist/es/ -e js,ts --debug -x pnpm build && yalc push",
     "docs:build": "dumi build",
     "husky:prepare": "husky install && dumi setup",
@@ -72,6 +73,13 @@
     "@ocloud/admin-commitlint-config": "^1.0.0",
     "@ocloud/admin-commitizen-config": "^1.0.0",
     "@ocloud/admin-father-config": "^1.0.0",
+    "@ocloud/antd": "^1.2.0",
+    "@ocloud/admin-hooks": "^1.2.0",
+    "@ocloud/admin-context": "^1.2.0",
+    "@ocloud/admin-config": "^1.2.0",
+    "@ocloud/admin-utils": "^1.1.0",
+    "@ant-design/icons": "^5.1.4",
+    "rc-field-form": "~1.39.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "dumi": "^2.2.13",
@@ -79,7 +87,8 @@
     "father": "^4.3.1",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
-    "csstype": "^3.1.3"
+    "csstype": "^3.1.3",
+    "ahooks": "^3.7.4"
   },
   "browserslist": [
     "last 2 versions",
