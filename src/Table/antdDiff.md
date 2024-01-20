@@ -96,3 +96,10 @@
 - [ ] indentSize 展示树形数据时，每层缩进的宽度，以 `px` 为单位 <b style="color: red;">不支持</b>
 - [ ] showExpandColumn 设置是否显示展开触发列 <b style="color: red;">用到了, 但是无意义, 需要删除</b>
 - [ ] expandIconColumnIndex 展开图标的列位置 <b style="color: red;">使用替换</b>
+
+### 替换antd-table问题
+
+- 合并表头少了下边框线
+- 操作列超出4个未显示更多按钮
+- 列宽拖动很卡
+- 左右/上下滚动会一直回到原地

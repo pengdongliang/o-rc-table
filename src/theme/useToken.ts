@@ -3,7 +3,6 @@ import { useCacheToken } from '@ant-design/cssinjs'
 import { DesignTokenContext } from 'antd/es/theme/context'
 import React from 'react'
 
-import pkg from '../../package.json'
 import type { DesignTokenProviderProps } from './context'
 import { defaultTheme } from './context'
 import type { AliasToken, GlobalToken, MapToken, SeedToken } from './interface'
@@ -120,7 +119,7 @@ export default function useToken(): [
 ] {
   const { token: rootDesignToken, hashed, theme, override, cssVar } = React.useContext(DesignTokenContext)
 
-  const salt = `${pkg.version}-${hashed || ''}`
+  const salt = `${new Date().getTime()}-${hashed || ''}`
 
   const mergedTheme = theme || defaultTheme
 

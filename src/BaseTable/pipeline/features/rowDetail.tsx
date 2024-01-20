@@ -20,7 +20,7 @@ export interface RenderExpandIconProps<RecordType> extends Partial<React.StyleHT
   onExpand: TriggerEventHandler<RecordType>
 }
 
-export type RenderExpandIcon<RecordType> = (props: RenderExpandIconProps<RecordType>) => React.ReactNode
+export type RenderExpandIcon<RecordType> = (props: RenderExpandIconProps<RecordType>) => JSX.Element
 
 export type ExpandedRowRender<ValueType> = (
   record: ValueType,
