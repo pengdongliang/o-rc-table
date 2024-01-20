@@ -29,7 +29,7 @@ export interface BuildCrossTableOptions {
   leftMetaColumns: CrossTableLeftMetaColumn[]
   getValue: CrossTableProps['getValue']
   render?: CrossTableProps['render']
-  getCellProps?: CrossTableProps['getCellProps']
+  onCell?: CrossTableProps['onCell']
 }
 
 export default function buildCrossTable(options: BuildCrossTableOptions): Pick<TableProps, 'columns' | 'dataSource'> {
@@ -58,12 +58,12 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
       for (let index = 0; index < leftHeaderWidth; index++) {
         const metaCol = leftMetaColumns[index] ?? ({} as CrossTableLeftMetaColumn)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars
-        const { getCellProps, render, ...staticMetaColConfig } = metaCol
+        const { onCell, render, ...staticMetaColConfig } = metaCol
         leftPartColumns.push({
           columnType: 'left',
           fixed: true,
           ...staticMetaColConfig,
-          getCellProps: leftHeaderGetCellPropsFactory(metaCol, index),
+          onCell: leftHeaderGetCellPropsFactory(metaCol, index),
           getSpanRect: leftHeaderGetSpanRectFactory(metaCol, index),
           getValue: leftHeaderGetValueFactory(metaCol, index),
           render: leftHeaderRenderFactory(metaCol, index),
@@ -74,10 +74,10 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
       function leftHeaderGetCellPropsFactory(
         metaCol: CrossTableLeftMetaColumn,
         colIndex: number
-      ): ColumnType['getCellProps'] {
+      ): ColumnType['onCell'] {
         return (_value: any, row: CrossTableRenderRow) => {
           const node = row.nodes[colIndex]
-          return metaCol.getCellProps?.(node, colIndex)
+          return metaCol.onCell?.(node, colIndex)
         }
       }
 
@@ -168,11 +168,11 @@ export default function buildCrossTable(options: BuildCrossTableOptions): Pick<T
           }
           return val
         },
-        getCellProps(val, row: CrossTableRenderRow) {
-          if (options.getCellProps) {
+        onCell(val, row: CrossTableRenderRow) {
+          if (options.onCell) {
             const leftDepth = row.nodes.length - 1
             const leftNode = row.nodes[leftDepth]
-            return options.getCellProps(val, leftNode, topNode, leftDepth, topDepth)
+            return options.onCell(val, leftNode, topNode, leftDepth, topDepth)
           }
         },
       }

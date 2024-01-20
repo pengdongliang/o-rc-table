@@ -167,6 +167,7 @@ export function calculateRenderInfo(
     columns: columnsProp,
     dataSource: dataSourceProp,
     defaultColumnWidth,
+    onHeaderRow,
   } = props
 
   const columns = processColumns(columnsProp, defaultColumnWidth)
@@ -268,5 +269,6 @@ export function calculateRenderInfo(
     leftLockTotalWidth,
     rightLockTotalWidth,
     hasLockColumn: nested.left.length > 0 || nested.right.length > 0,
+    onHeaderRow,
   }
 }

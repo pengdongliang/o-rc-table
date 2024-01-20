@@ -120,7 +120,7 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
         )
       }
 
-      const getCellProps = (value: any, row: any, rowIndex: number) => {
+      const onCell = (value: any, row: any, rowIndex: number) => {
         const meta = getGroupingMeta(row)
         if (!meta.isGroupHeader) {
           return
@@ -149,7 +149,7 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
           }
         }
 
-        const prevProps = firstCol.getCellProps?.(value, row, rowIndex)
+        const prevProps = firstCol.onCell?.(value, row, rowIndex)
         return mergeCellProps(prevProps, {
           onClick,
           style: { cursor: expandable ? 'pointer' : undefined },
@@ -165,7 +165,7 @@ export function rowGrouping(opts: RowGroupingFeatureOptions = {}) {
             </div>
           ),
           render,
-          getCellProps,
+          onCell,
           getSpanRect(_value: any, row: any, rowIndex: number) {
             if (getGroupingMeta(row).isGroupHeader) {
               return { top: rowIndex, bottom: rowIndex + 1, left: 0, right: columnFlatCount }

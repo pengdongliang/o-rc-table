@@ -24,7 +24,7 @@ export interface CrossTableProps extends Omit<TableProps, 'dataSource' | 'column
     leftDepth: number,
     topDepth: number
   ): React.ReactNode
-  getCellProps?(
+  onCell?(
     value: any,
     leftNode: LeftCrossTreeNode,
     topNode: TopCrossTreeNode,
@@ -40,7 +40,7 @@ export default (function CrossTable({
   topTree,
   topTotalNode,
   getValue,
-  getCellProps,
+  onCell,
   leftMetaColumns,
   render,
   baseTableRef,
@@ -52,7 +52,7 @@ export default (function CrossTable({
     leftTotalNode,
     topTotalNode,
     getValue,
-    getCellProps,
+    onCell,
     render,
     leftMetaColumns,
   })

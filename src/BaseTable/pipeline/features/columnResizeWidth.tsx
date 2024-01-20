@@ -205,7 +205,7 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
                 ))}
             </>
           ),
-          headerCellProps: mergeCellProps(col.headerCellProps, {
+          onHeaderCell: ()=> mergeCellProps(col.onHeaderCell?.(col), {
             className: 'resizeable',
           }),
         }

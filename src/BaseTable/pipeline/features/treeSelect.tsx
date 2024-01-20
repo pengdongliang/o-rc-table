@@ -110,7 +110,7 @@ export function treeSelect(opts: TreeSelectFeatureOptions) {
       render(_val, record) {
         return makeCheckbox(record[rowKey], false, record)
       },
-      getCellProps(_val: any, row: any): CellProps {
+      onCell(_val: any, row: any): CellProps {
         const currentRowKey = row[rowKey]
         if (clickArea !== 'cell') {
           return

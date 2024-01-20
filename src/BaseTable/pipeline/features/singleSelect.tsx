@@ -88,8 +88,8 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
       title: renderColumnTitle(),
       ...opts.columnProps,
       width: opts.columnProps?.width ?? 50,
-      getCellProps(val: any, row: any, rowIndex: number): CellProps {
-        const preCellProps = opts.columnProps?.getCellProps?.(val, row, rowIndex)
+      onCell(val: any, row: any, rowIndex: number): CellProps {
+        const preCellProps = opts.columnProps?.onCell?.(val, row, rowIndex)
         if (clickArea === 'cell') {
           const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
           const checkboxProps = (opts.getCheckboxProps ? opts.getCheckboxProps(row) : null) || {}

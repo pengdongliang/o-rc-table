@@ -236,7 +236,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
         )
       }
 
-      const getCellProps = (value: any, row: any, rowIndex: number) => {
+      const onCell = (value: any, row: any, rowIndex: number) => {
         if (row[rowDetailMetaKey]) {
           return {
             style: {
@@ -247,7 +247,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
           }
         }
 
-        const prevProps = expandCol?.getCellProps?.(value, row, rowIndex)
+        const prevProps = expandCol?.onCell?.(value, row, rowIndex)
 
         if (!rowExpandable(row, rowIndex)) {
           return prevProps
@@ -282,7 +282,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
 
       const baseColumn = {
         title: opts.columnTitle,
-        getCellProps: clickArea === 'cell' ? getCellProps : expandCol?.getCellProps,
+        onCell: clickArea === 'cell' ? onCell : expandCol?.onCell,
         getSpanRect(_value: any, row: any, rowIndex: number) {
           if (row[rowDetailMetaKey]) {
             // detail 总是成一行
@@ -304,7 +304,6 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
         fixed: opts.fixed,
         render,
       }
-
       if (expandColumnIndex !== undefined) {
         tableColumns[expandColumnIndex] = {
           ...expandCol,
@@ -325,7 +324,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
           tableColumns[0] = {
             ...firstCol,
             ...newColumns,
-            getCellProps: tableColumns[0].getCellProps,
+            onCell: tableColumns[0].onCell,
             render: firstColRender,
           }
         }

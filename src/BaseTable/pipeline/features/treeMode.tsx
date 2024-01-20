@@ -196,7 +196,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
         )
       }
 
-      const getCellProps = (_value: any, record: any, rowIndex: number) => {
+      const onCell = (_value: any, record: any, rowIndex: number) => {
         const prevProps = internals.safeGetCellProps(expandCol, record, rowIndex)
         if (record[treeMetaKey] == null) {
           // 没有 treeMeta 信息的话，就返回原先的 cellProps
@@ -227,7 +227,7 @@ export function treeMode(opts: TreeModeFeatureOptions = {}) {
           </span>
         ),
         render,
-        getCellProps: clickArea === 'cell' ? getCellProps : expandCol.getCellProps,
+        onCell: clickArea === 'cell' ? onCell : expandCol.onCell,
       }
 
       return [...columns]

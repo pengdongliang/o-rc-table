@@ -30,7 +30,7 @@ export default () => {
   const col = proto.array({
     align: 'center',
     width: 80,
-    headerCellProps: { style: { textAlign: 'center', padding: 0 } },
+    onHeaderCell: () => ({ style: { textAlign: 'center', padding: 0 } }),
   })
   const columns = col([
     { fixed: true, dataIndex: 'occupation', name: '职务', width: 120 },

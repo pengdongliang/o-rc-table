@@ -3,9 +3,9 @@ title: 单元格合并
 order: 601
 ---
 
-通过 `column.getCellProps(...)` 返回 colSpan/rowSpan 可实现单元格合并。
+通过 `column.onCell(...)` 返回 colSpan/rowSpan 可实现单元格合并。
 
-除了 colSpan, rowSpan 之外，getCellProps 也可以返回 td 元素的其他 props，例如 className, style, onClick 等。
+除了 colSpan, rowSpan 之外，onCell 也可以返回 td 元素的其他 props，例如 className, style, onClick 等。
 ```jsx
 import React from "react";
 import { Table, useTablePipeline, features } from 'baseTableDemo/demoUtil';
@@ -22,7 +22,7 @@ export default () => {
   const columns = [
     { dataIndex: 'No', name: '序号', width: 60, align: 'center'},
     { dataIndex: 'order', name: '物流编码', width: 200,       
-      getCellProps(value, record, rowIndex) {
+      onCell(value, record, rowIndex) {
         if (rowIndex === 1) {
           return {
             rowSpan: 2,

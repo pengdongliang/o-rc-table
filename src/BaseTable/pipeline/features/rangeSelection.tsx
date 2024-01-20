@@ -243,10 +243,10 @@ export function rangeSelection(opts: RangeSelectionFeatureOptions) {
       makeRecursiveMapper((col) => {
         const cellRanges = pipeline.getStateAtKey(rangeSelectionKey) || []
 
-        const prevGetCellProps = col.getCellProps
+        const prevGetCellProps = col.onCell
         return {
           ...col,
-          getCellProps(value: any, record: any, rowIndex: number): CellProps {
+          onCell(value: any, record: any, rowIndex: number): CellProps {
             const prevCellProps = prevGetCellProps?.(value, record, rowIndex)
             const isFooterCell = record[pipeline.getFeatureOptions('footerRowMetaKey')]
             if (!cellRanges.some((cellRange: any) => isCellInRange(cellRange, rowIndex, col, isFooterCell)))

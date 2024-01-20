@@ -165,16 +165,16 @@ export function shallowEqual<T>(objA: T, objB: T): boolean {
 
 // todo: 抽出mergeRowProps
 export function composeRowPropsGetter(
-  getRowProps: (record: any, rowIndex: number) => React.HTMLAttributes<HTMLTableRowElement>,
+  onRow: (record: any, rowIndex: number) => React.HTMLAttributes<HTMLTableRowElement>,
   pendingRowProps?: React.HTMLAttributes<HTMLTableRowElement>
 ): (record: any, rowIndex: number) => React.HTMLAttributes<HTMLTableRowElement> {
   const keys = Object.keys(pendingRowProps)
   if (keys.length) {
     return ((row: any, rowIndex: number) => {
-      return mergeCellProps(getRowProps(row, rowIndex) as any, pendingRowProps as any)
+      return mergeCellProps(onRow(row, rowIndex) as any, pendingRowProps as any)
     }) as any
   }
-  return getRowProps
+  return onRow
 }
 
 export function getTableScrollHeaderDOM(domHelper: TableDOMHelper): HTMLDivElement {

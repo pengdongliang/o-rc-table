@@ -105,16 +105,14 @@ export interface BaseTableProps<RecordType = any> {
   /** 列的默认宽度 */
   defaultColumnWidth?: number
 
-  /**
-   * @deprecated
-   * flowRoot 在表格 v2.4 后不再需要提供，请移除该属性
-   * */
-  flowRoot?: never
-
   /** 虚拟滚动调试标签，用于表格内部调试使用 */
   virtualDebugLabel?: string
 
-  getRowProps?(record: any, rowIndex: number): React.HTMLAttributes<HTMLTableRowElement>
+  /** 设置行属性 */
+  onRow?(record: any, rowIndex: number): React.HTMLAttributes<HTMLTableRowElement>
+
+  /** 设置头部行属性 */
+  onHeaderRow?(columns: ColumnType<RecordType>[], index: number): React.HTMLAttributes<HTMLTableRowElement>
 
   getTableProps?(): React.HTMLAttributes<HTMLTableElement>
 
@@ -152,7 +150,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     scrollLoad,
     components = {},
     footerDataSource = [],
-    getRowProps = noop as unknown as BaseTableProps['getRowProps'],
+    onRow = noop as unknown as BaseTableProps['onRow'],
     rowKey,
     stickyBottom = 0,
     hasStickyScroll = true,
@@ -397,7 +395,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
             )}
             <HtmlTable
               tbodyHtmlTag="tbody"
-              getRowProps={getRowProps}
+              onRow={onRow}
               rowKey={rowKey}
               data={dataSource.slice(topIndex, bottomIndex)}
               stickyRightOffset={stickyRightOffset}
@@ -429,7 +427,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       contextValue.Classes?.virtualBlank,
       dataSource,
       emptyCellHeight,
-      getRowProps,
+      onRow,
       getScrollBarWidth,
       handleRowMouseEnter,
       handleRowMouseLeave,
@@ -458,7 +456,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
             tbodyHtmlTag="tfoot"
             data={footerDataSource}
             horizontalRenderInfo={info}
-            getRowProps={getRowProps}
+            onRow={onRow}
             rowKey={rowKey}
             verticalRenderInfo={{
               offset: 0,
@@ -481,7 +479,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       contextValue.Classes?.tableFooter,
       contextValue.Classes?.verticalScrollPlaceholder,
       footerDataSource,
-      getRowProps,
+      onRow,
       getScrollBarWidth,
       handleRowMouseEnter,
       handleRowMouseLeave,

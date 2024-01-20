@@ -66,7 +66,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
         features: {
           resizeable: false,
         },
-        getCellProps: () => {
+        onCell: () => {
           return {
             className: pipeline.getTableContext().Classes?.emptyColCell,
           }

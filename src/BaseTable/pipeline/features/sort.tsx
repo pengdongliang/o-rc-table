@@ -269,10 +269,11 @@ export function sort(opts: SortFeatureOptions = {}) {
             sortIndex = index
 
             if (highlightColumnWhenActive) {
-              result.headerCellProps = mergeCellProps(col.headerCellProps, {
-                style: { background: 'var(--header-highlight-bgcolor)' } as any,
-              })
-              result.getCellProps = (_value, row, rowIndex) => {
+              result.onHeaderCell = () =>
+                mergeCellProps(col.onHeaderCell?.(col), {
+                  style: { background: 'var(--header-highlight-bgcolor)' } as any,
+                })
+              result.onCell = (_value, row, rowIndex) => {
                 const prevCellProps = internals.safeGetCellProps(col, row, rowIndex)
                 return mergeCellProps(prevCellProps, {
                   style: { background: 'var(--highlight-bgcolor)' } as any,

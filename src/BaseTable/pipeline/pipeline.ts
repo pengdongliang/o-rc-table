@@ -5,7 +5,7 @@ import { ColumnType, TableTransform, Transform } from '../interfaces'
 import { mergeCellProps } from '../utils'
 import { autoFillTableWidth, tableWidthKey } from './features/autoFill'
 
-type RowPropsGetter = TableProps['getRowProps']
+type RowPropsGetter = TableProps['onRow']
 
 type InputType<RecordType = Record<string, any>> =
   | {
@@ -47,8 +47,8 @@ export interface TablePipelineCtx {
  * 1. ctx：上下文环境对象，step（流水线上的一步）可以对 ctx 中的字段进行读写。
  * ctx 中部分字段名称有特定的含义（例如 rowKey 表示行的主键），使用自定义的上下文信息时注意避开这些名称。
  *
- * 2. rowPropsGetters：getRowProps 回调队列，step 可以通过 pipeline.appendRowPropsGetter 向队列中追加回调函数，
- *   在调用 pipeline.props() 队列中的所有函数会组合形成最终的 getRowProps
+ * 2. rowPropsGetters：onRow 回调队列，step 可以通过 pipeline.appendRowPropsGetter 向队列中追加回调函数，
+ *   在调用 pipeline.props() 队列中的所有函数会组合形成最终的 onRow
  *
  * 3. 当前流水线的状态，包括 dataSource, columns, rowPropsGetters 三个部分
  *
@@ -116,7 +116,7 @@ export class TablePipeline<RecordType = unknown> {
   }
 
   appendRowPropsGetter(getter: RowPropsGetter) {
-    this._rowPropsGetters.push(getter)
+    getter && this._rowPropsGetters.push(getter)
     return this
   }
 
@@ -290,7 +290,7 @@ export class TablePipeline<RecordType = unknown> {
   }
 
   /**
-   * 获取 BaseTable 的 props，结果中包含 dataSource/columns/rowKey/getRowProps 四个字段
+   * 获取 BaseTable 的 props，结果中包含 dataSource/columns/rowKey/onRow 四个字段
    */
   getProps(this: TablePipeline) {
     this.use(autoFillTableWidth())
@@ -307,7 +307,7 @@ export class TablePipeline<RecordType = unknown> {
     }
 
     if (this._rowPropsGetters.length > 0) {
-      result.getRowProps = (row, rowIndex) => {
+      result.onRow = (row, rowIndex) => {
         return this._rowPropsGetters.reduce<any>((res, get) => {
           return mergeCellProps(res, get(row, rowIndex) as any)
         }, {})

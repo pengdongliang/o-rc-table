@@ -13,7 +13,7 @@ export interface CrossTableLeftMetaColumn extends Omit<ArtColumnStaticPart, 'hid
   render?(leftNode: LeftCrossTreeNode, leftDepth: number): ReactNode
 
   /** 自定义的获取单元格 props 的方法 */
-  getCellProps?(leftNode: LeftCrossTreeNode, leftDepth: number): CellProps
+  onCell?(leftNode: LeftCrossTreeNode, leftDepth: number): CellProps
 }
 
 export interface CrossTreeNode {

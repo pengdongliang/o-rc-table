@@ -295,8 +295,6 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
     }
 
     position: relative;
-    width: 100%;
-    height: 100%;
     filter: none;
     overflow: auto;
     display: flex;
@@ -522,7 +520,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
     td {
       padding: var(--cell-padding);
       background: var(--bgcolor);
-      height: var(--row-height);
+      //height: var(--row-height);
       border: 1px solid transparent;
       border-right: var(--cell-border-horizontal);
       border-bottom: var(--cell-border-vertical);

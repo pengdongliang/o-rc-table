@@ -26,9 +26,9 @@ function safeGetRowKey(rowKey: BaseTableProps['rowKey'], record: any, rowIndex?:
 }
 
 function safeGetCellProps(column: ColumnType, record: any, rowIndex: number) {
-  if (column.getCellProps) {
+  if (column.onCell) {
     const value = safeGetValue(column, record, rowIndex)
-    return column.getCellProps(value, record, rowIndex) || {}
+    return column.onCell(value, record, rowIndex) || {}
   }
   return {}
 }

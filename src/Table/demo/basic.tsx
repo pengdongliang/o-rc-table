@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import type { TableRowSelection } from '@table/interface'
 import { ConfigProvider, Form, Radio, Switch, Tooltip } from 'antd'
 import { ColumnType, type features, TableProps } from 'o-rc-table'
@@ -5,6 +6,99 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import Table from '../Table'
 import antdTheme from './antdTheme.json'
+
+const StyledExpandBox = styled.div`
+  position: sticky;
+  left: 0px;
+  overflow: hidden;
+`
+
+function makeChildren(prefix: number) {
+  return [
+    {
+      id: `${prefix}-1`,
+      No: '二级标题',
+      order: '应用部',
+      from: '云南大理',
+      amount: '29400.00',
+      balance: '1000.00',
+      opt: `操作${prefix}-1`,
+      children: [
+        {
+          id: `${prefix}-1-1`,
+          No: '三级标题',
+          order: '平台大前端-UED',
+          from: '云南大理',
+          amount: '29400.00',
+          balance: '1000.00',
+          opt: `操作${prefix}-1-1`,
+          children: [],
+        },
+        {
+          id: `${prefix}-1-2`,
+          No: '三级标题',
+          order: '平台大前端-前端',
+          from: '云南大理',
+          amount: '29400.00',
+          balance: '1000.00',
+          opt: `操作${prefix}-1-2`,
+        },
+      ],
+    },
+    {
+      id: `${prefix}-2`,
+      No: '二级标题',
+      order: '应用部',
+      from: '云南大理',
+      amount: '29400.00',
+      balance: '1000.00',
+      opt: `操作${prefix}-2`,
+      children: [
+        {
+          id: `${prefix}-2-1`,
+          No: '三级标题',
+          order: '平台大前端-UED',
+          from: '云南大理',
+          amount: '29400.00',
+          balance: '1000.00',
+          opt: `操作${prefix}-2-1`,
+        },
+        {
+          id: `${prefix}-2-2`,
+          No: '三级标题',
+          order: '平台大前端-前端',
+          from: '云南大理',
+          amount: '29400.00',
+          balance: '1000.00',
+          opt: `操作${prefix}-2-2`,
+        },
+      ],
+    },
+    {
+      id: `${prefix}-3`,
+      No: '二级标题',
+      order: '应用部',
+      from: '云南大理',
+      amount: '29400.00',
+      balance: '1000.00',
+      opt: `操作${prefix}-3`,
+    },
+  ]
+}
+
+const getDataSource = (count = 1000, renderChild = true) => {
+  return Array.from(Array(count)).map((_item, index) => ({
+    id: index,
+    No: index,
+    order: `HK-FDF-24785-0${index}`,
+    from: index < 2 ? '自动合并的行' : Math.random() * 10000,
+    to: '2222222',
+    amount: '29400.00',
+    balance: '1000.00',
+    opt: `操作${index}`,
+    children: renderChild ? makeChildren(index) : [],
+  }))
+}
 
 export default () => {
   const [dataCount, setDataCount] = useState(1000)
@@ -22,93 +116,6 @@ export default () => {
   const [filter, setFilter] = useState<features.FilterFeatureOptions>()
   const [rowSelection, setRowSelection] = useState<TableRowSelection>({ type: 'checkbox' })
 
-  function makeChildren(prefix: number) {
-    return [
-      {
-        id: `${prefix}-1`,
-        No: '二级标题',
-        order: '应用部',
-        from: '云南大理',
-        amount: '29400.00',
-        balance: '1000.00',
-        opt: `操作${prefix}-1`,
-        children: [
-          {
-            id: `${prefix}-1-1`,
-            No: '三级标题',
-            order: '平台大前端-UED',
-            from: '云南大理',
-            amount: '29400.00',
-            balance: '1000.00',
-            opt: `操作${prefix}-1-1`,
-            children: [],
-          },
-          {
-            id: `${prefix}-1-2`,
-            No: '三级标题',
-            order: '平台大前端-前端',
-            from: '云南大理',
-            amount: '29400.00',
-            balance: '1000.00',
-            opt: `操作${prefix}-1-2`,
-          },
-        ],
-      },
-      {
-        id: `${prefix}-2`,
-        No: '二级标题',
-        order: '应用部',
-        from: '云南大理',
-        amount: '29400.00',
-        balance: '1000.00',
-        opt: `操作${prefix}-2`,
-        children: [
-          {
-            id: `${prefix}-2-1`,
-            No: '三级标题',
-            order: '平台大前端-UED',
-            from: '云南大理',
-            amount: '29400.00',
-            balance: '1000.00',
-            opt: `操作${prefix}-2-1`,
-          },
-          {
-            id: `${prefix}-2-2`,
-            No: '三级标题',
-            order: '平台大前端-前端',
-            from: '云南大理',
-            amount: '29400.00',
-            balance: '1000.00',
-            opt: `操作${prefix}-2-2`,
-          },
-        ],
-      },
-      {
-        id: `${prefix}-3`,
-        No: '二级标题',
-        order: '应用部',
-        from: '云南大理',
-        amount: '29400.00',
-        balance: '1000.00',
-        opt: `操作${prefix}-3`,
-      },
-    ]
-  }
-
-  const getDataSource = (count = 1000) => {
-    return Array.from(Array(count)).map((_item, index) => ({
-      id: index,
-      No: index,
-      order: `HK-FDF-24785-0${index}`,
-      from: index < 2 ? '自动合并的行' : Math.random() * 10000,
-      to: '2222222',
-      amount: '29400.00',
-      balance: '1000.00',
-      opt: `操作${index}`,
-      children: makeChildren(index),
-    }))
-  }
-
   const [dataSource, setDataSource] = useState(getDataSource())
 
   const getColumns = useCallback(
@@ -122,7 +129,22 @@ export default () => {
           features: { sortable: true, filterable: true },
         },
         { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right', className: 'test-table-cell', colSpan: 1 },
-        { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right' },
+        {
+          dataIndex: 'balance',
+          name: '应收余额',
+          width: 100,
+          align: 'right',
+          onCell: (_value, record) => {
+            if (record.id === 0) {
+              return {
+                style: { background: '#ccc' },
+              }
+            }
+          },
+          onHeaderCell: () => {
+            return { style: { background: '#ddd' } }
+          },
+        },
         {
           dataIndex: 'from',
           title: '发货地',
@@ -135,7 +157,7 @@ export default () => {
           width: '200px',
           ...(autoColSpan
             ? {
-                getCellProps: (_value, _record, rowIndex) => {
+                onCell: (_value, _record, rowIndex) => {
                   if (rowIndex === 1) {
                     return {
                       rowSpan: 2,
@@ -336,6 +358,16 @@ export default () => {
         columnHighlight={columnHighlight}
         sort={sort}
         filter={filter}
+        onHeaderRow={() => {
+          return {
+            className: 'test-on-header-row',
+          }
+        }}
+        onRow={(record) => {
+          if (record.id === 3) {
+            return { style: { color: '#a11' } }
+          }
+        }}
         rowSelection={{
           columnTitle: rowSelection.type === 'checkbox' ? null : <div>选择</div>,
           onSelectAll: (selected, selectedRows, changeRows) => {
@@ -366,13 +398,25 @@ export default () => {
           columnWidth: 60,
           fixed: true,
           columnTitle: '展开',
-          defaultExpandAllRows: true,
-          expandedRowRender(row) {
+          defaultExpandAllRows: false,
+          expandedRowRender(record) {
+            if (record.id === '0_detail') {
+              return (
+                <Table
+                  style={{ boxShadow: '0 0 4px 1px #33333333', width: '800px' }}
+                  className="bordered compact"
+                  dataSource={getDataSource(20, false)}
+                  columns={getColumns(2)}
+                  pagination={false}
+                />
+              )
+            }
+
             return (
-              <div style={{ margin: '8px', textAlign: 'left' }}>
-                <p>应付金额：{row.amount}</p>
-                <p>应收余额：{row.balance}</p>
-              </div>
+              <StyledExpandBox style={{ textAlign: 'left' }}>
+                <p>应付金额：{record.amount}</p>
+                <p>应收余额：{record.balance}</p>
+              </StyledExpandBox>
             )
           },
         }}

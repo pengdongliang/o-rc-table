@@ -42,6 +42,7 @@ export const usePipeline = (props: TableProps) => {
     columnDrag,
     columnGroupExpand,
     columnHighlight,
+    onRow,
     sort,
     filter,
     rowSelection,
@@ -52,6 +53,7 @@ export const usePipeline = (props: TableProps) => {
   const { expandRowByClick } = expandable ?? {}
 
   const pipeline = useTablePipeline({ components: { Checkbox, Radio, Input, ...components } })
+    .appendRowPropsGetter(onRow)
     .input({ dataSource, columns, tableContext: { namespace: prefixCls, Classes: getTableClasses(prefixCls) } })
     .rowKey(rowKey)
     .use(features.columnResize())
@@ -128,7 +130,7 @@ export const usePipeline = (props: TableProps) => {
           columnProps: {
             fixed,
             width: columnWidth as number,
-            getCellProps: (_text, record, rowIndex) => onCell(record, rowIndex),
+            onCell: (_text, record, rowIndex) => onCell(record, rowIndex),
           },
         }
 

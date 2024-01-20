@@ -30,7 +30,7 @@ export default () => {
   const [dataSource, setDataSource] = React.useState(initDataSource)
   const [activeCell, setActiveCell] = React.useState({ row: -1, col: -1 });
 
-  const getCellProps = (col) => (value, record, rowIndex) => {
+  const onCell = (col) => (value, record, rowIndex) => {
     return {
       style: {},
       onClick (event) {
@@ -79,7 +79,7 @@ export default () => {
   };
 
   const transAction = (col, colIndex) => {
-    col.getCellProps = getCellProps(colIndex);
+    col.onCell = onCell(colIndex);
     if (!col.editable) {
       return col
     }

@@ -11,7 +11,7 @@ import { RenderInfo } from './interfaces'
 import { BaseTableProps } from './table'
 import { getTitleFromCellRenderChildren } from './utils'
 
-export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'getRowProps' | 'rowKey'>> {
+export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'onRow' | 'rowKey'>> {
   tbodyHtmlTag: 'tbody' | 'tfoot'
   data: any[]
   stickyRightOffset?: number
@@ -33,7 +33,7 @@ export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'getRowPro
 
 export function HtmlTable({
   tbodyHtmlTag,
-  getRowProps,
+  onRow,
   rowKey,
   stickyRightOffset,
   data,
@@ -65,7 +65,7 @@ export function HtmlTable({
     const rowIndex = verInfo.offset + i
     spanManager.stripUpwards(rowIndex)
 
-    const rowProps = getRowProps?.(record, rowIndex)
+    const rowProps = onRow?.(record, rowIndex)
     const rowClass = cx(
       Classes?.tableRow,
       {
@@ -123,8 +123,7 @@ export function HtmlTable({
     }
 
     const value = internals.safeGetValue(column, record, rowIndex)
-    const cellProps = column.getCellProps?.(value, record, rowIndex) ?? {}
-    console.log('body', column)
+    const cellProps = column.onCell?.(value, record, rowIndex) ?? {}
 
     let cellContent: ReactNode = value
     if (column.render) {

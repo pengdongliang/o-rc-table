@@ -176,10 +176,10 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
         align: 'center',
         ...opts.columnProps,
         width: opts.columnProps?.width ?? 50,
-        getCellProps(val: any, row: any, rowIndex: number): CellProps {
+        onCell(val: any, row: any, rowIndex: number): CellProps {
           const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
           let checkboxCellProps = {}
-          const preCellProps = opts.columnProps?.getCellProps?.(val, row, rowIndex)
+          const preCellProps = opts.columnProps?.onCell?.(val, row, rowIndex)
           const fullRowsSet = pipeline.getFeatureOptions(fullRowsSetKey) || new Set<string>()
           const selectValueSet = pipeline.getFeatureOptions(selectValueSetKey) || new Set<string>()
           if (fullRowsSet.has(currentRowKey) && clickArea === 'cell') {

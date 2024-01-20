@@ -179,10 +179,9 @@ interface TableHeaderProps {
 }
 
 export default function TableHeader({ info, theaderPosition, rowCount: _rowCount }: TableHeaderProps) {
-  const { nested, flat, stickyLeftMap, stickyRightMap } = info
+  const { nested, flat, stickyLeftMap, stickyRightMap, onHeaderRow } = info
   const rowCount = _rowCount ?? getTreeDepth(nested.full) + 1
   const headerRenderInfo = calculateHeaderRenderInfo(info, rowCount)
-  console.log('header', headerRenderInfo.leveled)
 
   const tableContext = useBaseTableContext()
 
@@ -202,7 +201,7 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
         const { colIndex, colSpan, isLeaf, col } = wrapped
         const finalColSpan = col.colSpan ?? colSpan
 
-        const headerCellProps = col.headerCellProps ?? {}
+        const { onHeaderCell } = col
 
         const positionStyle: CSSProperties = {}
         if (colIndex < leftFlatCount) {
@@ -225,8 +224,8 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
         const cell = (
           <th
             key={col.key}
-            {...headerCellProps}
-            className={cx(tableContext.Classes?.tableHeaderCell, col.className, headerCellProps.className, {
+            {...onHeaderCell?.(col)}
+            className={cx(tableContext.Classes?.tableHeaderCell, col.className, onHeaderCell?.(col)?.className, {
               [tableContext.Classes?.first]: colIndex === 0,
               [tableContext.Classes?.last]: colIndex + finalColSpan === fullFlatCount,
               [tableContext.Classes?.lockLeft]: colIndex < leftFlatCount || theaderPosition === 'left',
@@ -239,7 +238,7 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
             style={{
               textAlign: col.align,
               verticalAlign: col.verticalAlign ?? 'middle',
-              ...headerCellProps.style,
+              ...onHeaderCell?.(col)?.style,
               ...positionStyle,
             }}
             data-index={col.dataIndex}
@@ -265,10 +264,13 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
       return null
     })
 
+    const headerRowProps = onHeaderRow?.(_wrappedCols, 0)
+
     return (
       <tr
+        {...headerRowProps}
         key={level}
-        className={cx(tableContext.Classes?.tableHeaderRow, {
+        className={cx(tableContext.Classes?.tableHeaderRow, headerRowProps?.className, {
           [tableContext.Classes?.first]: level === 0,
           [tableContext.Classes?.last]: level === rowCount - 1,
         })}

@@ -50,7 +50,7 @@ const defaultRowDragColumn = (pipeline: TablePipeline): ColumnType => {
     title: '',
     width: 40,
     align: 'center',
-    getCellProps(): CellProps {
+    onCell(): CellProps {
       return {
         className: cx(pipeline.getTableContext().Classes?.rowDragCell),
       }

@@ -6,8 +6,8 @@ order: 401
 在 `columns.children=[...]` 中添加子节点，`<Table />` 会绘制相应的嵌套表头结构。
 
 ```jsx
-import React from "react";
-import { Table, useTablePipeline, features, proto } from 'baseTableDemo/demoUtil';
+import React from 'react'
+import { Table, useTablePipeline, features, proto } from 'baseTableDemo/demoUtil'
 
 export default () => {
   const occupations = ['UED', '客服', '产品', '运营', '前端', '数据']
@@ -30,7 +30,7 @@ export default () => {
   const col = proto.array({
     align: 'center',
     width: 80,
-    headerCellProps: { style: { textAlign: 'center', padding: 0 } },
+    onHeaderCell: () => ({ style: { textAlign: 'center', padding: 0 } }),
   })
   const columns = col([
     { fixed: true, dataIndex: 'occupation', name: '职务', width: 120 },
@@ -43,7 +43,7 @@ export default () => {
       children: col([
         { dataIndex: 'hc_2014', name: '2014年' },
         { dataIndex: 'hc_2015', name: '2015年' },
-        { dataIndex: 'hc_lfl', name: '同比增长' }])
+        { dataIndex: 'hc_lfl', name: '同比增长' }]),
     },
     {
       name: '年龄',
@@ -67,9 +67,9 @@ export default () => {
       dataIndex: 'percent_02',
       children: col([
         { dataIndex: 'rate_2014_1', name: '2014年' },
-        { dataIndex: 'rate_2015_1', name: '2015年' }
-      ])
-    }
+        { dataIndex: 'rate_2015_1', name: '2015年' },
+      ]),
+    },
   ])
   const onChangeExtendStatus = (curStatus, changeValue) => {
     setExpandStatus(curStatus)
@@ -81,8 +81,8 @@ export default () => {
     .use(features.colGroupExtendable(
       {
         extendStatus: expandStatus,
-        onChangeExtendStatus: onChangeExtendStatus
-      }
+        onChangeExtendStatus: onChangeExtendStatus,
+      },
     ))
   return <Table className="bordered" {...pipeline.getProps()} />
 }

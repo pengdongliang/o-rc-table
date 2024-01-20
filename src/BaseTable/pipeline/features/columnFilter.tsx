@@ -123,7 +123,7 @@ export function filter(opts: FilterFeatureOptions = {}) {
             result.title = [...[].concat(result.title ?? [internals.safeRenderHeader({ ...col })]), _Filter]
           }
 
-          // result.headerCellProps = mergeCellProps(col.headerCellProps, {
+          // result.onHeaderCell = ()=> mergeCellProps(col.onHeaderCell?.(col), {
           //   style: {
           //     paddingRight: '18px'
           //   }

@@ -1,3 +1,5 @@
+import { BaseTableProps } from 'o-rc-table/base/table'
+
 import { ColumnType } from '../interfaces'
 import { BaseTableContextProps } from '.'
 
@@ -28,7 +30,7 @@ export interface ResolvedUseVirtual {
   header: boolean
 }
 
-export interface RenderInfo extends Partial<BaseTableContextProps> {
+export interface RenderInfo extends Partial<BaseTableContextProps>, Pick<BaseTableProps, 'onHeaderRow'> {
   verticalRenderRange: VerticalRenderRange
   horizontalRenderRange: HorizontalRenderRange
   visible: VisibleColumnDescriptor[]

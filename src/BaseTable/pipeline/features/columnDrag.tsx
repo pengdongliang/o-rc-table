@@ -51,18 +51,18 @@ export function columnDrag(opts: ColumnDragOptions = {}) {
               transform: `translate3d(${cloumnsTranslateData[col.dataIndex]}px, 0px, 0px)`,
             }
           : {}
-        const prevGetCellProps = col.getCellProps
+        const prevGetCellProps = col.onCell
         // !col.dataIndex: 选择列 col.fixed: 固定列 不允许拖拽
         if (col.fixed || !col.dataIndex) return col
         return {
           ...col,
-          getCellProps(value: any, record: any, rowIndex: number): CellProps {
+          onCell(value: any, record: any, rowIndex: number): CellProps {
             const prevCellProps = prevGetCellProps?.(value, record, rowIndex)
             return mergeCellProps(prevCellProps, {
               style: style as any,
             })
           },
-          headerCellProps: mergeCellProps(col.headerCellProps, {
+          onHeaderCell: ()=> mergeCellProps(col.onHeaderCell?.(col), {
             onMouseDown:
               !isLeaf || path.length > 1
                 ? undefined

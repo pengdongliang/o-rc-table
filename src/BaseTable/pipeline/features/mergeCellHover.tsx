@@ -8,10 +8,10 @@ export function mergeCellHover() {
         if (!isLeafNode(col)) {
           return col
         }
-        const prevGetCellProps = col.getCellProps
+        const prevGetCellProps = col.onCell
         return {
           ...col,
-          getCellProps(value: any, record: any, rowIndex: number) {
+          onCell(value: any, record: any, rowIndex: number) {
             const prevCellProps = prevGetCellProps?.(value, record, rowIndex)
             return mergeCellProps(prevCellProps, {
               onMouseEnter(e: React.MouseEvent<HTMLTableCellElement, MouseEvent>) {

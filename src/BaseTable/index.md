@@ -201,12 +201,12 @@ export default () => {
 | 属性                 | 说明                    | 类型            | 默认值          | 可选值                   | 版本 |
 |--------------------|-----------------------|---------------|--------------|-----------------------|----|
 | useOuterBorder     | 是否带边框                 | boolean       | `true`       | `true` `false`        | -  |
-| columns            | 表格列的配置描述，具体项见下表       | ColumnType[]1  | -            | -                     | -  |
+| columns            | 表格列的配置描述，具体项见下表       | ColumnType[]1 | -            | -                     | -  |
 | dataSource         | 数据数组                  | any[]         | -            | -                     | -  |
 | loading            | 表格是否在加载中              | boolean       | `false`      | `true` `false`        | -  |
 | style              | 自定义内联样式               | CSSProperties | `-`          | `-`                   | -  |
 | rowKey             | 主键                    | string        | -            | -                     | -  |
-| showHeader          | 表格是否具有头部              | boolean       | `true`       | `true` `false`        | -  |
+| showHeader         | 表格是否具有头部              | boolean       | `true`       | `true` `false`        | -  |
 | emptyCellHeight    | 数据为空时，单元格的高度          | number        | -            | -                     | -  |
 | useVirtual         | 是否开启虚拟滚动              | boolean auto  | `auto`       | `true` `false` `auto` | -  |
 | estimatedRowHeight | 虚拟滚动开启情况下，表格中每一行的预估高度 | number        | `48`         | -                     | -  |
@@ -224,7 +224,7 @@ export default () => {
 | verticalAlign      | 单元格中的文本或内容的 垂直水平轴对其方向             | string                  | `middle` | `top` `bottom` `middle` | -  |
 | hidden             | 是否隐藏                              | boolean                 | `false`  | `true` `false`          | -  |
 | fixed              | 是否锁列                              | boolean                 | -        | `HTMLTableCellElement`  | -  |
-| headerCellProps    | 表头单元格的 props                      | number                  | -        | -                       | -  |
+| onHeaderCell    | 表头单元格的 props                      | (column)=> column       | -        | -                       | -  |
 | features           | 功能开关, 具体项见下表                      | 	{ [key: string]: any } | -        | -                       | -  |
 | estimatedRowHeight | 虚拟滚动开启情况下，表格中每一行的预估高度             | number                  | `48`     | -                       | -  |
 | filterable         | 是否开启过滤功能                          | boolean                 | `false`  | `true` `false`          | -  |
@@ -385,18 +385,18 @@ interface SortHeaderCellProps {
 
 | 属性                        | 说明                                                     | 类型                                                                         | 默认值                    | 可选值                                         | 版本 |
 |---------------------------|--------------------------------------------------------|----------------------------------------------------------------------------|------------------------|---------------------------------------------|----|
-| defaultExpandAllRows            | (非受控用法) 是否默认展开所有详情单元格                                  | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
+| defaultExpandAllRows      | (非受控用法) 是否默认展开所有详情单元格                                  | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
 | defaultOpenKeys           | (非受控用法) 默认展开的 keys                                     | string[]                                                                   | `-`                    | `-`                                         | -  |
 | openKeys                  | (受控用法) 当前展开的 keys                                      | string[]                                                                   | `-`                    | `-`                                         | -  |
 | onChangeOpenKeys          | (受控用法) openKeys 改变的回调                                  | (nextKeys: string[], key: string, action: 'expand' &#124; 'collapse'):void | `-`                    | `-`                                         | -  |
-| expandedRowRender              | 详情单元格的渲染方法                                             | (row: any, rowIndex: number): ReactNode                                    | `-`                    | `-`                                         | -  |
-| rowExpandable                 | 是否包含详情单元格                                              | (row: any, rowIndex: number): boolean                                      | `-`                    | `-`                                         | -  |
+| expandedRowRender         | 详情单元格的渲染方法                                             | (row: any, rowIndex: number): ReactNode                                    | `-`                    | `-`                                         | -  |
+| rowExpandable             | 是否包含详情单元格                                              | (row: any, rowIndex: number): boolean                                      | `-`                    | `-`                                         | -  |
 | getDetailKey              | 获取详情单元格所在行的 key，默认为 `(row) => row[rowKey] + '_detail'` | (row: any, rowIndex: number): string                                       | `-`                    | `-`                                         | -  |
 | detailCellStyle           | 详情单元格 td 的额外样式                                         | React.CSSProperties                                                        | `-`                    | `-`                                         | -  |
 | clickArea                 | 点击事件的响应区域                                              | string                                                                     | `cell`                 | `'cell'` &#124; `'content'` &#124; `'icon'` | -  |
 | stopClickEventPropagation | 是否对触发展开/收拢的 click 事件调用 event.stopPropagation()         | boolean                                                                    | `false`                | `true` &#124; `false`                       | -  |
 | rowDetailMetaKey          | 指定表格每一行元信息的记录字段                                        | string &#124; symbol                                                       | `Symbol('row-detail')` | `-`                                         | -  |
-| expandColumnDataIndex          | 指定在哪一列设置展开按钮                                           | string                                                                     | `-`                    | `-`                                         | -  |
+| expandColumnDataIndex     | 指定在哪一列设置展开按钮                                           | string                                                                     | `-`                    | `-`                                         | -  |
 
 <br/>
 
@@ -441,7 +441,7 @@ interface SortHeaderCellProps {
 | onDragMove    | 拖拽过程回调函数   | (event:RowDragEvent):void             | `-`  | `-` | -  |
 | onDragEnd     | 拖拽结束回调函数   | (event:RowDragEvent):void             | `-`  | `-` | -  |
 | isDisabled    | 判断某行拖拽是否禁用 | (row: any, rowIndex: number): boolean | `-`  | `-` | -  |
-| rowDragColumn | 拖拽列定义      | ColumnType                             | `-`  | `-` | -  |
+| rowDragColumn | 拖拽列定义      | ColumnType                            | `-`  | `-` | -  |
 | rowHeight     | 行高         | number                                | `48` | `-` | -  |
 
 <br/>
@@ -493,7 +493,7 @@ interface SortHeaderCellProps {
 - SpanRect 的具体类型为 { left: number, right: number, top: number, bottom: number }
     - 注意其中 left/top 是 inclusive 的，right/bottom 是 exclusive 的。
 
-不开启虚拟滚动时，单元格合并可以通过 column.getCellProps(...) 返回 colSpan / rowSpan 进行实现。
+不开启虚拟滚动时，单元格合并可以通过 column.onCell(...) 返回 colSpan / rowSpan 进行实现。
 
 ##### 预估行高
 

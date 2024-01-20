@@ -12,6 +12,8 @@
 
 #### Table.xxx
 
+<b style="color: red;">以下功能暂不支持</b>
+
 - [ ] Table.Column
 - [ ] Table.ColumnGroup
 - [ ] Table.summary <b style="color: purple;">有用到</b>
@@ -24,14 +26,13 @@
 
 #### Table
 
+<b style="color: red;">以下功能暂不支持</b>
+
 - [ ] components 只有空元素
-- [ ] expandable 有类似功能, 未抛出兼容的api控制
 - [ ] footer 有类似功能, 未抛出兼容的api控制
 - [ ] getPopupContainer
 - [ ] locale
-- [ ] pagination
 - [ ] rowClassName
-- [ ] rowSelection
 - [ ] scroll 有类似功能, 未抛出兼容的api控制
 - [ ] showSorterTooltip
 - [ ] size
@@ -41,45 +42,49 @@
 - [ ] tableLayout 表格元素的 table-layout 属性，设为 fixed 表示内容不会影响列的布局
 - [ ] title 表格标题
 - [ ] onChange 分页、排序、筛选变化时触发
-- [ ] onHeaderRow 设置头部行属性
-- [ ] onRow 设置行属性
 
 #### Column
 
-- [ ] onRow 设置行属性
-- [ ] colSpan <b style="color: purple;">设置为 0 时，也会渲染</b>
-- [ ] defaultFilteredValue 默认筛选值
-- [ ] filterResetToDefaultFilteredValue 点击重置按钮的时候，是否恢复默认筛选值
+- <b style="color: green;">以下功能与 `antd-table` 有区别, 使用 `features: { sortable: true, filterable: true }` </b>
+
+- [ ] filters 过滤, 包括用到的方法的配置
+- [ ] sorter 排序, 包括用到的方法的配置
+
+- <b style="color: #faad14;">以下功能使用的地方不多, 可以去掉这些功能或使用替代方案</b>
+
+- [ ] ellipsis 超过宽度将自动省略，<b style="color: red;">支持boolean, 暂不支持{ showTitle?: boolean }</b>
+- [ ] fixed 设置行属性 <b style="color: purple;">支持boolean, 不支持string配置位置</b>
+- [ ] showSorterTooltip 表头显示下一次排序的 tooltip 提示, 覆盖 table 中 showSorterTooltip
+- [ ] sortDirections 支持的排序方式，覆盖 Table 中 sortDirections， 取值为 ascend descend
+
+- <b style="color: purple;">以下功能未用到, 使用 `<Table sort={} filter={} />` 替代, 与 `antd-table` 使用有区别</b>
+
 - [ ] defaultSortOrder 默认排序顺序
-- [ ] ellipsis 	超过宽度将自动省略，暂不支持和排序筛选一起使用。
-  设置为 true 或 { showTitle?: boolean } 时，表格布局将变成 tableLayout="fixed"
-- [ ] filterDropdown 	可以自定义筛选菜单，此函数只负责渲染图层，需要自行编写各种交互
+- [ ] filterResetToDefaultFilteredValue 点击重置按钮的时候，是否恢复默认筛选值
+- [ ] defaultFilteredValue 默认筛选值
+- [ ] shouldCellUpdate 自定义单元格渲染时机
+- [ ] filterDropdown 可以自定义筛选菜单，此函数只负责渲染图层，需要自行编写各种交互
 - [ ] filterDropdownOpen 用于控制自定义筛选菜单是否可见
 - [ ] filtered 标识数据是否经过过滤，筛选图标会高亮
 - [ ] filteredValue 筛选的受控属性，外界可用此控制列的筛选状态，值为已筛选的 value 数组
 - [ ] filterIcon 自定义 filter 图标
 - [ ] filterMultiple 是否多选
 - [ ] filterMode 指定筛选菜单的用户界面
-- [ ] filterSearch 筛选菜单项是否可搜索	
-- [ ] filters 表头的筛选菜单项		
-- [ ] responsive 响应式 breakpoint 配置列表。未设置则始终可见		
-- [ ] rowScope 设置列范围		
-- [ ] shouldCellUpdate 自定义单元格渲染时机		
-- [ ] showSorterTooltip 表头显示下一次排序的 tooltip 提示, 覆盖 table 中 showSorterTooltip		
-- [ ] sortDirections 支持的排序方式，覆盖 Table 中 sortDirections， 取值为 ascend descend	
-- [ ] sorter 排序函数
+- [ ] filterSearch 筛选菜单项是否可搜索
+- [ ] filters 表头的筛选菜单项
+- [ ] responsive 响应式 breakpoint 配置列表。未设置则始终可见
+- [ ] rowScope 设置列范围
 - [ ] sortOrder 排序的受控属性，外界可用此控制列的排序，可设置为 ascend descend null
 - [ ] sortIcon 自定义 sort 图标
-- [ ] onCell 设置单元格属性
 - [ ] onFilter 本地模式下，确定筛选的运行函数
 - [ ] onFilterDropdownOpenChange 自定义筛选菜单可见变化时调用
-- [ ] onHeaderCell 设置头部单元格属性
 
 #### rowSelection
 
-- [ ] checkStrictly `checkable` 状态下节点选择完全受控（父子数据选中状态不再关联）
+- [ ] checkStrictly `checkable` 状态下节点选择完全受控（父子数据选中状态不再关联）<b style="color: purple;">默认关闭, 暂无法直接开启, 需要换个方式</b>
 - [ ] preserveSelectedRowKeys 当数据被删除时仍然保留选项的 `key` <b style="color: red;">有用到, 默认开启, 暂无法关闭</b>
-- [ ] selections 自定义选择项 配置项, 设为 `true` 时使用默认选择项 <b style="color: red;">有用到, 无需处理, 项目里弃用</b>
+- [ ] selections 自定义选择项 配置项, 设为 `true` 时使用默认选择项 <b style="color: red;">有用到, 无需处理,
+  项目里弃用</b>
 - [ ] onCell 设置单元格属性，用法与 `antd-table-Column` 的 `onCell` <b style="color: red;">有些不相同</b>
 - [ ] onSelectAll 用户手动选择/取消选择所有行的回调 <b style="color: red;">有用到并兼容, 推荐弃用, 使用onChange替换</b>
 

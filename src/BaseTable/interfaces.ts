@@ -4,11 +4,13 @@ export type ArtColumnAlign = 'left' | 'center' | 'right'
 
 export type ArtColumnVerticalAlign = 'top' | 'bottom' | 'middle'
 
+export type HeaderCellProps = (col: ColumnType) => React.HTMLAttributes<any> & React.TdHTMLAttributes<any>
+
 export type CellProps = React.TdHTMLAttributes<HTMLTableCellElement>
 
 export type CellEllipsisType = { showTitle?: boolean } | boolean
 
-export interface ArtColumnStaticPart<RecordType = any> {
+export interface ArtColumnStaticPart {
   /** 列的名称 */
   name?: string
 
@@ -40,7 +42,7 @@ export interface ArtColumnStaticPart<RecordType = any> {
   // dragable?: boolean
 
   /** 表头单元格的 props */
-  headerCellProps?: CellProps
+  onHeaderCell?: HeaderCellProps
 
   /** 单元格自动省略 */
   ellipsis?: CellEllipsisType
@@ -74,7 +76,7 @@ export interface ArtColumnDynamicPart<RecordType = unknown> {
   render?(value: any, row: RecordType, rowIndex: number): ReactNode
 
   /** 自定义的获取单元格 props 的方法 */
-  getCellProps?(value: any, row: RecordType, rowIndex: number): CellProps
+  onCell?(value: any, row: RecordType, rowIndex: number): CellProps
 
   /** 自定义的获取单元格 SpanRect 方法 */
   getSpanRect?(value: any, row: RecordType, rowIndex: number): SpanRect

@@ -50,7 +50,25 @@ export function columnRangeHover(opts: ColumnRangeHoverFeatureOptions = {}) {
 
           return {
             ...col,
-            headerCellProps: mergeCellProps(col.headerCellProps, {
+            onHeaderCell: () =>
+              mergeCellProps(col.onHeaderCell?.(col), {
+                onMouseEnter() {
+                  onChangeHoverRange(colRange)
+                },
+                onMouseLeave() {
+                  onChangeHoverRange(EMPTY_RANGE)
+                },
+                style: { background: match ? headerHoverColor : undefined },
+              }),
+          }
+        }
+
+        const prevGetCellProps = col.onCell
+
+        return {
+          ...col,
+          onHeaderCell: () =>
+            mergeCellProps(col.onHeaderCell?.(col), {
               onMouseEnter() {
                 onChangeHoverRange(colRange)
               },
@@ -59,24 +77,8 @@ export function columnRangeHover(opts: ColumnRangeHoverFeatureOptions = {}) {
               },
               style: { background: match ? headerHoverColor : undefined },
             }),
-          }
-        }
 
-        const prevGetCellProps = col.getCellProps
-
-        return {
-          ...col,
-          headerCellProps: mergeCellProps(col.headerCellProps, {
-            onMouseEnter() {
-              onChangeHoverRange(colRange)
-            },
-            onMouseLeave() {
-              onChangeHoverRange(EMPTY_RANGE)
-            },
-            style: { background: match ? headerHoverColor : undefined },
-          }),
-
-          getCellProps(value: any, record: any, rowIndex: number): CellProps {
+          onCell(value: any, record: any, rowIndex: number): CellProps {
             const prevCellProps = prevGetCellProps?.(value, record, rowIndex)
 
             return mergeCellProps(prevCellProps, {
