@@ -10,6 +10,8 @@ export interface BaseTableContextProps {
   /** class name */
   Classes: ReturnType<typeof getTableClasses> | Record<string, any>
   getComponent?: GetComponent
+  /** 未使用 */
+  tableBodyClientWidth?: number
 }
 
 export const defaultTableComponents = {

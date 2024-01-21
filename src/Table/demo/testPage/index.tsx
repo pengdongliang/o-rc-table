@@ -40,10 +40,9 @@ const STOSingleProductionDeliveryPlan = () => {
   const [expKeys, setExpKeys]: any = useState([])
 
   const columns = useMemo(() => {
-    // 截取前80，解决卡顿问题
     let showDataList = []
     if (dataList[0]?.dailyDetailsResList && dataList[0]?.dailyDetailsResList.length) {
-      showDataList = dataList[0]?.dailyDetailsResList // .slice(0, 80)
+      showDataList = dataList[0]?.dailyDetailsResList
     }
     const dynamicList1 =
       dataList[0]?.demandDetailList?.map((res: any, i: any) => {
@@ -204,24 +203,16 @@ const STOSingleProductionDeliveryPlan = () => {
             optionFilterProp: ['label', 'id'],
             options: [
               {
-                label: '2000-自产',
-                id: '2000-自产',
+                label: '2000',
+                id: '2000',
               },
               {
-                label: '4000-非自产',
-                id: '4000-非自产',
+                label: '4000',
+                id: '4000',
               },
               {
-                label: '4010-刀刀',
-                id: '4010-刀刀',
-              },
-              {
-                label: '4010-非自产',
-                id: '4010-非自产',
-              },
-              {
-                label: '3040-非自产',
-                id: '3040-非自产',
+                label: '4010',
+                id: '4010',
               },
             ],
           },
@@ -235,16 +226,12 @@ const STOSingleProductionDeliveryPlan = () => {
             optionFilterProp: ['label', 'id'],
             options: [
               {
-                label: '常规',
+                label: '新品',
                 id: 'REGULAR',
               },
               {
-                label: '限量',
+                label: '老品',
                 id: 'LIMITED',
-              },
-              {
-                label: '一次性常规版',
-                id: 'DISPOSABLE_REGULAR',
               },
             ],
           },
@@ -259,10 +246,9 @@ const STOSingleProductionDeliveryPlan = () => {
   }, [])
 
   const expandedRowRender = (record: any) => {
-    // 截取前80，解决卡顿问题
     let refDataList = []
     if (record?.refResList[0]?.dailyDetailsResList && record?.refResList[0]?.dailyDetailsResList.length) {
-      refDataList = record?.refResList[0]?.dailyDetailsResList // .slice(0, 80)
+      refDataList = record?.refResList[0]?.dailyDetailsResList
     }
     const arr =
       refDataList?.map((res: any, index: number) => {
@@ -282,12 +268,12 @@ const STOSingleProductionDeliveryPlan = () => {
           {
             title: '单号',
             dataIndex: 'stoNo',
-            width: 160,
+            width: 120,
             fixed: 'left',
           },
           {
             title: '单据类型',
-            width: 160,
+            width: 80,
             fixed: 'left',
             dataIndex: 'replyType',
 
@@ -301,7 +287,6 @@ const STOSingleProductionDeliveryPlan = () => {
         containerNode="div"
         showSearchBar={false}
         pagination={false}
-        style={{ width: '1000px' }}
       />
     )
   }

@@ -33,6 +33,10 @@ export const StyledTableLayoutReplaceBox = styled.div(({ theme }) => {
   const { colors, namespace } = theme
   return css`
     &.layout-table-page {
+      .${namespace}-table-expanded-row-fixed {
+        padding: 0;
+      }
+
       .layout-table-split > .${namespace}-space-item {
         background-color: ${colors?.white};
 

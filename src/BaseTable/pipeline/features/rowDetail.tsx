@@ -11,6 +11,7 @@ import { collectNodes, mergeCellProps, renderExpandIcon } from '../../utils'
 import console from '../../utils/console'
 import { always, flatMap } from '../../utils/others'
 import { TablePipeline } from '../pipeline'
+import { tableWidthKey } from './autoFill'
 
 export interface RenderExpandIconProps<RecordType> extends Partial<React.StyleHTMLAttributes<HTMLElement>> {
   prefixCls: string
@@ -183,11 +184,33 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
         const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
         const expanded = openKeySet.has(currentRowKey)
         if (row[rowDetailMetaKey]) {
+          let contentNode = null
           const renderRowDetail = getTableRenderTemplate('rowDetail')
           if (typeof renderRowDetail === 'function') {
-            return renderRowDetail({ row, rowIndex, domHelper: pipeline.ref.current.domHelper, expandedRowRender })
+            contentNode = renderRowDetail({
+              row,
+              rowIndex,
+              domHelper: pipeline.ref.current.domHelper,
+              expandedRowRender,
+            })
+          } else {
+            contentNode = expandedRowRender(row, rowIndex, indents.iconIndent, expanded)
           }
-          return expandedRowRender(row, rowIndex, indents.iconIndent, expanded)
+
+          return (
+            <div
+              style={{
+                // width: componentWidth - (fixHeader ? scrollbarSize : 0)
+                width: pipeline.getStateAtKey(tableWidthKey) ?? '100%',
+                position: 'sticky',
+                left: 0,
+                overflow: 'hidden',
+              }}
+              className={pipeline.getTableContext().Classes?.expandRowFixed}
+            >
+              {contentNode}
+            </div>
+          )
         }
         const content = expandCol ? internals.safeRender(expandCol, row, rowIndex) : null
         if (!rowExpandable(row, rowIndex)) {
@@ -268,13 +291,34 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
 
       const firstColRender = (_value: any, row: any, rowIndex: number) => {
         if (row[rowDetailMetaKey]) {
+          let contentNode = null
           const renderRowDetail = getTableRenderTemplate('rowDetail')
           if (typeof renderRowDetail === 'function') {
-            return renderRowDetail({ row, rowIndex, domHelper: pipeline.ref.current.domHelper, expandedRowRender })
+            contentNode = renderRowDetail({
+              row,
+              rowIndex,
+              domHelper: pipeline.ref.current.domHelper,
+              expandedRowRender,
+            })
+          } else {
+            const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
+            const expanded = openKeySet.has(currentRowKey)
+            contentNode = expandedRowRender(row, rowIndex, indents.iconIndent, expanded)
           }
-          const currentRowKey = internals.safeGetRowKey(rowKey, row, rowIndex)
-          const expanded = openKeySet.has(currentRowKey)
-          return expandedRowRender(row, rowIndex, indents.iconIndent, expanded)
+
+          return (
+            <div
+              style={{
+                width: pipeline.getStateAtKey(tableWidthKey) ?? '100%',
+                position: 'sticky',
+                left: 0,
+                overflow: 'hidden',
+              }}
+              className={pipeline.getTableContext().Classes?.expandRowFixed}
+            >
+              {contentNode}
+            </div>
+          )
         }
         const content = internals.safeRender(firstCol, row, rowIndex)
         return content

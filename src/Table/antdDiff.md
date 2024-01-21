@@ -28,7 +28,7 @@
 
 <b style="color: red;">以下功能暂不支持</b>
 
-- [ ] components 只有空元素
+- [ ] components 未支持CustomizeScrollBody, 多了空元素覆盖
 - [ ] footer 有类似功能, 未抛出兼容的api控制
 - [ ] getPopupContainer
 - [ ] locale
@@ -100,6 +100,6 @@
 ### 替换antd-table问题
 
 - 合并表头少了下边框线
-- 操作列超出4个未显示更多按钮
-- 列宽拖动很卡
-- 左右/上下滚动会一直回到原地
+- 列宽拖动很卡, 更改为鼠标拖动停止才改变列宽
+- 默认未开启弹性布局, 最后一列如果表格太宽, 右边会有空白
+- 优化外层组件columns处理逻辑, 横向滚动有点卡

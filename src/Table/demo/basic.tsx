@@ -403,7 +403,7 @@ export default () => {
             if (record.id === '0_detail') {
               return (
                 <Table
-                  style={{ boxShadow: '0 0 4px 1px #33333333', width: '800px' }}
+                  style={{ boxShadow: '0 0 4px 1px #ccc' }}
                   className="bordered compact"
                   dataSource={getDataSource(20, false)}
                   columns={getColumns(2)}

@@ -125,6 +125,7 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     leaf: `${prefix}-leaf`,
 
     // ================= expand ==================
+    expandRowFixed: `${prefix}-expanded-row-fixed`,
     expandIcon: `${prefix}-row-expand-icon`,
     expanded: `${prefix}-row-expand-icon-expanded`,
     collapsed: `${prefix}-row-expand-icon-collapsed`,
@@ -193,6 +194,7 @@ export type BaseTableCSSVariables = Partial<{
 
   /** 单元格 padding */
   '--cell-padding': string
+  '--expand-fixed-margin': string
   /** 字体大小 */
   '--font-size': string
   /** 表格内字体的行高 */
@@ -271,6 +273,7 @@ export const defaultCSSVariables: BaseTableCSSVariables = {
   '--header-highlight-bgcolor': '#e4e8ed',
 
   '--cell-padding': '8px 12px',
+  '--expand-fixed-margin': '-8px -12px',
   '--font-size': '12px',
   '--line-height': '1.28571',
   '--fixed-shadow': 'rgba(152, 152, 152, 0.5) 0 0 6px 2px',
@@ -668,8 +671,12 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
         background: var(--hover-bgcolor);
       }
     }
-
     //#endregion
+
+    // =============== expand ===============
+    .${Classes?.expandRowFixed} {
+      margin: var(--expand-fixed-margin);
+    }
 
     //#region 粘性滚动条
 

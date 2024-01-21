@@ -34,7 +34,7 @@ export default () => {
       expandedRowRender() {
         return (
           <Table
-              style={{ boxShadow: '0 0 4px 1px #33333333' }}
+              style={{ boxShadow: '0 0 4px 1px #ccc' }}
               className="bordered compact"
               dataSource={dataSource}
               columns={columns}

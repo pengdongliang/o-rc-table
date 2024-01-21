@@ -869,7 +869,6 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     didMountOrUpdate()
     // const { cssVariables, enableCSSVariables, bordered } = props
     // cssPolifill({ variables: cssVariables || {}, enableCSSVariables, bordered })
-    setTableWidth?.(domHelper.current.tableBody.clientWidth)
     setTableDomHelper?.(domHelper.current)
     setRowHeightManager?.(rowHeightManager)
 
@@ -890,6 +889,10 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     props$.current.next(props)
     didMountOrUpdate(props$.current.getValue())
   }, [didMountOrUpdate, props, updateDOMHelper])
+
+  useEffect(() => {
+    setTableWidth?.(domHelper.current.tableBody.clientWidth)
+  }, [hasScrollY, setTableWidth])
 
   useImperativeHandle(ref, () => {
     return {

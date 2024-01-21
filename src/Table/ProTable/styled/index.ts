@@ -93,7 +93,6 @@ export const TableContainerStyled = styled.div(({ theme }) => {
         .${namespace}-table-expanded-row-fixed {
           height: 100%;
           background-color: #fff;
-          padding: 0;
 
           &:after {
             border: 0;
