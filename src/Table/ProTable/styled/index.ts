@@ -36,7 +36,6 @@ export const TableContainerStyled = styled.div(({ theme }) => {
       }
 
       .${namespace}-table-thead, .${namespace}-table-tbody {
-        background: red;
         & > tr {
           & > th {
             font-size: ${antdTheme.token.fontSize - 2}px;

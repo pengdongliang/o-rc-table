@@ -147,7 +147,7 @@ const STOSingleProductionDeliveryPlan = () => {
       {
         title: '操作',
         dataIndex: 'opt',
-        width: 260,
+        width: 250,
         fixed: 'right',
         render: () => {
           return (

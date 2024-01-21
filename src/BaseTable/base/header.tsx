@@ -176,9 +176,15 @@ interface TableHeaderProps {
   info: RenderInfo
   theaderPosition?: 'left' | 'center' | 'right'
   rowCount?: number
+  stickyRightOffset?: number
 }
 
-export default function TableHeader({ info, theaderPosition, rowCount: _rowCount }: TableHeaderProps) {
+export default function TableHeader({
+  info,
+  theaderPosition,
+  rowCount: _rowCount,
+  stickyRightOffset,
+}: TableHeaderProps) {
   const { nested, flat, stickyLeftMap, stickyRightMap, onHeaderRow } = info
   const rowCount = _rowCount ?? getTreeDepth(nested.full) + 1
   const headerRenderInfo = calculateHeaderRenderInfo(info, rowCount)
@@ -215,7 +221,8 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
           positionStyle.left = stickyLeftMap.get(colIndex)
         } else if (colIndex >= fullFlatCount - rightFlatCount) {
           positionStyle.position = 'sticky'
-          positionStyle.right = stickyRightMap.get(colIndex)
+          positionStyle.right =
+            stickyRightMap.get(colIndex) + (typeof stickyRightOffset === 'number' ? stickyRightOffset : 0)
         }
 
         const justifyContent = col.align === 'right' ? 'flex-end' : col.align === 'center' ? 'center' : 'flex-start'

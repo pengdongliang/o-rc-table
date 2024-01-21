@@ -265,6 +265,9 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       if (typeof renderHeader === 'function') {
         return renderHeader(info, props)
       }
+
+      const stickyRightOffset = hasScrollY ? getScrollBarWidth() : 0
+
       return (
         <div
           className={cx(contextValue.Classes?.tableHeader, contextValue.Classes?.tableHeaderNoScrollbar)}
@@ -273,7 +276,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
             display: showHeader ? undefined : 'none',
           }}
         >
-          <TableHeader info={info} />
+          <TableHeader info={info} stickyRightOffset={stickyRightOffset} />
           <div
             className={contextValue.Classes?.verticalScrollPlaceholder}
             style={hasScrollY ? { width: getScrollBarWidth() } : undefined}
@@ -511,6 +514,8 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
 
   const renderLockShadows = useCallback(
     (info: RenderInfo) => {
+      const stickyRightOffset = hasScrollY ? getScrollBarWidth() : 0
+
       return (
         <>
           <div
@@ -521,7 +526,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
           </div>
           <div
             className={contextValue.Classes?.lockShadowMask}
-            style={{ right: 0, width: info.rightLockTotalWidth + LOCK_SHADOW_PADDING }}
+            style={{ right: 0, width: info.rightLockTotalWidth + LOCK_SHADOW_PADDING + stickyRightOffset }}
           >
             <div className={cx(contextValue.Classes?.lockShadow, contextValue.Classes?.rightLockShadow)} />
           </div>
@@ -533,6 +538,8 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       contextValue.Classes?.lockShadow,
       contextValue.Classes?.lockShadowMask,
       contextValue.Classes?.rightLockShadow,
+      getScrollBarWidth,
+      hasScrollY,
     ]
   )
 

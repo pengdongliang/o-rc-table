@@ -287,7 +287,7 @@ export const defaultCSSVariables: BaseTableCSSVariables = {
 export const variableConst = getCssVariableText(defaultCSSVariables)
 
 export const StyledArtTableWrapper = styled.div(({ theme }) => {
-  const { Classes = {} } = theme
+  const { Classes = {}, antdTheme } = theme
 
   return css`
     ${variableConst}
@@ -295,7 +295,6 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       box-sizing: border-box;
     }
 
-    width: 100%;
     position: relative;
     filter: none;
     overflow: auto;
@@ -741,8 +740,12 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
     //#region 滚动条占位
 
     .${Classes?.verticalScrollPlaceholder} {
-      visibility: hidden;
       flex-shrink: 0;
+      z-index: ${Z.fixed + 1};
+      position: sticky;
+      right: 0;
+      right: 0;
+      background-color: ${(antdTheme as any)?.components?.Table?.headerBg ?? 'var(--header-bgcolor)'};
     }
 
     .${Classes?.tableFooter} .${Classes?.verticalScrollPlaceholder} {
