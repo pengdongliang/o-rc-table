@@ -86,7 +86,9 @@ export function getScrollbarSize() {
   return scrollBarSize$.value
 }
 
-/** 同步多个元素之间的 scrollLeft, 每当 scrollLeft 发生变化时 callback 会被调用 */
+/**
+ * 同步多个元素之间的 scrollLeft, 每当 scrollLeft 发生变化时 callback 会被调用
+ */
 export function syncScrollLeft(elements: HTMLElement[], callback: (scrollLeft: number) => void): Subscription {
   const bypassSet: Set<HTMLElement> = new Set()
 

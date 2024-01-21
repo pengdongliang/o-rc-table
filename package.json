@@ -1,6 +1,6 @@
 {
   "name": "o-rc-table",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Table ui component for react",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -68,7 +68,6 @@
     "@ocloud/admin-ts-config": "^1.0.0",
     "@ocloud/admin-commitlint-config": "^1.0.0",
     "@ocloud/admin-commitizen-config": "^1.0.0",
-    "@ocloud/admin-father-config": "^1.0.0",
     "@ocloud/antd": "^1.2.0",
     "@ocloud/admin-hooks": "^1.2.0",
     "@ocloud/admin-context": "^1.2.0",

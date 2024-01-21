@@ -2,6 +2,7 @@ import { ThemeProvider as EmotionThemeProvider } from '@emotion/react'
 import { createImmutable } from '@rc-component/context'
 import type { CompareProps } from '@rc-component/context/lib/Immutable'
 import { internals } from '@src/BaseTable'
+import { useGetState } from 'ahooks'
 import cx from 'classnames'
 import { getRichVisibleRectsStream } from 'o-rc-table/base/helpers/getRichVisibleRectsStream'
 import React, {
@@ -186,6 +187,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   const artTableWrapperRef = useRef<HTMLDivElement>(null)
   const rootSubscription = useRef<Subscription>(null)
   const resizeSubject = useRef<Subject<unknown>>(null)
+  const hozScrollSubject = useRef<Subject<number>>(null)
   const resizeObserver = useRef<ResizeObserver>(null)
   const [, setForceUpdate] = useState(false)
   const lastHasScroll = useRef(true)
@@ -193,7 +195,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   const [hasScrollY, setHasScrollY] = useState(true)
   const [needRenderLock, setNeedRenderLock] = useState(true)
   const [offsetY, setOffsetY] = useState<number>(0)
-  const [offsetX, setOffsetX] = useState<number>(0)
+  const [offsetX, setOffsetX, getOffsetX] = useGetState<number>(0)
   // 因为 ResizeObserver 在一开始总是会调用一次所提供的回调函数
   // 故这里为 maxRenderHeight/maxRenderWidth 设置一个默认值即可（因为这两个默认值很快就会被覆盖）
   // https://stackoverflow.com/questions/60026223/does-resizeobserver-invokes-initially-on-page-load
@@ -299,12 +301,12 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   const updateOffsetX = useCallback(
     (nextOffsetX: number) => {
       if (lastInfo.current.useVirtual.horizontal) {
-        if (Math.abs(nextOffsetX - offsetX) >= OVERSCAN_SIZE / 2) {
+        if (Math.abs(nextOffsetX - getOffsetX()) >= OVERSCAN_SIZE / 2) {
           setOffsetX(nextOffsetX)
         }
       }
     },
-    [offsetX]
+    [getOffsetX, setOffsetX]
   )
 
   const syncHorizontalScroll = useCallback(
@@ -340,8 +342,8 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   )
 
   const syncHorizontalScrollFromTableBody = useCallback(() => {
-    syncHorizontalScroll(domHelper.current?.virtual.scrollLeft)
-  }, [syncHorizontalScroll])
+    hozScrollSubject.current.next(domHelper.current?.virtual.scrollLeft)
+  }, [])
 
   const getVerticalRenderRange = useCallback(
     (virtualParams: ResolvedUseVirtual): VerticalRenderRange => {
@@ -676,6 +678,10 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       setTableWidth?.(domHelper.current.tableBody.clientWidth)
     })
 
+    hozScrollSubject.current.pipe(op.debounceTime(20)).subscribe((nextOffsetX) => {
+      syncHorizontalScroll(nextOffsetX)
+    })
+
     const handleTableWrapperResize = () => {
       resizeSubject.current.next()
     }
@@ -687,7 +693,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       syncScrollLeft(
         [getTableScrollHeaderDOM(domHelper.current), virtual, getTableScrollFooterDOM(domHelper.current), stickyScroll],
         (scrollLeft) => {
-          syncHorizontalScroll(scrollLeft)
+          hozScrollSubject.current.next(scrollLeft)
         }
       )
     )
@@ -862,6 +868,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   useEffect(() => {
     rootSubscription.current = new Subscription()
     resizeSubject.current = new Subject()
+    hozScrollSubject.current = new Subject()
     updateDOMHelper()
 
     props$.current = new BehaviorSubject(props)
@@ -876,6 +883,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       resizeObserver.current?.disconnect()
       rootSubscription.current.unsubscribe()
       resizeSubject.current.unsubscribe()
+      hozScrollSubject.current.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
