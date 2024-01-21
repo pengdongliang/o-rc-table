@@ -44,6 +44,7 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     /** 表格标题无滚动条 */
     tableHeaderNoScrollbar: `${prefix}-header-no-scrollbar`,
     tableBody: `${prefix}-body`,
+    tableDom: `${prefix}-dom`,
     tableBodyEmpty: `${prefix}-body-empty`,
     tableBodyTbody: `${prefix}-tbody`,
     virtual: `${prefix}-virtual`,

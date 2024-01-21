@@ -44,23 +44,29 @@ export function EmptyHtmlTable({
 }: EmptyTableProps) {
   const show = !loading
 
-  const { Classes } = useBaseTableContext()
+  const { Classes, getComponent } = useBaseTableContext()
+
+  // =================== Render: Node ===================
+  const TableComponent = getComponent(['table'], 'table')
+  const WrapperComponent = getComponent(['body', 'wrapper'], 'tbody')
+  const TrComponent = getComponent(['body', 'row'], 'tr')
+  const TdComponent = getComponent(['body', 'cell'], 'td')
 
   return (
     <>
-      <table key="table">
+      <TableComponent key="table" className={Classes?.tableDom}>
         <Colgroup descriptors={descriptors} />
-        <tbody>
-          <tr className={cx(Classes?.tableRow, Classes?.first, Classes?.last, 'no-hover')} data-rowindex={0}>
+        <WrapperComponent>
+          <TrComponent className={cx(Classes?.tableRow, Classes?.first, Classes?.last, 'no-hover')} data-rowindex={0}>
             {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-            <td
+            <TdComponent
               className={cx(Classes?.tableCell, Classes?.first, Classes?.last)}
               colSpan={descriptors.length}
               style={{ height: emptyCellHeight ?? 200 }}
             />
-          </tr>
-        </tbody>
-      </table>
+          </TrComponent>
+        </WrapperComponent>
+      </TableComponent>
       {show && (
         <div className={Classes?.emptyWrapper} key="empty">
           <EmptyContent />

@@ -88,9 +88,11 @@ export class TableDOMHelper {
     return this.tableBody.querySelector<HTMLDivElement>(`.${this.Classes?.virtualBlank}.top`)
   }
 
-  getTableRows(): NodeListOf<HTMLTableRowElement> {
-    const tbody = this.artTable.querySelector(`.${this.Classes?.tableBody} .${this.Classes?.virtual} table tbody`)
-    return tbody.childNodes as NodeListOf<HTMLTableRowElement>
+  getTableRows(): NodeListOf<HTMLTableRowElement> | [] {
+    const tbody = this.artTable.querySelector(
+      `.${this.Classes?.tableBody} .${this.Classes?.virtual} .${this.Classes?.tableDom} .${this.Classes?.tableBodyTbody}`
+    )
+    return (tbody?.childNodes as NodeListOf<HTMLTableRowElement>) ?? []
   }
 
   getTableBodyHtmlTable(): HTMLTableElement {

@@ -147,25 +147,25 @@ const STOSingleProductionDeliveryPlan = () => {
       {
         title: '操作',
         dataIndex: 'opt',
-        width: 320,
+        width: 260,
         fixed: 'right',
         render: () => {
           return (
             <>
               <Button color="blue" type="link">
-                修改备注
+                编辑
               </Button>
               <Button color="blue" type="link">
-                修改备注
+                删除
               </Button>
               <Button color="blue" type="link">
-                修改备注
+                复制
               </Button>
               <Button color="blue" type="link">
-                修改备注
+                编辑
               </Button>
               <Button color="blue" type="link">
-                修改备注
+                删除
               </Button>
             </>
           )

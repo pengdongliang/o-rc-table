@@ -183,11 +183,17 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
   const rowCount = _rowCount ?? getTreeDepth(nested.full) + 1
   const headerRenderInfo = calculateHeaderRenderInfo(info, rowCount)
 
-  const tableContext = useBaseTableContext()
+  const { Classes, getComponent } = useBaseTableContext()
 
   const fullFlatCount = flat.full.length
   const leftFlatCount = flat.left.length
   const rightFlatCount = flat.right.length
+
+  // =================== Render: Node ===================
+  const TableComponent = getComponent(['table'], 'table')
+  const WrapperComponent = getComponent(['header', 'wrapper'], 'thead')
+  const TrComponent = getComponent(['header', 'row'], 'tr')
+  const ThComponent = getComponent(['header', 'cell'], 'th')
 
   const thead = headerRenderInfo.leveled.map((wrappedCols, level) => {
     const _wrappedCols = wrappedCols.concat()
@@ -222,16 +228,15 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
         })
 
         const cell = (
-          <th
+          <ThComponent
             key={col.key}
             {...onHeaderCell?.(col)}
-            className={cx(tableContext.Classes?.tableHeaderCell, col.className, onHeaderCell?.(col)?.className, {
-              [tableContext.Classes?.first]: colIndex === 0,
-              [tableContext.Classes?.last]: colIndex + finalColSpan === fullFlatCount,
-              [tableContext.Classes?.lockLeft]: colIndex < leftFlatCount || theaderPosition === 'left',
-              [tableContext.Classes?.lockRight]:
-                colIndex >= fullFlatCount - rightFlatCount || theaderPosition === 'right',
-              [tableContext.Classes?.leaf]: wrapped.isLeaf,
+            className={cx(Classes?.tableHeaderCell, col.className, onHeaderCell?.(col)?.className, {
+              [Classes?.first]: colIndex === 0,
+              [Classes?.last]: colIndex + finalColSpan === fullFlatCount,
+              [Classes?.lockLeft]: colIndex < leftFlatCount || theaderPosition === 'left',
+              [Classes?.lockRight]: colIndex >= fullFlatCount - rightFlatCount || theaderPosition === 'right',
+              [Classes?.leaf]: wrapped.isLeaf,
             })}
             colSpan={finalColSpan}
             rowSpan={isLeaf ? rowCount - level : undefined}
@@ -245,8 +250,8 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
           >
             {theaderPosition === 'center' && positionStyle.position === 'sticky' ? null : (
               <div
-                className={cx(tableContext.Classes?.tableHeaderCellContent, {
-                  [tableContext.Classes?.tableCellEllipsis]: col.ellipsis,
+                className={cx(Classes?.tableHeaderCellContent, {
+                  [Classes?.tableCellEllipsis]: col.ellipsis,
                 })}
                 style={{ justifyContent }}
                 title={title}
@@ -254,12 +259,14 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
                 {col.title ?? col.name}
               </div>
             )}
-          </th>
+          </ThComponent>
         )
         return cell
       }
       if (wrapped.width > 0) {
-        return <th key={wrapped.blankSide} style={{ visibility: wrapped.isPlacehoder ? 'hidden' : undefined }} />
+        return (
+          <ThComponent key={wrapped.blankSide} style={{ visibility: wrapped.isPlacehoder ? 'hidden' : undefined }} />
+        )
       }
       return null
     })
@@ -267,16 +274,16 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
     const headerRowProps = onHeaderRow?.(_wrappedCols, 0)
 
     return (
-      <tr
+      <TrComponent
         {...headerRowProps}
         key={level}
-        className={cx(tableContext.Classes?.tableHeaderRow, headerRowProps?.className, {
-          [tableContext.Classes?.first]: level === 0,
-          [tableContext.Classes?.last]: level === rowCount - 1,
+        className={cx(Classes?.tableHeaderRow, headerRowProps?.className, {
+          [Classes?.first]: level === 0,
+          [Classes?.last]: level === rowCount - 1,
         })}
       >
         {headerCells}
-      </tr>
+      </TrComponent>
     )
   })
 
@@ -291,9 +298,9 @@ export default function TableHeader({ info, theaderPosition, rowCount: _rowCount
   })
 
   return (
-    <table>
+    <TableComponent className={Classes?.tableDom}>
       <colgroup>{colgroup}</colgroup>
-      <thead className={tableContext.Classes?.tableHeaderThead}>{thead}</thead>
-    </table>
+      <WrapperComponent className={Classes?.tableHeaderThead}>{thead}</WrapperComponent>
+    </TableComponent>
   )
 }

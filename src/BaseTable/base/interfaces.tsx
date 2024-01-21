@@ -48,3 +48,27 @@ export interface RenderInfo extends Partial<BaseTableContextProps>, Pick<BaseTab
   /** 右侧锁定列的总宽度 */
   rightLockTotalWidth: number
 }
+
+export type GetComponent = (path: readonly string[], defaultComponent?: CustomizeComponent) => CustomizeComponent
+
+export type CustomizeComponent<P = any> =
+  | React.ComponentType<P>
+  | React.ForwardRefExoticComponent<P>
+  | React.FC<P>
+  | keyof React.ReactHTML
+
+export interface TableComponents {
+  /** 数据为空时，表格的展示内容。 */
+  EmptyContent?: React.ComponentType
+  table?: CustomizeComponent
+  header?: {
+    wrapper?: CustomizeComponent
+    row?: CustomizeComponent
+    cell?: CustomizeComponent
+  }
+  body?: {
+    wrapper?: CustomizeComponent
+    row?: CustomizeComponent
+    cell?: CustomizeComponent
+  }
+}

@@ -191,7 +191,7 @@ export const EditableCell = React.memo((props: React.PropsWithChildren<EditableC
           : child
       ).filter((i) => [0, '0'].includes(i as number | string) || !!i)
     }
-    return React.Children.map(children, (child) => child).filter((i) => [0, '0'].includes(i as number | string) || !!i)
+    return React.Children.map(children, (child) => child)?.filter((i) => [0, '0'].includes(i as number | string) || !!i)
   }, [children, colKey, editRowFlag, setEditingRowKey])
 
   const childNode = useMemo(() => {

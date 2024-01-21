@@ -27,7 +27,14 @@ import TableHeader from './header'
 import { getFullRenderRange, makeRowHeightManager } from './helpers/rowHeightManager'
 import { TableDOMHelper } from './helpers/TableDOMUtils'
 import { HtmlTable } from './html-table'
-import { RenderInfo, ResolvedUseVirtual, VerticalRenderRange, VirtualEnum } from './interfaces'
+import type {
+  GetComponent,
+  RenderInfo,
+  ResolvedUseVirtual,
+  TableComponents,
+  VerticalRenderRange,
+  VirtualEnum,
+} from './interfaces'
 import getTableRenderTemplate from './renderTemplates'
 import { BaseTableCSSVariables, getTableClasses, LOCK_SHADOW_PADDING, StyledArtTableWrapper } from './styles'
 import {
@@ -35,6 +42,7 @@ import {
   getScrollbarSize,
   getTableScrollFooterDOM,
   getTableScrollHeaderDOM,
+  getValue,
   OVERSCAN_SIZE,
   STYLED_REF_PROP,
   sum,
@@ -96,10 +104,7 @@ export interface BaseTableProps<RecordType = any> {
   emptyContent?: ReactNode
 
   /** 覆盖表格内部用到的组件 */
-  components?: {
-    /** 数据为空时，表格的展示内容。 */
-    EmptyContent?: React.ComponentType
-  }
+  components?: TableComponents
 
   /** 列的默认宽度 */
   defaultColumnWidth?: number
@@ -195,12 +200,19 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   const [maxRenderHeight, setMaxRenderHeight] = useState<number>(600)
   const [maxRenderWidth, setMaxRenderWidth] = useState<number>(800)
 
+  // ==================== Customize =====================
+  const getComponent = React.useCallback<GetComponent>(
+    (path, defaultComponent) => getValue(components, path) || defaultComponent,
+    [components]
+  )
+
   const contextValue = useMemo(() => {
     return {
       namespace,
       Classes: getTableClasses(namespace),
+      getComponent,
     }
-  }, [namespace])
+  }, [getComponent, namespace])
 
   const getScrollBarWidth = useCallback(() => {
     return scrollbarWidth || getScrollbarSize().width
