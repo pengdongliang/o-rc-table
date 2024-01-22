@@ -3,6 +3,7 @@ import { Button, OAppContainer } from '@ocloud/antd'
 import antdTheme from '@table/demo/antdTheme.json'
 import { ProTable } from '@table/ProTable'
 import { useMemo, useRef, useState } from 'react'
+import KeepAlive, { AliveScope } from 'react-activation'
 
 import dataSourceMock from './dataSourceMock.json'
 
@@ -306,46 +307,50 @@ const STOSingleProductionDeliveryPlan = () => {
         },
       }}
     >
-      <ProTable
-        proTable
-        containerNode="div"
-        style={{ height: '500px' }}
-        initPaginationConfig={{ pageSize: 500 }}
-        ref={tableRef}
-        columns={columns}
-        useTableForm={useTableForm}
-        request={() => {
-          return new Promise((resolve) => {
-            setTimeout(() => {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              const firstData = dataSourceMock.data.list.splice(0, 1)
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              dataSourceMock.data.list = firstData.concat(dataSourceMock.data.list.sort(() => Math.random() - 0.5))
-              resolve(dataSourceMock)
-            }, 300)
-          })
-        }}
-        responseDataHandler={(data: any) => {
-          setDataList(data?.list)
-          return data
-        }}
-        requestParamsHandler={(searchParams, formData) => {
-          return {
-            searchParams,
-            formData: { ...formData, materialCodes: filterData(formData?.materialCodes) },
-          }
-        }}
-        expandable={{
-          expandedRowKeys: expKeys,
-          onExpand: (b: any, r: any) => {
-            const newExp: any = b ? [...expKeys, r.id] : expKeys.filter((i: any) => i !== r.id)
-            setExpKeys(newExp)
-          },
-          expandedRowRender,
-        }}
-      />
+      <AliveScope>
+        <KeepAlive name="testProTable" cacheKey="testProTable" id="testProTable">
+          <ProTable
+            proTable
+            containerNode="div"
+            style={{ height: '500px' }}
+            initPaginationConfig={{ pageSize: 500 }}
+            ref={tableRef}
+            columns={columns}
+            useTableForm={useTableForm}
+            request={() => {
+              return new Promise((resolve) => {
+                setTimeout(() => {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  const firstData = dataSourceMock.data.list.splice(0, 1)
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  dataSourceMock.data.list = firstData.concat(dataSourceMock.data.list.sort(() => Math.random() - 0.5))
+                  resolve(dataSourceMock)
+                }, 300)
+              })
+            }}
+            responseDataHandler={(data: any) => {
+              setDataList(data?.list)
+              return data
+            }}
+            requestParamsHandler={(searchParams, formData) => {
+              return {
+                searchParams,
+                formData: { ...formData, materialCodes: filterData(formData?.materialCodes) },
+              }
+            }}
+            expandable={{
+              expandedRowKeys: expKeys,
+              onExpand: (b: any, r: any) => {
+                const newExp: any = b ? [...expKeys, r.id] : expKeys.filter((i: any) => i !== r.id)
+                setExpKeys(newExp)
+              },
+              expandedRowRender,
+            }}
+          />
+        </KeepAlive>
+      </AliveScope>
     </OAppContainer>
   )
 }

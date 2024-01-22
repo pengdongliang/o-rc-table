@@ -2,7 +2,7 @@ import { ThemeProvider as EmotionThemeProvider } from '@emotion/react'
 import { createImmutable } from '@rc-component/context'
 import type { CompareProps } from '@rc-component/context/lib/Immutable'
 import { internals } from '@src/BaseTable'
-import { useGetState } from 'ahooks'
+import { useDeepCompareEffect, useGetState } from 'ahooks'
 import cx from 'classnames'
 import { getRichVisibleRectsStream } from 'o-rc-table/base/helpers/getRichVisibleRectsStream'
 import React, {
@@ -191,8 +191,8 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   const resizeObserver = useRef<ResizeObserver>(null)
   const [, setForceUpdate] = useState(false)
   const lastHasScroll = useRef(true)
-  const [hasScroll, setHasScroll] = useState(true)
-  const [hasScrollY, setHasScrollY] = useState(true)
+  const [, setHasScroll, getHasScroll] = useGetState(true)
+  const [hasScrollY, setHasScrollY, getHasScrollY] = useGetState(true)
   const [needRenderLock, setNeedRenderLock] = useState(true)
   const [offsetY, setOffsetY] = useState<number>(0)
   const [offsetX, setOffsetX, getOffsetX] = useGetState<number>(0)
@@ -225,7 +225,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
    */
   const updateStickyScroll = useCallback(() => {
     const { stickyScroll, artTable, stickyScrollItem } = domHelper.current
-    const _lastHasScrollY = hasScrollY
+
     if (!artTable) {
       return
     }
@@ -235,31 +235,33 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
 
     const newStickyScrollHeight = stickyScrollHeight === 'auto' ? getScrollBarWidth() : stickyScrollHeight
 
-    // stickyScroll.style.marginTop = `-${newStickyScrollHeight + 1}px`
     // 设置滚动条高度
-    stickyScroll.style.height = `${newStickyScrollHeight}px`
+    // stickyScroll.style.marginTop = `-${stickyScrollHeight + 1}px`
+    stickyScroll.style.height = `${stickyScrollHeight}px`
 
     if (artTableWidth >= innerTableWidth) {
-      if (hasScroll) {
+      if (getHasScroll()) {
         setHasScroll(false)
         lastHasScroll.current = true
       }
-    } else if (!hasScroll && newStickyScrollHeight > 5) {
+    } else if (!getHasScroll() && newStickyScrollHeight > 5) {
       // 考虑下mac下面隐藏滚动条的情况
       setHasScroll(true)
       lastHasScroll.current = false
     }
+
     if (domHelper.current?.virtual.offsetHeight > domHelper.current?.tableBody.offsetHeight) {
       setHasScrollY(true)
     } else {
       setHasScrollY(false)
     }
-    if (_lastHasScrollY !== hasScrollY) {
-      setTableWidth?.(domHelper.current?.tableBody?.clientWidth)
-    }
+    // if (_lastHasScrollY !== getHasScrollY()) {
+    //   setTableWidth?.(domHelper.current?.tableBody?.clientWidth)
+    // }
+
     // 设置子节点宽度
-    stickyScrollItem.style.width = `${innerTableWidth + (hasScrollY ? getScrollBarWidth() : 0)}px`
-  }, [getScrollBarWidth, hasScroll, hasScrollY, setTableWidth, stickyScrollHeight])
+    stickyScrollItem.style.width = `${innerTableWidth + (getHasScrollY() ? getScrollBarWidth() : 0)}px`
+  }, [stickyScrollHeight, getScrollBarWidth, getHasScroll, getHasScrollY, setHasScroll, setHasScrollY])
 
   const renderTableHeader = useCallback(
     (info: RenderInfo) => {
@@ -268,7 +270,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
         return renderHeader(info, props)
       }
 
-      const stickyRightOffset = hasScrollY ? getScrollBarWidth() : 0
+      const stickyRightOffset = getHasScrollY() ? getScrollBarWidth() : 0
 
       return (
         <div
@@ -281,7 +283,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
           <TableHeader info={info} stickyRightOffset={stickyRightOffset} />
           <div
             className={contextValue.Classes?.verticalScrollPlaceholder}
-            style={hasScrollY ? { width: getScrollBarWidth() } : undefined}
+            style={getHasScrollY() ? { width: getScrollBarWidth() } : undefined}
           />
         </div>
       )
@@ -292,7 +294,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       contextValue.Classes?.verticalScrollPlaceholder,
       getScrollBarWidth,
       showHeader,
-      hasScrollY,
+      getHasScrollY,
       props,
       stickyTop,
     ]
@@ -397,7 +399,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       }
 
       const { topIndex, bottomBlank, topBlank, bottomIndex } = info.verticalRenderRange
-      const stickyRightOffset = hasScrollY ? getScrollBarWidth() : 0
+      const stickyRightOffset = getHasScrollY() ? getScrollBarWidth() : 0
 
       const renderBody = getTableRenderTemplate('body')
       if (typeof renderBody === 'function') {
@@ -455,7 +457,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       getScrollBarWidth,
       handleRowMouseEnter,
       handleRowMouseLeave,
-      hasScrollY,
+      getHasScrollY,
       loading,
       props,
       rowKey,
@@ -492,7 +494,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
           {footerDataSource.length > 0 ? (
             <div
               className={contextValue.Classes?.verticalScrollPlaceholder}
-              style={hasScrollY ? { width: getScrollBarWidth(), visibility: 'initial' } : undefined}
+              style={getHasScrollY() ? { width: getScrollBarWidth(), visibility: 'initial' } : undefined}
             />
           ) : null}
         </div>
@@ -507,7 +509,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       getScrollBarWidth,
       handleRowMouseEnter,
       handleRowMouseLeave,
-      hasScrollY,
+      getHasScrollY,
       props,
       rowKey,
       stickyBottom,
@@ -516,7 +518,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
 
   const renderLockShadows = useCallback(
     (info: RenderInfo) => {
-      const stickyRightOffset = hasScrollY ? getScrollBarWidth() : 0
+      const stickyRightOffset = getHasScrollY() ? getScrollBarWidth() : 0
 
       return (
         <>
@@ -541,7 +543,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       contextValue.Classes?.lockShadowMask,
       contextValue.Classes?.rightLockShadow,
       getScrollBarWidth,
-      hasScrollY,
+      getHasScrollY,
     ]
   )
 
@@ -556,7 +558,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
         <div
           className={cx(contextValue.Classes?.stickyScroll)}
           style={{
-            display: hasStickyScroll && hasScroll ? 'block' : 'none',
+            display: hasStickyScroll && getHasScroll() ? 'block' : 'none',
             bottom: stickyBottom,
           }}
         >
@@ -569,7 +571,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     contextValue.Classes?.horizontalStickyScrollContainer,
     contextValue.Classes?.stickyScroll,
     contextValue.Classes?.stickyScrollItem,
-    hasScroll,
+    getHasScroll,
     hasStickyScroll,
     stickyBottom,
   ])
@@ -629,13 +631,24 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     }
   }, [needRenderLock])
 
+  useDeepCompareEffect(() => {
+    if (domHelper.current) {
+      if (domHelper.current.stickyScroll) {
+        domHelper.current.stickyScroll.scrollLeft = 0
+      }
+      if (domHelper.current.tableBody) {
+        domHelper.current.tableBody.scrollTop = 0
+      }
+    }
+  }, [dataSource])
+
   const updateScrollLeftWhenLayoutChanged = useCallback(
     (prevProps?: Readonly<BaseTableProps>) => {
-      if (prevProps != null) {
-        if (!lastHasScroll.current && hasScroll) {
-          domHelper.current.stickyScroll.scrollLeft = 0
-        }
-      }
+      // if (prevProps != null) {
+      //   if (!lastHasScroll.current && getHasScroll() && !getHasScrollY()) {
+      //     domHelper.current.stickyScroll.scrollLeft = 0
+      //   }
+      // }
 
       if (prevProps != null) {
         const prevHasFooter = prevProps.footerDataSource?.length > 0
@@ -645,7 +658,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
         }
       }
     },
-    [footerDataSource.length, hasScroll]
+    [footerDataSource.length]
   )
 
   const didMountOrUpdate = useCallback(
@@ -722,7 +735,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     //       return
     //     }
     //     const height = clipRect.bottom - clipRect.top
-    //     // fixme 这里的定位在有些特殊情况下可能会出错
+    //     // f ixme 这里的定位在有些特殊情况下可能会出错
     //     loadingIndicator.style.top = `${height / 2}px`
     //     loadingIndicator.style.marginTop = `${height / 2}px`
     //   })
