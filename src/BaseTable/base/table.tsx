@@ -1,9 +1,9 @@
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react'
 import { createImmutable } from '@rc-component/context'
 import type { CompareProps } from '@rc-component/context/lib/Immutable'
-import { internals } from '@src/BaseTable'
-import { useDeepCompareEffect, useGetState } from 'ahooks'
+import { useGetState } from 'ahooks'
 import cx from 'classnames'
+import { internals } from 'o-rc-table'
 import { getRichVisibleRectsStream } from 'o-rc-table/base/helpers/getRichVisibleRectsStream'
 import React, {
   CSSProperties,
@@ -148,7 +148,9 @@ export interface BaseTableProps<RecordType = any> {
 
 export type BaseTableRef = {
   nativeElement: HTMLDivElement
-  scrollTo: (config: { index?: number; key?: React.Key; top?: number }) => void
+  scrollTo?(config: { x?: number; y?: number }): void
+  scrollTo?(config: { index: number }): void
+  scrollTo?(config: { key: React.Key }): void
 }
 
 const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
@@ -631,17 +633,6 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     }
   }, [needRenderLock])
 
-  useDeepCompareEffect(() => {
-    if (domHelper.current) {
-      if (domHelper.current.stickyScroll) {
-        domHelper.current.stickyScroll.scrollLeft = 0
-      }
-      if (domHelper.current.tableBody) {
-        domHelper.current.tableBody.scrollTop = 0
-      }
-    }
-  }, [dataSource])
-
   const updateScrollLeftWhenLayoutChanged = useCallback(
     (prevProps?: Readonly<BaseTableProps>) => {
       // if (prevProps != null) {
@@ -691,7 +682,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       setTableWidth?.(domHelper.current.tableBody.clientWidth)
     })
 
-    hozScrollSubject.current.pipe(op.debounceTime(20)).subscribe((nextOffsetX) => {
+    hozScrollSubject.current.pipe(op.debounceTime(30)).subscribe((nextOffsetX) => {
       syncHorizontalScroll(nextOffsetX)
     })
 
@@ -919,19 +910,20 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     return {
       nativeElement: artTableWrapperRef.current,
       scrollTo: (config: Record<string, any>) => {
-        if (domHelper.current instanceof HTMLElement) {
-          const { index, top, key } = config
-
-          if (top) {
-            domHelper.current?.scrollTo({
-              top,
-            })
-          } else {
+        const { x, y, index, key } = config ?? {}
+        if (key || key === 0 || index || index === 0) {
+          if (domHelper.current.tableBody instanceof HTMLElement) {
             const mergedKey = key ?? internals.safeGetRowKey(rowKey, dataSource, index)
-            domHelper.current.querySelector(`[data-row-key="${mergedKey}"]`)?.scrollIntoView()
+            // TODO 未加载的数据，调不到, 需要遍历计算高度
+            domHelper.current.tableBody.querySelector(`[data-row-key="${mergedKey}"]`)?.scrollIntoView()
           }
-        } else if ((domHelper.current as any)?.scrollTo) {
-          ;(domHelper.current as any).scrollTo(config)
+        } else if (domHelper.current) {
+          if ((x || x === 0) && domHelper.current.stickyScroll) {
+            domHelper.current.stickyScroll.scrollLeft = x
+          }
+          if ((y || y === 0) && domHelper.current.tableBody) {
+            domHelper.current.tableBody.scrollTop = y
+          }
         }
       },
     }

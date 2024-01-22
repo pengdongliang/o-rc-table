@@ -278,14 +278,14 @@ export class TablePipeline<RecordType = unknown> {
   /**
    * 获取featureOptions 内容
    */
-  getFeatureOptions(optionKey: string) {
+  getFeatureOptions(optionKey: string | symbol) {
     return this.ref.current.featureOptions?.[optionKey]
   }
 
   /**
    * 设置pipelineOptions 内容
    */
-  setFeatureOptions(optionKey: string, value: any) {
+  setFeatureOptions(optionKey: string | symbol, value: any) {
     this.ref.current.featureOptions[optionKey] = value
   }
 

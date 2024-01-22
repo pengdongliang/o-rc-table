@@ -16,6 +16,7 @@ import type { AntdTableOptions, Params as AntdTableParams } from 'ahooks/es/useA
 import React, { useImperativeHandle, useRef, useState } from 'react'
 
 import type { AnyObject } from '../../theme/interface'
+import type { TableRef as OTableRef } from '../index'
 import { Table as RcTable, TableProps as RcTableProps } from '../index'
 import type { PaginationConfigType } from './config'
 import { defaultPaginationConfig } from './config'
@@ -156,6 +157,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
   const [locale, setLocale] = useState<TableProps['locale']>({ emptyText: <div /> })
   const searchFormRef = useRef<FormRef>(null)
   const tableContainerRef = useRef<HTMLDivElement | null>(null)
+  const oTableRef = useRef<OTableRef>(null)
 
   const { antdTheme } = useThemeContext()
   const finalTableConfig = useDefaultTableConfig<RecordType>(props)
@@ -278,6 +280,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
     columns: realColumns,
     loading: !!finalTableConfig?.loading,
     className: 'table_container',
+    ref: oTableRef,
   }
 
   return (
@@ -298,6 +301,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
                     } else {
                       tableParamsData?.search?.submit()
                     }
+                    oTableRef.current?.initScrollBar()
                   }}
                   onReset={(...args) => {
                     if (typeof useTableForm?.onReset === 'function') {
@@ -305,6 +309,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
                     } else {
                       tableParamsData?.search?.reset()
                     }
+                    oTableRef.current?.initScrollBar()
                   }}
                 />
               ) : null}

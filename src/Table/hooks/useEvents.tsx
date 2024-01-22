@@ -1,7 +1,8 @@
 import type { FilterValue, SorterResult } from 'antd/es/table/interface'
+import type { TablePipeline } from 'o-rc-table'
 
 import type { AnyObject } from '../../theme/interface'
-import type { TableProps } from '../InternalTable'
+import { RCTABLEREF, type TableProps } from '../InternalTable'
 import { FilterState } from './useFilter'
 import { SortState } from './useSorter'
 
@@ -23,13 +24,15 @@ interface ChangeEventInfo<RecordType> {
 const TableActions = ['paginate', 'sort', 'filter'] as const
 export type TableAction = (typeof TableActions)[number]
 
-export type EventsProps<RecordType extends AnyObject = AnyObject> = TableProps<RecordType>
+export interface EventsProps<RecordType extends AnyObject = AnyObject> extends TableProps<RecordType> {
+  pipeline: TablePipeline
+}
 
 /**
  * 处理事件
  */
 export const useEvents = <RecordType extends AnyObject = AnyObject>(props: EventsProps<RecordType>) => {
-  const { pagination, onChange, dataSource } = props
+  const { pagination, onChange, dataSource, pipeline } = props
   const changeEventInfo: Partial<ChangeEventInfo<RecordType>> = {}
 
   const triggerOnChange = (info: Partial<ChangeEventInfo<RecordType>>, action: TableAction, reset = false) => {
@@ -51,6 +54,10 @@ export const useEvents = <RecordType extends AnyObject = AnyObject>(props: Event
         pagination.onChange(1, changeInfo.pagination?.pageSize)
       }
     }
+
+    // if (scroll && scroll.scrollToFirstRowOnChange !== false && internalRefs.body.current) {
+    pipeline.getFeatureOptions(RCTABLEREF)?.scrollTo({ x: 0, y: 0 })
+    // }
 
     onChange?.(changeInfo.pagination, changeInfo.filters, changeInfo.sorter, {
       currentDataSource: dataSource,

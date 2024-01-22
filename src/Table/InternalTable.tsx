@@ -4,7 +4,7 @@ import { type ConfigConsumerProps, ConfigContext } from 'antd/es/config-provider
 import { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/es/table/interface'
 import classNames from 'classnames'
 import { useTablePipeline } from 'o-rc-table'
-import type { BaseTableProps } from 'o-rc-table/base/table'
+import type { BaseTableProps, BaseTableRef } from 'o-rc-table/base/table'
 import * as React from 'react'
 
 import useCSSVarCls from '../ConfigProvider/hooks/useCSSVarCls'
@@ -13,8 +13,13 @@ import type { TableFeaturesType, TablePaginationConfig } from './interface'
 import RcTable from './RcTable'
 import useStyle from './style'
 
+export const RCTABLEREF = Symbol('rcTableRef')
+
 export type SizeType = 'small' | 'middle' | 'large' | undefined
-export type TableRef = ReturnType<typeof useTablePipeline>
+export type TableRef = {
+  pipeline?: ReturnType<typeof useTablePipeline>
+  initScrollBar?: () => void
+}
 
 export interface TableProps<RecordType = any> extends Omit<BaseTableProps<RecordType>, 'loading'>, TableFeaturesType {
   /** 前缀 */
@@ -74,7 +79,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
     }
   }
 
-  const { changeEventInfo, triggerOnChange } = useEvents<RecordType>(finalProps)
+  const { changeEventInfo, triggerOnChange } = useEvents<RecordType>({ ...finalProps, pipeline })
   const { topPaginationNode, bottomPaginationNode } = useTablePagination<RecordType>({
     ...finalProps,
     changeEventInfo,
@@ -82,7 +87,14 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
     prefixCls,
   })
 
-  React.useImperativeHandle(ref, () => pipeline)
+  const initScrollBar = () => {
+    pipeline.getFeatureOptions(RCTABLEREF)?.scrollTo({ x: 0, y: 0 })
+  }
+
+  React.useImperativeHandle(ref, () => ({
+    pipeline,
+    initScrollBar,
+  }))
 
   return wrapCSSVar(
     <div className={rootClassNames}>
@@ -97,6 +109,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
             className={classNames(cssVarCls, rootCls, hashId)}
             dataSource={dataSource}
             columns={columns}
+            ref={(tableRef: BaseTableRef) => pipeline.setFeatureOptions(RCTABLEREF, tableRef)}
           />
         </Spin>
       </div>
