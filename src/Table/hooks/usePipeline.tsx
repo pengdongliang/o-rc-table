@@ -130,7 +130,7 @@ export const usePipeline = (props: TableProps) => {
           columnProps: {
             fixed,
             width: columnWidth as number,
-            onCell: (_text, record, rowIndex) => onCell(record, rowIndex),
+            ...(typeof onCell === 'function' ? { onCell: (_text, record, rowIndex) => onCell(record, rowIndex) } : {}),
           },
         }
 

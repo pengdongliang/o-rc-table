@@ -28,9 +28,8 @@ export default () => {
 
 ## 代码演示
 
-[//]: # (<!-- prettier-ignore -->)
-
-[//]: # (<code src="./demo/basic.tsx">动态控制表格属性</code>)
+<!-- prettier-ignore -->
+<code src="./demo/basic.tsx">动态控制表格属性</code>
 
 <!-- prettier-ignore -->
 <code src="./demo/testPage/index.tsx">表格调试</code>
