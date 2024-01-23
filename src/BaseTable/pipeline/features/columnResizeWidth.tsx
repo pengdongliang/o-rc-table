@@ -8,6 +8,7 @@ import { ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, isGroupColumn, makeRecursiveMapper, mergeCellProps } from '../../utils'
 import { TablePipeline } from '../pipeline'
+import classnames from 'classnames'
 
 const TableHeaderCellResize = styled.div`
   position: absolute;
@@ -33,10 +34,9 @@ const TableHeaderCellResize = styled.div`
   }
 `
 
-const TableHeaderGroupCellResize = styled((props) => <TableHeaderCellResize {...props} />)`
+const TableHeaderGroupCellResize = styled((props: any) => <TableHeaderCellResize {...props} />)`
   &:after {
     height: 100%;
-    top: 0;
   }
 `
 
@@ -68,7 +68,7 @@ function clamp(min: number, x: number, max: number) {
   return Math.max(min, Math.min(max, x))
 }
 
-function disableSelect(event) {
+function disableSelect(event: Event) {
   event.preventDefault()
 }
 
@@ -180,7 +180,7 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
     const isGroup = isGroupColumn(pipeline.getColumns())
 
     return pipeline.mapColumns(
-      makeRecursiveMapper((col) => {
+      makeRecursiveMapper((col, {isLast}) => {
         const prevTitle = internals.safeRenderHeader(col)
         const { dataIndex, features, width } = col
         return {
@@ -192,13 +192,13 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
               {features?.resizeable !== false &&
                 (isGroup ? (
                   <TableHeaderGroupCellResize
-                    className={pipeline.getTableContext().Classes?.tableHeaderCellResize}
+                    className={classnames({[pipeline.getTableContext().Classes?.tableHeaderCellResize]: !isLast})}
                     onDoubleClick={(e: React.MouseEvent<HTMLSpanElement>) => handleDoubleClick(e, col)}
                     onMouseDown={(e: React.MouseEvent<HTMLSpanElement>) => handleMouseDown(e, col)}
                   />
                 ) : (
                   <TableHeaderCellResize
-                    className={pipeline.getTableContext().Classes?.tableHeaderCellResize}
+                    className={classnames({[pipeline.getTableContext().Classes?.tableHeaderCellResize]: !isLast})}
                     onDoubleClick={(e: React.MouseEvent<HTMLSpanElement>) => handleDoubleClick(e, col)}
                     onMouseDown={(e: React.MouseEvent<HTMLSpanElement>) => handleMouseDown(e, col)}
                   />

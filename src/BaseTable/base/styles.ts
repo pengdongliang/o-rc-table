@@ -220,7 +220,7 @@ export type BaseTableCSSVariables = Partial<{
 
 const outerBorderStyleMixin = (Classes: BaseTableContextProps['Classes']) => css`
   border-top: 1px solid #cccccc;
-  border-right: 1px solid #cccccc;
+  border-inline-end: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
   border-left: 1px solid #cccccc;
 
@@ -229,7 +229,7 @@ const outerBorderStyleMixin = (Classes: BaseTableContextProps['Classes']) => css
   }
 
   td.${Classes?.last}, th.${Classes?.last} {
-    border-right: none;
+    border-inline-end: none;
   }
 
   thead tr.${Classes?.first} th,
@@ -250,7 +250,7 @@ const outerBorderStyleMixin = (Classes: BaseTableContextProps['Classes']) => css
   }
 
   td.${Classes?.rowSpan}:not(.${Classes?.last}) {
-    border-right: var(--cell-border-horizontal);
+    border-inline-end: var(--cell-border-horizontal);
   }
 `
 
@@ -329,7 +329,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       background: var(--header-bgcolor);
       display: flex;
       flex-shrink: 0;
-      border-bottom: var(--header-cell-border-vertical);
+      //border-bottom: var(--header-cell-border-vertical);
     }
 
     .${Classes?.tableHeaderCellContent} {
@@ -391,7 +391,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       }
 
       .${Classes?.tableCellRangeRight} {
-        border-right: 1px solid #0e5fd8 !important;
+        border-inline-end: 1px solid #0e5fd8 !important;
       }
     }
 
@@ -498,18 +498,11 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       height: var(--header-row-height);
       color: var(--header-color);
       background: var(--header-bgcolor);
-      border: 1px solid transparent;
-      border-right: var(--header-cell-border-horizontal);
       border-bottom: var(--header-cell-border-vertical);
       position: relative;
     }
 
-    th.resizeable {
-      border-right: var(--header-cell-border-horizontal);
-    }
-
     th.${Classes?.leaf} {
-      border-right: var(--header-cell-border-horizontal);
       border-bottom: none;
     }
 
@@ -525,10 +518,17 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       padding: var(--cell-padding);
       background: var(--bgcolor);
       //height: var(--row-height);
-      border: 1px solid transparent;
-      border-right: var(--cell-border-horizontal);
       border-bottom: var(--cell-border-vertical);
       word-break: break-all;
+    }
+
+    .${Classes?.artTableBordered} {
+      th {
+        border-inline-end: var(--header-cell-border-horizontal);
+      }
+      td {
+        border-inline-end: var(--cell-border-horizontal);
+      }
     }
 
     td.${Classes?.first} {
@@ -571,7 +571,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
 
         &.show-shadow {
           box-shadow: var(--fixed-shadow);
-          border-right: var(--cell-border-horizontal);
+          //border-inline-end: var(--cell-border-horizontal);
         }
       }
 
@@ -581,7 +581,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
 
         &.show-shadow {
           box-shadow: var(--fixed-shadow);
-          border-left: var(--cell-border-horizontal);
+          //border-left: var(--cell-border-horizontal);
         }
       }
     }

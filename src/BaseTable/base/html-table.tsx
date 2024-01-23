@@ -35,6 +35,7 @@ export function HtmlTable({
   tbodyHtmlTag,
   onRow,
   rowKey,
+  stickyRightOffset,
   data,
   verticalRenderInfo: verInfo,
   horizontalRenderInfo: hozInfo,
@@ -108,7 +109,9 @@ export function HtmlTable({
         positionStyle.left = hozInfo.stickyLeftMap.get(colIndex)
       } else if (colIndex >= fullFlatCount - rightFlatCount) {
         positionStyle.position = 'sticky'
-        positionStyle.right = hozInfo.stickyRightMap.get(colIndex)
+        positionStyle.right =
+          hozInfo.stickyRightMap.get(colIndex) +
+          (tbodyHtmlTag === 'tfoot' && typeof stickyRightOffset === 'number' ? stickyRightOffset : 0)
       }
 
       // ============================ title =============================
@@ -162,8 +165,10 @@ export function HtmlTable({
       leftFlatCount,
       rightFlatCount,
       spanManager,
+      stickyRightOffset,
       tbodyPosition,
       verInfo.limit,
+      tbodyHtmlTag,
     ]
   )
 

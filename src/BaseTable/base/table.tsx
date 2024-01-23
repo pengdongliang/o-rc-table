@@ -475,6 +475,8 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
         })
       }
 
+      const stickyRightOffset = getHasScrollY() ? getScrollBarWidth() : 0
+
       return (
         <div
           className={cx(contextValue.Classes?.tableFooter, contextValue.Classes?.horizontalScrollContainer)}
@@ -486,6 +488,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
             horizontalRenderInfo={info}
             onRow={onRow}
             rowKey={rowKey}
+            stickyRightOffset={stickyRightOffset}
             verticalRenderInfo={{
               offset: 0,
               first: 0,

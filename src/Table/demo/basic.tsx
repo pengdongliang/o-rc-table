@@ -395,7 +395,7 @@ export default () => {
           // rowExpandable: (record) => record.id === 1,
           showExpandColumn: false,
           // expandIcon: ({ onClick }) => <div onClick={onClick}>自定义展开图标</div>,
-          columnWidth: 60,
+          columnWidth: 62,
           fixed: true,
           columnTitle: '展开',
           defaultExpandAllRows: false,

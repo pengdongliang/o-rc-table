@@ -39,7 +39,9 @@ const genRadiusStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
             },
 
             '> *:last-child': {
-              borderStartEndRadius: tableRadius,
+              [`&:hot(:has(${componentCls}fixed-right))`]: {
+                borderStartEndRadius: tableRadius,
+              },
             },
           },
         },

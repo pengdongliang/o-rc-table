@@ -6,6 +6,8 @@ type RecursiveFlatMapInfo<T> = {
   endIndex: number
   path: T[]
   isLeaf: boolean
+  $index: number
+  isLast: boolean
 }
 
 export default function makeRecursiveMapper<T extends AbstractTreeNode>(
@@ -18,37 +20,44 @@ export default function makeRecursiveMapper<T extends AbstractTreeNode>(
       let flatCount = 0
       const result: T[] = []
 
-      for (const node of nodes) {
-        path.push(node)
+      if (nodes) {
+        for (const [index, node] of nodes.entries()) {
+          path.push(node)
 
-        const startIndex = parentStartIndex + flatCount
+          const startIndex = parentStartIndex + flatCount
 
-        let subResult
-        if (isLeafNode(node)) {
-          subResult = fn(node, {
-            // parentStartIndex,
-            startIndex,
-            endIndex: startIndex + 1,
-            path: path.slice(),
-            isLeaf: true,
-          })
-          flatCount += 1
-        } else {
-          const dfsResult = dfs(node.children as T[], startIndex, path)
-          subResult = fn(
-            { ...node, children: dfsResult.result },
-            { startIndex, endIndex: startIndex + dfsResult.flatCount, path: path.slice(), isLeaf: false }
-          )
-          flatCount += dfsResult.flatCount
+          const baseInfo = {
+            $index: index,
+            isLast: index === nodes?.length - 1,
+          }
+          let subResult: T | T[]
+          if (isLeafNode(node)) {
+            subResult = fn(node, {
+              // parentStartIndex,
+              startIndex,
+              endIndex: startIndex + 1,
+              path: path.slice(),
+              isLeaf: true,
+              ...baseInfo,
+            })
+            flatCount += 1
+          } else {
+            const dfsResult = dfs(node.children as T[], startIndex, path)
+            subResult = fn(
+              { ...node, children: dfsResult.result },
+              { startIndex, endIndex: startIndex + dfsResult.flatCount, path: path.slice(), isLeaf: false, ...baseInfo }
+            )
+            flatCount += dfsResult.flatCount
+          }
+
+          if (Array.isArray(subResult)) {
+            result.push(...subResult)
+          } else if (subResult != null) {
+            result.push(subResult)
+          }
+
+          path.pop()
         }
-
-        if (Array.isArray(subResult)) {
-          result.push(...subResult)
-        } else if (subResult != null) {
-          result.push(subResult)
-        }
-
-        path.pop()
       }
 
       return { result, flatCount }
