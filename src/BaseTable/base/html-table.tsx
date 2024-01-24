@@ -68,7 +68,7 @@ export function HtmlTable({
 
       let cellContent: ReactNode = value
       if (column.render) {
-        cellContent = column.render(value, record, rowIndex)
+        cellContent = column.render(value, record, record.$dataIndex ?? rowIndex)
       }
 
       let colSpan = 1

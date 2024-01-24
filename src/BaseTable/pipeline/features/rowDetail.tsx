@@ -149,10 +149,15 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
     return pipeline
       .dataSource(
         flatMap(pipeline.getDataSource(), (row, rowIndex) => {
+          const arr = [{ $dataIndex: rowIndex, ...row }]
           if (openKeySet.has(internals.safeGetRowKey(rowKey, row, rowIndex))) {
-            return [row, { [rowDetailMetaKey]: true, ...row, [detailPrimaryKey]: getDetailKey(row, rowIndex) }]
+            arr.push({
+              [rowDetailMetaKey]: true,
+              ...row,
+              [detailPrimaryKey]: getDetailKey(row, rowIndex),
+            })
           }
-          return [row]
+          return arr
         })
       )
       .columns(processColumns(pipeline.getColumns()))
