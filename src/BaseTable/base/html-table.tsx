@@ -8,7 +8,7 @@ import { internals } from '../internals'
 import { Colgroup } from './colgroup'
 import SpanManager from './helpers/SpanManager'
 import { RenderInfo } from './interfaces'
-import { BaseTableProps } from './table'
+import { BaseTableProps, type FixedShadowInfoType } from './table'
 import { getTitleFromCellRenderChildren } from './utils'
 
 export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'onRow' | 'rowKey'>> {
@@ -29,6 +29,7 @@ export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'onRow' | 
   }
 
   tbodyPosition?: 'left' | 'center' | 'right'
+  fixedShadowInfo?: FixedShadowInfoType
 }
 
 export function HtmlTable({
@@ -40,6 +41,7 @@ export function HtmlTable({
   verticalRenderInfo: verInfo,
   horizontalRenderInfo: hozInfo,
   tbodyPosition,
+  fixedShadowInfo,
 }: HtmlTableProps) {
   const { flat } = hozInfo
 
@@ -121,6 +123,13 @@ export function HtmlTable({
         children: cellContent,
       })
 
+      const isFixedLeft = colIndex < leftFlatCount || tbodyPosition === 'left'
+      const isFixedRight = colIndex >= fullFlatCount - rightFlatCount
+      const isFixedLeftLast =
+        fixedShadowInfo.left && isFixedLeft && flat?.left?.[flat?.left?.length - 1]?.key === column.key
+      const isFixedRightFirst =
+        fixedShadowInfo.right && isFixedRight && flat?.right?.[flat?.right?.length - 1]?.key === column.key
+
       return React.createElement(
         TdComponent,
         {
@@ -129,8 +138,10 @@ export function HtmlTable({
           className: cx(Classes?.tableCell, column.className, cellProps.className, {
             [Classes?.first]: colIndex === 0,
             [Classes?.last]: colIndex + colSpan === fullFlatCount,
-            [Classes?.lockLeft]: colIndex < leftFlatCount || tbodyPosition === 'left',
-            [Classes?.lockRight]: colIndex >= fullFlatCount - rightFlatCount,
+            [Classes?.fixedLeft]: isFixedLeft,
+            [Classes?.fixedRight]: isFixedRight,
+            [Classes?.fixedLeftLast]: isFixedLeftLast,
+            [Classes?.fixedRightFirst]: isFixedRightFirst,
             [Classes?.rowSpan]: rowSpan > 1,
             [Classes?.tableCellEllipsis]: column.ellipsis,
           }),
@@ -150,25 +161,31 @@ export function HtmlTable({
       )
     },
     [
-      Classes?.first,
-      Classes?.last,
-      Classes?.lockLeft,
-      Classes?.lockRight,
-      Classes?.rowSpan,
-      Classes?.tableCell,
-      Classes?.tableCellEllipsis,
-      TdComponent,
-      fullFlatCount,
+      spanManager,
+      verInfo.limit,
+      hozInfo.visible.length,
       hozInfo.stickyLeftMap,
       hozInfo.stickyRightMap,
-      hozInfo.visible.length,
       leftFlatCount,
+      fullFlatCount,
       rightFlatCount,
-      spanManager,
-      stickyRightOffset,
       tbodyPosition,
-      verInfo.limit,
+      fixedShadowInfo.left,
+      fixedShadowInfo.right,
+      flat?.left,
+      flat?.right,
+      TdComponent,
+      Classes?.tableCell,
+      Classes?.first,
+      Classes?.last,
+      Classes?.fixedLeft,
+      Classes?.fixedRight,
+      Classes?.fixedLeftLast,
+      Classes?.fixedRightFirst,
+      Classes?.rowSpan,
+      Classes?.tableCellEllipsis,
       tbodyHtmlTag,
+      stickyRightOffset,
     ]
   )
 

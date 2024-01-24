@@ -6,6 +6,7 @@ import type { CSSProperties } from 'react'
 import type { ColumnType } from '../interfaces'
 import { getTreeDepth, isLeafNode } from '../utils'
 import { HorizontalRenderRange, RenderInfo } from './interfaces'
+import type { FixedShadowInfoType } from './table'
 
 function range(n: number) {
   const array: number[] = []
@@ -177,6 +178,7 @@ interface TableHeaderProps {
   theaderPosition?: 'left' | 'center' | 'right'
   rowCount?: number
   stickyRightOffset?: number
+  fixedShadowInfo?: FixedShadowInfoType
 }
 
 export default function TableHeader({
@@ -184,6 +186,7 @@ export default function TableHeader({
   theaderPosition,
   rowCount: _rowCount,
   stickyRightOffset,
+  fixedShadowInfo,
 }: TableHeaderProps) {
   const { nested, flat, stickyLeftMap, stickyRightMap, onHeaderRow } = info
   const rowCount = _rowCount ?? getTreeDepth(nested.full) + 1
@@ -234,6 +237,13 @@ export default function TableHeader({
           children: col.title ?? col.name,
         })
 
+        const isFixedLeft = colIndex < leftFlatCount || theaderPosition === 'left'
+        const isFixedRight = colIndex >= fullFlatCount - rightFlatCount || theaderPosition === 'right'
+        const isFixedLeftLast =
+          fixedShadowInfo.left && isFixedLeft && flat?.left?.[flat?.left?.length - 1]?.key === col.key
+        const isFixedRightFirst =
+          fixedShadowInfo.right && isFixedRight && flat?.right?.[flat?.right?.length - 1]?.key === col.key
+
         const cell = (
           <ThComponent
             key={col.key}
@@ -241,8 +251,10 @@ export default function TableHeader({
             className={cx(Classes?.tableHeaderCell, col.className, onHeaderCell?.(col)?.className, {
               [Classes?.first]: colIndex === 0,
               [Classes?.last]: colIndex + finalColSpan === fullFlatCount,
-              [Classes?.lockLeft]: colIndex < leftFlatCount || theaderPosition === 'left',
-              [Classes?.lockRight]: colIndex >= fullFlatCount - rightFlatCount || theaderPosition === 'right',
+              [Classes?.fixedLeft]: isFixedLeft,
+              [Classes?.fixedRight]: isFixedRight,
+              [Classes?.fixedLeftLast]: isFixedLeftLast,
+              [Classes?.fixedRightFirst]: isFixedRightFirst,
               [Classes?.leaf]: wrapped.isLeaf,
             })}
             colSpan={finalColSpan}

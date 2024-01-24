@@ -106,9 +106,6 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     tableCellRangeBottom: `${prefix}-cell-range-bottom`,
     tableCellRangeRight: `${prefix}-cell-range-right`,
 
-    fixedLeft: `${prefix}-fixed-left`,
-    fixedRight: `${prefix}-fixed-right`,
-
     rowDetailContainer: `${prefix}-row-detail-container`,
     rowDetailItem: `${prefix}-row-detail-item`,
 
@@ -119,8 +116,11 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     even: `${prefix}-even`,
     odd: `${prefix}-odd`,
 
-    lockLeft: `${prefix}-fixed-left`,
-    lockRight: `${prefix}-fixed-right`,
+    fixedLeft: `${prefix}-fixed-left`,
+    fixedRight: `${prefix}-fixed-right`,
+    fixedLeftLast: `${prefix}-fixed-left-last`,
+    fixedRightFirst: `${prefix}-fixed-right-first`,
+
     rowSpan: `${prefix}-row-span`,
     leaf: `${prefix}-leaf`,
 
@@ -242,7 +242,7 @@ const outerBorderStyleMixin = (Classes: BaseTableContextProps['Classes']) => css
   }
 
   &:not(${Classes?.hasFooter}) tbody tr.${Classes?.last} td {
-    border-bottom: none;
+    //border-bottom: none;
   }
 
   td.${Classes?.rowSpan}:not(.${Classes?.first}) {
@@ -469,11 +469,13 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
     }
 
     // 展开内容样式
+
     .${Classes?.isExpandContentRow} {
       z-index: 21;
     }
 
     // 在 tr 上设置 .no-hover 可以禁用鼠标悬停效果
+
     tr:not(.no-hover):hover > td {
       background: var(--hover-bgcolor);
     }
@@ -526,6 +528,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       th {
         border-inline-end: var(--header-cell-border-horizontal);
       }
+
       td {
         border-inline-end: var(--cell-border-horizontal);
       }
@@ -545,10 +548,6 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
 
     &.has-footer tbody tr.${Classes?.last} td {
       border-bottom: none;
-    }
-
-    .${Classes?.lockLeft}, .${Classes?.lockRight} {
-      z-index: ${Z.fixed};
     }
 
     //#region 锁列阴影
@@ -617,8 +616,45 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
 
     //#endregion
 
-    //#region IE兼容
+    // fixed
+    .${Classes?.fixedLeft}, .${Classes?.fixedRight} {
+      z-index: ${Z.fixed};
+    }
 
+    .${Classes?.fixedLeftLast}, .${Classes?.fixedRightFirst} {
+      overflow: visible;
+
+      &::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: -1px;
+        width: 30px;
+        transform: translateX(100%);
+        transition: box-shadow 0.3s;
+        content: '';
+        pointer-events: none;
+      }
+    }
+
+    .${Classes?.fixedLeftLast} {
+      &::after {
+        box-shadow: inset 10px 0 8px -8px rgba(5, 5, 5, 0.06);
+      }
+    }
+
+    .${Classes?.fixedRightFirst} {
+      &::after {
+        top: 0;
+        bottom: -1px;
+        left: 0;
+        width: 30px;
+        transform: translateX(-100%);
+        box-shadow: inset -10px 0 8px -8px rgba(5, 5, 5, 0.06);
+      }
+    }
+
+    //#region IE兼容
     &.ie-polyfill-wrapper {
       //锁定列兼容 仅在锁定列的情况下生效
 
@@ -652,6 +688,10 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
 
       .${Classes?.fixedLeft} {
         left: 0;
+
+        &:after {
+          box-shadow: inset 10px 0 8px -8px rgba(5, 5, 5, 0.06);
+        }
       }
 
       .${Classes?.fixedRight} {
@@ -671,9 +711,11 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
         background: var(--hover-bgcolor);
       }
     }
+
     //#endregion
 
     // =============== expand ===============
+
     .${Classes?.expandRowFixed} {
       margin: var(--expand-fixed-margin);
     }

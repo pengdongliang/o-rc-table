@@ -37,7 +37,7 @@ import type {
   VirtualEnum,
 } from './interfaces'
 import getTableRenderTemplate from './renderTemplates'
-import { BaseTableCSSVariables, getTableClasses, LOCK_SHADOW_PADDING, StyledArtTableWrapper } from './styles'
+import { BaseTableCSSVariables, getTableClasses, StyledArtTableWrapper } from './styles'
 import {
   addResizeObserver,
   getScrollbarSize,
@@ -52,6 +52,7 @@ import {
 } from './utils'
 
 export type RowKey<RecordType = unknown> = string | keyof RecordType | ((record: RecordType) => React.Key)
+export type FixedShadowInfoType = { left: boolean; right: boolean }
 
 export interface BaseTableProps<RecordType = any> {
   /** 主键 */
@@ -198,6 +199,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   const [needRenderLock, setNeedRenderLock] = useState(true)
   const [offsetY, setOffsetY] = useState<number>(0)
   const [offsetX, setOffsetX, getOffsetX] = useGetState<number>(0)
+  const [fixedShadowInfo, setFixedShadowInfo] = useState<FixedShadowInfoType>({ left: false, right: false })
   // 因为 ResizeObserver 在一开始总是会调用一次所提供的回调函数
   // 故这里为 maxRenderHeight/maxRenderWidth 设置一个默认值即可（因为这两个默认值很快就会被覆盖）
   // https://stackoverflow.com/questions/60026223/does-resizeobserver-invokes-initially-on-page-load
@@ -282,7 +284,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
             display: showHeader ? undefined : 'none',
           }}
         >
-          <TableHeader info={info} stickyRightOffset={stickyRightOffset} />
+          <TableHeader info={info} stickyRightOffset={stickyRightOffset} fixedShadowInfo={fixedShadowInfo} />
           <div
             className={contextValue.Classes?.verticalScrollPlaceholder}
             style={getHasScrollY() ? { width: getScrollBarWidth() } : undefined}
@@ -291,14 +293,15 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       )
     },
     [
+      getHasScrollY,
+      getScrollBarWidth,
       contextValue.Classes?.tableHeader,
       contextValue.Classes?.tableHeaderNoScrollbar,
       contextValue.Classes?.verticalScrollPlaceholder,
-      getScrollBarWidth,
-      showHeader,
-      getHasScrollY,
-      props,
       stickyTop,
+      showHeader,
+      fixedShadowInfo,
+      props,
     ]
   )
 
@@ -315,34 +318,17 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
 
   const syncHorizontalScroll = useCallback(
     (x: number) => {
-      updateOffsetX(x)
-
       const { flat } = lastInfo.current
 
-      const leftLockShadow = domHelper.current.getLeftLockShadow()
-      if (leftLockShadow) {
-        const shouldShowLeftLockShadow = flat.left.length > 0 && needRenderLock && x > 0
-        if (shouldShowLeftLockShadow) {
-          leftLockShadow.classList.add('show-shadow')
-        } else {
-          leftLockShadow.classList.remove('show-shadow')
-        }
-      }
+      const shouldShowLeftLockShadow = flat.left.length > 0 && needRenderLock && x > 0
+      const shouldShowRightLockShadow =
+        flat.right.length > 0 &&
+        needRenderLock &&
+        x < domHelper.current.virtual.scrollWidth - domHelper.current.virtual.clientWidth
 
-      const rightLockShadow = domHelper.current.getRightLockShadow()
-      if (rightLockShadow) {
-        const shouldShowRightLockShadow =
-          flat.right.length > 0 &&
-          needRenderLock &&
-          x < domHelper.current.virtual.scrollWidth - domHelper.current.virtual.clientWidth
-        if (shouldShowRightLockShadow) {
-          rightLockShadow.classList.add('show-shadow')
-        } else {
-          rightLockShadow.classList.remove('show-shadow')
-        }
-      }
+      setFixedShadowInfo({ left: !!shouldShowLeftLockShadow, right: shouldShowRightLockShadow })
     },
-    [needRenderLock, updateOffsetX]
+    [needRenderLock]
   )
 
   const syncHorizontalScrollFromTableBody = useCallback(() => {
@@ -428,6 +414,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
               data={dataSource.slice(topIndex, bottomIndex)}
               stickyRightOffset={stickyRightOffset}
               horizontalRenderInfo={info}
+              fixedShadowInfo={fixedShadowInfo}
               verticalRenderInfo={{
                 first: 0,
                 offset: topIndex,
@@ -447,22 +434,23 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       )
     },
     [
-      components,
-      contextValue.Classes?.horizontalScrollContainer,
       contextValue.Classes?.tableBody,
-      contextValue.Classes?.tableBodyEmpty,
+      contextValue.Classes?.horizontalScrollContainer,
       contextValue.Classes?.virtual,
       contextValue.Classes?.virtualBlank,
+      contextValue.Classes?.tableBodyEmpty,
       dataSource,
-      emptyCellHeight,
-      onRow,
+      getHasScrollY,
       getScrollBarWidth,
+      onRow,
+      rowKey,
+      fixedShadowInfo,
+      components,
+      loading,
+      emptyCellHeight,
+      props,
       handleRowMouseEnter,
       handleRowMouseLeave,
-      getHasScrollY,
-      loading,
-      props,
-      rowKey,
     ]
   )
 
@@ -489,6 +477,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
             onRow={onRow}
             rowKey={rowKey}
             stickyRightOffset={stickyRightOffset}
+            fixedShadowInfo={fixedShadowInfo}
             verticalRenderInfo={{
               offset: 0,
               first: 0,
@@ -506,49 +495,19 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       )
     },
     [
-      contextValue.Classes?.horizontalScrollContainer,
+      getHasScrollY,
+      getScrollBarWidth,
       contextValue.Classes?.tableFooter,
+      contextValue.Classes?.horizontalScrollContainer,
       contextValue.Classes?.verticalScrollPlaceholder,
+      stickyBottom,
       footerDataSource,
       onRow,
-      getScrollBarWidth,
+      rowKey,
+      fixedShadowInfo,
+      props,
       handleRowMouseEnter,
       handleRowMouseLeave,
-      getHasScrollY,
-      props,
-      rowKey,
-      stickyBottom,
-    ]
-  )
-
-  const renderLockShadows = useCallback(
-    (info: RenderInfo) => {
-      const stickyRightOffset = getHasScrollY() ? getScrollBarWidth() : 0
-
-      return (
-        <>
-          <div
-            className={contextValue.Classes?.lockShadowMask}
-            style={{ left: 0, width: info.leftLockTotalWidth + LOCK_SHADOW_PADDING }}
-          >
-            <div className={cx(contextValue.Classes?.lockShadow, contextValue.Classes?.leftLockShadow)} />
-          </div>
-          <div
-            className={contextValue.Classes?.lockShadowMask}
-            style={{ right: 0, width: info.rightLockTotalWidth + LOCK_SHADOW_PADDING + stickyRightOffset }}
-          >
-            <div className={cx(contextValue.Classes?.lockShadow, contextValue.Classes?.rightLockShadow)} />
-          </div>
-        </>
-      )
-    },
-    [
-      contextValue.Classes?.leftLockShadow,
-      contextValue.Classes?.lockShadow,
-      contextValue.Classes?.lockShadowMask,
-      contextValue.Classes?.rightLockShadow,
-      getScrollBarWidth,
-      getHasScrollY,
     ]
   )
 
@@ -685,9 +644,16 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       setTableWidth?.(domHelper.current.tableBody.clientWidth)
     })
 
-    hozScrollSubject.current.pipe(op.debounceTime(30)).subscribe((nextOffsetX) => {
-      syncHorizontalScroll(nextOffsetX)
-    })
+    hozScrollSubject.current
+      .pipe(
+        op.tap((nextOffsetX) => {
+          syncHorizontalScroll(nextOffsetX)
+        }),
+        op.debounceTime(30)
+      )
+      .subscribe((nextOffsetX) => {
+        updateOffsetX(nextOffsetX)
+      })
 
     const handleTableWrapperResize = () => {
       resizeSubject.current.next()
@@ -812,7 +778,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     //       scrollLoad?.callback(startIndex)
     //     })
     // )
-  }, [adjustNeedRenderLock, setTableWidth, syncHorizontalScroll, updateStickyScroll, virtualDebugLabel])
+  }, [adjustNeedRenderLock, setTableWidth, syncHorizontalScroll, updateOffsetX, updateStickyScroll, virtualDebugLabel])
 
   /**
    * 更新 DOM 节点的引用，方便其他方法直接操作 DOM
@@ -909,6 +875,11 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     setTableWidth?.(domHelper.current.tableBody.clientWidth)
   }, [hasScrollY, setTableWidth])
 
+  useEffect(() => {
+    const list = dataSource?.filter((i) => i.$expadFlag !== false)
+    rowHeightManager.current = makeRowHeightManager(list?.length, estimatedRowHeight)
+  }, [dataSource, estimatedRowHeight])
+
   useImperativeHandle(ref, () => {
     return {
       nativeElement: artTableWrapperRef.current,
@@ -950,7 +921,6 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
                 {renderTableHeader(info)}
                 {renderTableBody(info)}
                 {footerDataSource?.length > 0 && renderTableFooter(info)}
-                {renderLockShadows(info)}
               </div>
               {renderStickyScroll()}
             </>

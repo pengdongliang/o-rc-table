@@ -145,7 +145,9 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
       }
       opts.onExpand?.(!expanded, record)
     }
+
     const detailPrimaryKey = typeof rowKey === 'string' ? rowKey : `${rowDetailMetaKey.toString()}RowKey`
+
     return pipeline
       .dataSource(
         flatMap(pipeline.getDataSource(), (row, rowIndex) => {
@@ -154,6 +156,8 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
             arr.push({
               [rowDetailMetaKey]: true,
               ...row,
+              $expadnIndex: rowIndex,
+              $expadFlag: !!openKeySet.has(internals.safeGetRowKey(rowKey, row, rowIndex)),
               [detailPrimaryKey]: getDetailKey(row, rowIndex),
             })
           }
