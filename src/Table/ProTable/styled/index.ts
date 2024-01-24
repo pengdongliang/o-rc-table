@@ -83,7 +83,7 @@ export const TableContainerStyled = styled.div(({ theme }) => {
             }
           }
 
-          &:hover {
+          &:hover:not(:has .no-hover) {
             td {
               background-color: #f8f8f8;
             }
@@ -98,8 +98,10 @@ export const TableContainerStyled = styled.div(({ theme }) => {
             border: 0;
           }
 
-          td {
-            background-color: ${antdTheme.components.Table?.headerBg};
+          :not(:has(.${namespace}-table-body-empty)) {
+            td {
+              background-color: ${antdTheme.components.Table?.headerBg};
+            }
           }
         }
       }
