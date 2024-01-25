@@ -90,7 +90,7 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
   function appendLastColumnWidth(cols: ColumnType[], remainingWidthSum: number) {
     const lastColumn = cols[cols.length - 1]
     if (isLeafNode(lastColumn)) {
-      cols[cols.length - 1].width = remainingWidthSum + (lastColumn.width ?? 0)
+      cols[cols.length - 1].width = remainingWidthSum + ((lastColumn.width as number) ?? 0)
     } else if (lastColumn.children?.length) {
       cols[cols.length - 1].children = appendLastColumnWidth(lastColumn.children, remainingWidthSum)
     }
@@ -118,8 +118,8 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
 function getPercentageColumn(pipeline: TablePipeline) {
   let tableWidth = pipeline.ref.current.domHelper?.tableBody?.clientWidth || pipeline.getStateAtKey(tableWidthKey)
   if (!tableWidth) return
-  const columnsWidthSum = getColumnWidthSum(pipeline, excludeKeys)
   const excludeKeys = [CHECKBOX_COLUMN_KEY, RADIO_COLUMN_KEY, EXPAND_COLUMN_KEY]
+  const columnsWidthSum = getColumnWidthSum(pipeline, excludeKeys)
   const cols = pipeline.getColumns()
   const remainingWidth = Math.floor(tableWidth - columnsWidthSum)
   const preRemainingWidthSum = tableWidth
@@ -143,23 +143,24 @@ function getPercentageColumn(pipeline: TablePipeline) {
       })
     } else {
       columns.forEach((col) => {
+        const width = col.width as number
         if (col?.features?.flex !== false) {
           if (!isLeafNode(col) && col.children?.length) {
             const newList = dfs(col.children, remainingWidthSum)
             col.children = newList?.columns
             remainingWidthSum = newList?.remainingWidthSum ?? 0
           } else if (!excludeKeys.includes(col.key)) {
-            if (col.width === undefined) {
+            if (width === undefined) {
               col.width = Math.floor(0.01 * tableWidth)
             } else {
-              col.width = Math.floor((col.width / columnsWidthSum) * tableWidth)
+              col.width = Math.floor((width / columnsWidthSum) * tableWidth)
             }
           } else {
-            tableWidth -= col.width ?? 0
+            tableWidth -= width ?? 0
           }
         }
         if (isLeafNode(col)) {
-          remainingWidthSum -= col.width ?? 0
+          remainingWidthSum -= width ?? 0
         }
       })
     }
