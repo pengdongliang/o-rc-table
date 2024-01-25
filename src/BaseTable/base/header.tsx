@@ -246,7 +246,7 @@ export default function TableHeader({
 
         const cell = (
           <ThComponent
-            key={col.key}
+            key={col.key ?? col.dataIndex}
             {...onHeaderCell?.(col)}
             className={cx(Classes?.tableHeaderCell, col.className, onHeaderCell?.(col)?.className, {
               [Classes?.first]: colIndex === 0,
@@ -256,6 +256,7 @@ export default function TableHeader({
               [Classes?.fixedLeftLast]: isFixedLeftLast,
               [Classes?.fixedRightFirst]: isFixedRightFirst,
               [Classes?.leaf]: wrapped.isLeaf,
+              [Classes?.tableCellEllipsis]: col.ellipsis,
             })}
             colSpan={finalColSpan}
             rowSpan={isLeaf ? rowCount - level : undefined}
@@ -269,7 +270,7 @@ export default function TableHeader({
           >
             {theaderPosition === 'center' && positionStyle.position === 'sticky' ? null : (
               <div
-                className={cx(Classes?.tableHeaderCellContent, {
+                className={cx(Classes?.tableCellContent, {
                   [Classes?.tableCellEllipsis]: col.ellipsis,
                 })}
                 style={{ justifyContent }}

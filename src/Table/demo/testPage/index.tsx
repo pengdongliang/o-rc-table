@@ -60,21 +60,7 @@ const STOSingleProductionDeliveryPlan = () => {
         title: '物料编码',
         dataIndex: 'materialCode',
         fixed: 'left',
-        width: 120,
-        children: [
-          {
-            title: '物料编码1',
-            dataIndex: 'materialCode1',
-            fixed: 'left',
-            width: 100,
-          },
-          {
-            title: '物料编码2',
-            dataIndex: 'materialCode2',
-            fixed: 'left',
-            width: 100,
-          },
-        ],
+        width: 80,
       },
       {
         title: '物料名称',
@@ -85,6 +71,20 @@ const STOSingleProductionDeliveryPlan = () => {
         title: '物料组',
         dataIndex: 'materialGroup',
         width: 120,
+        children: [
+          {
+            title: '物料组1',
+            dataIndex: 'materialGroup1',
+            fixed: 'left',
+            width: 100,
+          },
+          {
+            title: '物料组2',
+            dataIndex: 'materialGroup2',
+            fixed: 'left',
+            width: 100,
+          },
+        ],
       },
       {
         title: '采购类型',
@@ -339,9 +339,9 @@ const STOSingleProductionDeliveryPlan = () => {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   const firstData = dataSourceMock.data.list.splice(0, 1)
-                  dataSourceMock.data.list = firstData
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
+                  dataSourceMock.data.list = firstData
                   // dataSourceMock.data.list = firstData.concat(dataSourceMock.data.list.sort(() => Math.random() - 0.5))
                   resolve(dataSourceMock)
                 }, 300)

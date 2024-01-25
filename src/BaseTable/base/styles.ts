@@ -59,6 +59,8 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     tableHeaderRow: `${prefix}-header-row`,
     /** 单元格 */
     tableCell: `${prefix}-cell`,
+    /** 单元格内容 */
+    tableCellContent: `${prefix}-cell-content`,
     /** 表头的单元格 */
     tableHeaderCell: `${prefix}-header-cell`,
     tableHeaderCellContent: `${prefix}-header-cell-content`,
@@ -118,8 +120,8 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
 
     fixedLeft: `${prefix}-fixed-left`,
     fixedRight: `${prefix}-fixed-right`,
-    fixedLeftLast: `${prefix}-fixed-left-last`,
-    fixedRightFirst: `${prefix}-fixed-right-first`,
+    fixedLeftLast: `${prefix}-cell-fix-left-last`,
+    fixedRightFirst: `${prefix}-cell-fix-right-first`,
 
     rowSpan: `${prefix}-row-span`,
     leaf: `${prefix}-leaf`,
@@ -587,6 +589,25 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
 
     //#endregion
 
+    // ================ elliepsis ================
+
+    .${Classes?.tableCellEllipsis} {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      word-break: keep-all;
+
+      &.${Classes?.fixedLeftLast}, &.${Classes?.fixedRightFirst} {
+        overflow: visible;
+
+        .${Classes?.tableCellContent} {
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
     //#region 空表格展现
 
     .${Classes?.emptyWrapper} {
@@ -617,6 +638,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
     //#endregion
 
     // fixed
+
     .${Classes?.fixedLeft}, .${Classes?.fixedRight} {
       z-index: ${Z.fixed};
     }
@@ -655,6 +677,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
     }
 
     //#region IE兼容
+
     &.ie-polyfill-wrapper {
       //锁定列兼容 仅在锁定列的情况下生效
 

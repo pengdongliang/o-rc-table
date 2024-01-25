@@ -227,8 +227,13 @@ export const getTitleFromCellRenderChildren = ({
   if (ellipsisConfig && (ellipsisConfig.showTitle || rowType === 'header')) {
     if (typeof children === 'string' || typeof children === 'number') {
       title = children.toString()
-    } else if (React.isValidElement(children) && typeof children.props.children === 'string') {
-      title = children.props.children
+    } else if (React.isValidElement(children)) {
+      const findIndex = React.Children.toArray(children.props.children)?.findIndex((child) => typeof child === 'string')
+      if (typeof children.props.children === 'string') {
+        title = children.props.children
+      } else if (findIndex > -1) {
+        title = React.Children.toArray(children.props.children)[findIndex] as string
+      }
     }
   }
   return title

@@ -68,9 +68,22 @@ export function HtmlTable({
       const value = internals.safeGetValue(column, record, rowIndex)
       const cellProps: any = column.onCell?.(value, record, rowIndex) ?? {}
 
+      const isFixedLeft = colIndex < leftFlatCount || tbodyPosition === 'left'
+      const isFixedRight = colIndex >= fullFlatCount - rightFlatCount
+      const isFixedLeftLast =
+        fixedShadowInfo.left && isFixedLeft && flat?.left?.[flat?.left?.length - 1]?.key === column.key
+      const isFixedRightFirst =
+        fixedShadowInfo.right && isFixedRight && flat?.right?.[flat?.right?.length - 1]?.key === column.key
+
       let cellContent: ReactNode = value
       if (column.render) {
         cellContent = column.render(value, record, record.$dataIndex ?? rowIndex)
+      } else if (column.ellipsis && (isFixedLeftLast || isFixedRightFirst)) {
+        cellContent = (
+          <span key={column.key} className={Classes?.tableCellContent}>
+            {cellContent}
+          </span>
+        )
       }
 
       let colSpan = 1
@@ -123,13 +136,6 @@ export function HtmlTable({
         children: cellContent,
       })
 
-      const isFixedLeft = colIndex < leftFlatCount || tbodyPosition === 'left'
-      const isFixedRight = colIndex >= fullFlatCount - rightFlatCount
-      const isFixedLeftLast =
-        fixedShadowInfo.left && isFixedLeft && flat?.left?.[flat?.left?.length - 1]?.key === column.key
-      const isFixedRightFirst =
-        fixedShadowInfo.right && isFixedRight && flat?.right?.[flat?.right?.length - 1]?.key === column.key
-
       return React.createElement(
         TdComponent,
         {
@@ -162,18 +168,18 @@ export function HtmlTable({
     },
     [
       spanManager,
-      verInfo.limit,
-      hozInfo.visible.length,
-      hozInfo.stickyLeftMap,
-      hozInfo.stickyRightMap,
       leftFlatCount,
+      tbodyPosition,
       fullFlatCount,
       rightFlatCount,
-      tbodyPosition,
       fixedShadowInfo.left,
       fixedShadowInfo.right,
       flat?.left,
       flat?.right,
+      verInfo.limit,
+      hozInfo.visible.length,
+      hozInfo.stickyLeftMap,
+      hozInfo.stickyRightMap,
       TdComponent,
       Classes?.tableCell,
       Classes?.first,
@@ -184,6 +190,7 @@ export function HtmlTable({
       Classes?.fixedRightFirst,
       Classes?.rowSpan,
       Classes?.tableCellEllipsis,
+      Classes?.tableCellContent,
       tbodyHtmlTag,
       stickyRightOffset,
     ]
