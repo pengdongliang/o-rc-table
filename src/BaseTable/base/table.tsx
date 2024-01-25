@@ -271,6 +271,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
 
   const renderTableHeader = useCallback(
     (info: RenderInfo) => {
+      // TODO 在未占满高度的情况下展开行会导致表头少了滚动宽度
       const renderHeader = getTableRenderTemplate('header')
       if (typeof renderHeader === 'function') {
         return renderHeader(info, props)
@@ -364,6 +365,12 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       })
   }, [])
 
+  const getSlotBlankHeight = () => {
+    const tableBodyHeight = domHelper.current?.tableBody?.offsetHeight ?? 0
+    const tableElementHeight = domHelper.current?.tableElement?.offsetHeight ?? 0
+    return tableBodyHeight - tableElementHeight
+  }
+
   const renderTableBody = useCallback(
     (info: RenderInfo) => {
       const tableBodyClassName = cx(contextValue.Classes?.tableBody, contextValue.Classes?.horizontalScrollContainer)
@@ -399,9 +406,12 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
         })
       }
 
+      const slotBlankHeight = getSlotBlankHeight()
+      const slotBlankStyle = slotBlankHeight > 0 ? { height: '100%' } : {}
+
       return (
         <div className={tableBodyClassName}>
-          <div className={contextValue.Classes?.virtual} tabIndex={-1} style={virtualStyle}>
+          <div className={contextValue.Classes?.virtual} tabIndex={-1} style={{ ...virtualStyle, ...slotBlankStyle }}>
             {topBlank > 0 && (
               <div
                 key="top-blank"

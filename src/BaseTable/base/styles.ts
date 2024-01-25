@@ -359,6 +359,14 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       flex: none;
     }
 
+    .${Classes?.tableBody} {
+      height: 100%;
+    }
+
+    .${Classes?.tableRow} {
+      position: relative;
+    }
+
     .${Classes?.tableBody}, .${Classes?.tableFooter} {
       background: var(--bgcolor);
       overflow: auto;
@@ -369,13 +377,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       &.empty {
         position: relative;
       }
-    }
 
-    .${Classes?.tableRow} {
-      position: relative;
-    }
-
-    .${Classes?.tableBody}, .${Classes?.tableFooter} {
       .${Classes?.tableCellRangeSelected} {
         background-color: #e6effb !important;
       }
@@ -526,6 +528,10 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       word-break: break-all;
     }
 
+    .${Classes?.emptyColCell} td {
+      border-bottom: none;
+    }
+
     .${Classes?.artTableBordered} {
       th {
         border-inline-end: var(--header-cell-border-horizontal);
@@ -617,8 +623,8 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       text-align: center;
       position: absolute;
       left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
+      top: 30px;
+      transform: translateX(-50%);
 
       .${Classes.emptyImg} {
         margin-bottom: 8px;

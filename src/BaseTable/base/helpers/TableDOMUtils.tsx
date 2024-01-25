@@ -72,7 +72,7 @@ export class TableDOMHelper {
       this.tableHeaderMain = this.artTable.querySelector(`.${Classes?.tableHeaderMain}`)
       this.tableBody = this.artTable.querySelector(`.${Classes?.tableBody}`)
       this.virtual = this.artTable.querySelector(`.${Classes?.virtual}`)
-      this.tableElement = this.artTable.querySelector(`.${Classes?.tableBody} table`)
+      this.tableElement = this.artTable.querySelector(`.${Classes?.tableBody} > .${Classes?.virtual} > table`)
       this.tableFooter = this.artTable.querySelector(`.${Classes?.tableFooter}`)
       this.tableFooterMain = this.artTable.querySelector(`.${Classes?.tableFooterMain}`)
 
@@ -93,6 +93,10 @@ export class TableDOMHelper {
       `.${this.Classes?.tableBody} .${this.Classes?.virtual} .${this.Classes?.tableDom} .${this.Classes?.tableBodyTbody}`
     )
     return (tbody?.childNodes as NodeListOf<HTMLTableRowElement>) ?? []
+  }
+
+  getTableVirtualHtml(): HTMLTableElement {
+    return this.artTable.querySelector(`.${this.Classes?.tableBody} .${this.Classes?.virtual}`)
   }
 
   getTableBodyHtmlTable(): HTMLTableElement {

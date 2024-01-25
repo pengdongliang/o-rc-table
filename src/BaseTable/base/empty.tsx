@@ -57,7 +57,10 @@ export function EmptyHtmlTable({
       <TableComponent key="table" className={Classes?.tableDom}>
         <Colgroup descriptors={descriptors} />
         <WrapperComponent>
-          <TrComponent className={cx(Classes?.tableRow, Classes?.first, Classes?.last, 'no-hover')} data-rowindex={0}>
+          <TrComponent
+            className={cx(Classes?.tableRow, Classes?.first, Classes?.last, Classes?.emptyColCell, 'no-hover')}
+            data-rowindex={0}
+          >
             {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <TdComponent
               className={cx(Classes?.tableCell, Classes?.first, Classes?.last)}

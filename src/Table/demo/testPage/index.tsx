@@ -338,10 +338,10 @@ const STOSingleProductionDeliveryPlan = () => {
                 setTimeout(() => {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
-                  const firstData = dataSourceMock.data.list.splice(0, 1)
+                  // const firstData = dataSourceMock.data.list.splice(0, 5)
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
-                  dataSourceMock.data.list = firstData
+                  // dataSourceMock.data.list = firstData
                   // dataSourceMock.data.list = firstData.concat(dataSourceMock.data.list.sort(() => Math.random() - 0.5))
                   resolve(dataSourceMock)
                 }, 300)
