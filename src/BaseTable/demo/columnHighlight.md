@@ -33,7 +33,7 @@ export default () => {
     onHeaderCell: () => ({ style: { textAlign: 'center', padding: 0 } }),
   })
   const columns = col([
-    { fixed: true, dataIndex: 'occupation', name: '职务', width: 120 },
+    { fixed: true, dataIndex: 'occupation', name: '职务', width: 100, features: { flex: false } },
     {
       name: '人数',
       dataIndex: 'personTotal',

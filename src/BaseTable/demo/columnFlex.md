@@ -3,7 +3,9 @@ title: 列宽充满
 order: 303
 ---
 
-当需要一个或多个列来填充表格中的整个可用空间时，可以配置`column.features.flex`属性，设置了该属性的列将会按照弹性值的比例平分表格的剩余空间。
+1. 当需要一个或多个列来填充表格中的整个可用空间时，可以配置`column.features.flex`属性，设置了该属性的列将会按照弹性值的比例平分表格的剩余空间。
+2. 当所有列未设置`flex`属性时，列的宽度将按照`column.width`属性的值进行比例分配, 默认分配特殊列(展开, 选择)。
+3. 可以配置`column.features.flex = false` , 来关闭该特性。
 
 > 注意：当同时设置了`columnResize`且该列宽被拖拽过大小时，该列的`flex`属性将不再生效
 
@@ -26,7 +28,7 @@ export default () => {
     { dataIndex: 'order', name: '物流编码', width: 200, },
     { dataIndex: 'from', name: '发货地', width: 200, features: { flex: 1, minWidth: 200, maxWidth: 300 } },
     { dataIndex: 'to', name: '收货地', width: 200, features: { flex: 2 } },
-    { dataIndex: 'amount', name: '应付金额', width: 100, align: 'right' },
+    { dataIndex: 'amount', name: '应付金额', width: 120, align: 'right' },
     { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right' }
   ]
 

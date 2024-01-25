@@ -12,6 +12,8 @@ import console from '../../utils/console'
 import { always, flatMap } from '../../utils/others'
 import { TablePipeline } from '../pipeline'
 import { tableWidthKey } from './autoFill'
+import { CHECKBOX_COLUMN_KEY } from './multiSelect'
+import { RADIO_COLUMN_KEY } from './singleSelect'
 
 export interface RenderExpandIconProps<RecordType> extends Partial<React.StyleHTMLAttributes<HTMLElement>> {
   prefixCls: string
@@ -84,6 +86,7 @@ export interface RowDetailFeatureOptions<RecordType = any> {
 }
 
 const rowDetailSymbol = Symbol('row-detail')
+export const EXPAND_COLUMN_KEY = 'table-expand'
 
 const fallbackRenderDetail = () => (
   <div style={{ margin: '8px 24px' }}>
@@ -351,7 +354,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
 
       const detailColumn: ColumnType = {
         ...baseColumn,
-        key: 'table-expand',
+        key: EXPAND_COLUMN_KEY,
         align: 'center',
         width: opts.columnWidth ?? 50,
         fixed: opts.fixed,
@@ -368,7 +371,7 @@ export function rowDetail(opts: RowDetailFeatureOptions = {}) {
           ),
           render,
         }
-      } else if (['table-checkbox', 'table-radio'].includes(tableColumns?.[0]?.key)) {
+      } else if ([CHECKBOX_COLUMN_KEY, RADIO_COLUMN_KEY].includes(tableColumns?.[0]?.key)) {
         const selectColumn = tableColumns.splice(0, 1, detailColumn)
         if (selectColumn?.[0]) {
           tableColumns.unshift(selectColumn?.[0])

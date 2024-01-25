@@ -7,6 +7,8 @@ import { mergeCellProps, SINGLE_SELECT_MARK_PROPNAME } from '../../utils'
 import { always } from '../../utils/others'
 import { TablePipeline } from '../pipeline'
 
+export const RADIO_COLUMN_KEY = 'table-radio'
+
 export interface SingleSelectFeatureOptions<RecordType = any> {
   /** 是否高亮被选中的行 */
   highlightRowWhenSelected?: boolean
@@ -82,7 +84,7 @@ export function singleSelect(opts: SingleSelectFeatureOptions = {}) {
     }
 
     const columnProps: ColumnType = {
-      key: 'table-radio',
+      key: RADIO_COLUMN_KEY,
       name: '',
       align: 'center',
       title: renderColumnTitle(),

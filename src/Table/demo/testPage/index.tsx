@@ -61,6 +61,20 @@ const STOSingleProductionDeliveryPlan = () => {
         dataIndex: 'materialCode',
         fixed: 'left',
         width: 120,
+        children: [
+          {
+            title: '物料编码1',
+            dataIndex: 'materialCode1',
+            fixed: 'left',
+            width: 100,
+          },
+          {
+            title: '物料编码2',
+            dataIndex: 'materialCode2',
+            fixed: 'left',
+            width: 100,
+          },
+        ],
       },
       {
         title: '物料名称',
@@ -147,7 +161,7 @@ const STOSingleProductionDeliveryPlan = () => {
       {
         title: '操作',
         dataIndex: 'opt',
-        width: 250,
+        width: 200,
         fixed: 'right',
         render: () => {
           return (

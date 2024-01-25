@@ -11,6 +11,7 @@ import { TablePipeline } from '../pipeline'
 const fullRowsSetKey = 'fullRowsSetKey'
 const allEnableKeys = 'allEnableKeys'
 const selectValueSetKey = 'selectValueSetKey'
+export const CHECKBOX_COLUMN_KEY = 'table-checkbox'
 
 export interface MultiSelectFeatureOptions<RecordType = any> {
   /** 非受控用法：默认选中的值 */
@@ -170,7 +171,7 @@ export function multiSelect(opts: MultiSelectFeatureOptions = {}) {
       }
 
       const columnProps: ColumnType = {
-        key: 'table-checkbox',
+        key: CHECKBOX_COLUMN_KEY,
         name: '',
         title: renderColumnTitle(),
         align: 'center',

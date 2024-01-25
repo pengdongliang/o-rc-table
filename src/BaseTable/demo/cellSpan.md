@@ -38,6 +38,8 @@ export default () => {
     { dataIndex: 'balance', name: '应收余额', width: 100, align: 'right' }
   ]
 
-  return <Table dataSource={dataSource} columns={columns} />
+  const pipeline = useTablePipeline().input({dataSource, columns})
+
+  return <Table {...pipeline.getProps()} />
 }
 ```

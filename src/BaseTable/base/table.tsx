@@ -1,4 +1,4 @@
-import { ThemeProvider as EmotionThemeProvider } from '@emotion/react'
+import { ThemeProvider as EmotionThemeProvider, useTheme } from '@emotion/react'
 import { createImmutable } from '@rc-component/context'
 import type { CompareProps } from '@rc-component/context/lib/Immutable'
 import { useGetState } from 'ahooks'
@@ -205,6 +205,8 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   // https://stackoverflow.com/questions/60026223/does-resizeobserver-invokes-initially-on-page-load
   const [maxRenderHeight, setMaxRenderHeight] = useState<number>(600)
   const [maxRenderWidth, setMaxRenderWidth] = useState<number>(800)
+
+  const theme = useTheme()
 
   // ==================== Customize =====================
   const getComponent = React.useCallback<GetComponent>(
@@ -913,7 +915,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
 
   return (
     <BaseTableContext.Provider value={contextValue}>
-      <EmotionThemeProvider theme={contextValue}>
+      <EmotionThemeProvider theme={{ namespace: contextValue.namespace, Classes: contextValue.Classes, ...theme }}>
         <StyledArtTableWrapper {...artTableWrapperProps}>
           {Object.keys(contextValue.Classes).length > 0 && (
             <>
