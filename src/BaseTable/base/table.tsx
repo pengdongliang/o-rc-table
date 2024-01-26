@@ -32,6 +32,7 @@ import type {
   GetComponent,
   RenderInfo,
   ResolvedUseVirtual,
+  RowClassName,
   TableComponents,
   VerticalRenderRange,
   VirtualEnum,
@@ -138,6 +139,8 @@ export interface BaseTableProps<RecordType = any> {
   // css变量兼容
   cssVariables?: { [key: string]: any }
   enableCSSVariables?: boolean
+  /** 表格行的类名 */
+  rowClassName?: string | RowClassName<RecordType>
 
   scrollLoad?: {
     /** 表格滚动加载回调 */
@@ -182,6 +185,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     loading,
     emptyCellHeight,
     virtualDebugLabel,
+    rowClassName,
   } = props
   const props$ = useRef<BehaviorSubject<BaseTableProps>>(new BehaviorSubject(props))
   const domHelper = useRef<TableDOMHelper>(null)
@@ -432,6 +436,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
                 limit: bottomIndex,
                 last: dataSource.length - 1,
               }}
+              rowClassName={rowClassName}
             />
             {bottomBlank > 0 && (
               <div
@@ -456,6 +461,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       onRow,
       rowKey,
       fixedShadowInfo,
+      rowClassName,
       components,
       loading,
       emptyCellHeight,
@@ -495,6 +501,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
               last: footerDataSource.length - 1,
               limit: Infinity,
             }}
+            rowClassName={rowClassName}
           />
           {footerDataSource.length > 0 ? (
             <div
@@ -516,6 +523,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       onRow,
       rowKey,
       fixedShadowInfo,
+      rowClassName,
       props,
       handleRowMouseEnter,
       handleRowMouseLeave,

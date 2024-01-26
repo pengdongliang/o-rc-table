@@ -340,10 +340,10 @@ const STOSingleProductionDeliveryPlan = () => {
                   const { materialCodes } = options?.params ?? {}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
-                  const firstData = newDataList.data.list.splice(0, 0)
+                  // const firstData = newDataList.data.list.splice(0, 5)
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
-                  newDataList.data.list = firstData
+                  // newDataList.data.list = firstData
                   // newDataList.data.list = firstData.concat(newDataList.data.list.sort(() => Math.random() - 0.5))
                   if (materialCodes) {
                     const findItem = newDataList.data.list.find((i: any) => i?.materialCode?.includes(materialCodes))

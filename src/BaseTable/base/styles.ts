@@ -115,8 +115,8 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
 
     first: `${prefix}-first`,
     last: `${prefix}-last`,
-    even: `${prefix}-even`,
-    odd: `${prefix}-odd`,
+    even: `${prefix}-row_even`,
+    odd: `${prefix}-row_odd`,
 
     fixedLeft: `${prefix}-fixed-left`,
     fixedRight: `${prefix}-fixed-right`,
@@ -556,6 +556,12 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
 
     &.has-footer tbody tr.${Classes?.last} td {
       border-bottom: none;
+    }
+
+    tr.${Classes?.even} {
+      td {
+        background-color: #fcfcfc;
+      }
     }
 
     //#region 锁列阴影

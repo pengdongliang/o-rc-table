@@ -110,7 +110,7 @@ function renderTableBodyInIE(
   props: BaseTableProps,
   extra?: { rowProps: React.HTMLAttributes<HTMLTableRowElement>; stickyRightOffset: number }
 ) {
-  const { dataSource, onRow, rowKey } = props
+  const { dataSource, onRow, rowKey, rowClassName } = props
 
   const { topIndex, bottomBlank, topBlank, bottomIndex } = info.verticalRenderRange
   const { flat, visible, hasLockColumn, Classes } = info
@@ -141,6 +141,7 @@ function renderTableBodyInIE(
         <HtmlTable
           tbodyHtmlTag="tbody"
           {...commonProps}
+          rowClassName={rowClassName}
           tbodyPosition={hasLockColumn ? 'center' : undefined}
           horizontalRenderInfo={info}
           verticalRenderInfo={verticalRenderInfo}
@@ -157,6 +158,7 @@ function renderTableBodyInIE(
           <HtmlTable
             tbodyHtmlTag="tbody"
             {...commonProps}
+            rowClassName={rowClassName}
             tbodyPosition="left"
             horizontalRenderInfo={{
               ...info,
@@ -183,6 +185,7 @@ function renderTableBodyInIE(
           <HtmlTable
             tbodyHtmlTag="tbody"
             {...commonProps}
+            rowClassName={rowClassName}
             tbodyPosition="right"
             stickyRightOffset={extra.stickyRightOffset}
             horizontalRenderInfo={{
@@ -212,7 +215,7 @@ function renderTableFooterInIE(
   props: BaseTableProps,
   extra?: { rowProps: React.HTMLAttributes<HTMLTableRowElement> }
 ) {
-  const { footerDataSource = [], onRow, rowKey, stickyBottom } = props
+  const { footerDataSource = [], onRow, rowKey, stickyBottom, rowClassName } = props
   const _getRowProps = composeRowPropsGetter(onRow, extra.rowProps)
 
   const { flat, visible, hasLockColumn, Classes } = info
@@ -236,6 +239,7 @@ function renderTableFooterInIE(
         <HtmlTable
           tbodyHtmlTag="tfoot"
           {...commonProps}
+          rowClassName={rowClassName}
           tbodyPosition={hasLockColumn ? 'center' : undefined}
           horizontalRenderInfo={info}
         />
@@ -245,6 +249,7 @@ function renderTableFooterInIE(
           <HtmlTable
             tbodyHtmlTag="tfoot"
             {...commonProps}
+            rowClassName={rowClassName}
             tbodyPosition="left"
             horizontalRenderInfo={{
               ...info,
@@ -264,6 +269,7 @@ function renderTableFooterInIE(
           <HtmlTable
             tbodyHtmlTag="tfoot"
             {...commonProps}
+            rowClassName={rowClassName}
             tbodyPosition="right"
             horizontalRenderInfo={{
               ...info,

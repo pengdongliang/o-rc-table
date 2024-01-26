@@ -72,3 +72,5 @@ export interface TableComponents {
     cell?: CustomizeComponent
   }
 }
+
+export type RowClassName<RecordType> = (record: RecordType, index: number) => string

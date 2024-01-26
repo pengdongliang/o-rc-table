@@ -11,7 +11,7 @@ import { RenderInfo } from './interfaces'
 import { BaseTableProps, type FixedShadowInfoType } from './table'
 import { getTitleFromCellRenderChildren } from './utils'
 
-export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'onRow' | 'rowKey'>> {
+export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'onRow' | 'rowKey' | 'rowClassName'>> {
   tbodyHtmlTag: 'tbody' | 'tfoot'
   data: any[]
   stickyRightOffset?: number
@@ -42,6 +42,7 @@ function HtmlTable({
   horizontalRenderInfo: hozInfo,
   tbodyPosition,
   fixedShadowInfo,
+  rowClassName,
 }: HtmlTableProps) {
   const { flat } = hozInfo
 
@@ -201,16 +202,25 @@ function HtmlTable({
       const rowIndex = verInfo.offset + i
       spanManager.stripUpwards(rowIndex)
 
+      // ====================== RowClassName ======================
+      let computeRowClassName: string
+      if (typeof rowClassName === 'string') {
+        computeRowClassName = rowClassName
+      } else if (typeof rowClassName === 'function') {
+        computeRowClassName = rowClassName(record, rowIndex)
+      }
+
       const rowProps = onRow?.(record, rowIndex)
       const rowClass = cx(
         Classes?.tableRow,
         {
           [Classes?.first]: rowIndex === verInfo.first,
           [Classes?.last]: rowIndex === verInfo.last,
-          [Classes?.even]: rowIndex % 2 === 0,
-          [Classes?.odd]: rowIndex % 2 === 1,
+          [Classes?.odd]: rowIndex % 2 === 0,
+          [Classes?.even]: rowIndex % 2 === 1,
         },
-        rowProps?.className
+        rowProps?.className,
+        computeRowClassName
       )
 
       const visibleColumnDescriptor = hozInfo.visible.concat()
@@ -252,6 +262,7 @@ function HtmlTable({
       hozInfo.visible,
       onRow,
       renderBodyCell,
+      rowClassName,
       rowKey,
       spanManager,
       tbodyPosition,
