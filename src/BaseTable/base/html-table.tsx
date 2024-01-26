@@ -32,7 +32,7 @@ export interface HtmlTableProps extends Required<Pick<BaseTableProps, 'onRow' | 
   fixedShadowInfo?: FixedShadowInfoType
 }
 
-export function HtmlTable({
+function HtmlTable({
   tbodyHtmlTag,
   onRow,
   rowKey,
@@ -272,3 +272,5 @@ export function HtmlTable({
     </TableComponent>
   )
 }
+
+export default React.memo(HtmlTable)

@@ -2,6 +2,7 @@ import cx from 'classnames'
 import { useBaseTableContext } from 'o-rc-table'
 import { getTitleFromCellRenderChildren } from 'o-rc-table/base/utils'
 import type { CSSProperties } from 'react'
+import React from 'react'
 
 import type { ColumnType } from '../interfaces'
 import { getTreeDepth, isLeafNode } from '../utils'
@@ -181,7 +182,7 @@ interface TableHeaderProps {
   fixedShadowInfo?: FixedShadowInfoType
 }
 
-export default function TableHeader({
+function TableHeader({
   info,
   theaderPosition,
   rowCount: _rowCount,
@@ -324,3 +325,5 @@ export default function TableHeader({
     </TableComponent>
   )
 }
+
+export default React.memo(TableHeader)

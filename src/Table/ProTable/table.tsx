@@ -355,4 +355,4 @@ if (process.env.NODE_ENV !== 'production') {
   Table.displayName = 'Table'
 }
 
-export { Table }
+export default React.memo(Table)

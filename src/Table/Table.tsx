@@ -22,4 +22,4 @@ if (process.env.NODE_ENV !== 'production') {
   ForwardTable.displayName = 'Table'
 }
 
-export default ForwardTable
+export default React.memo(ForwardTable)

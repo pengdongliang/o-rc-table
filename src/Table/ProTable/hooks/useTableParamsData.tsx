@@ -1,7 +1,7 @@
 import { useConfigContext, useRequest } from '@ocloud/admin-context'
 import { filterRequestParams, lowerLineToSmallHump, smallHumpToLowerLine } from '@ocloud/admin-utils'
 import { useAntdTable } from 'ahooks'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { defaultTableRequestFields } from '../config'
 import type { TableProps, UseAntdRowItemType } from '../table'
@@ -42,7 +42,6 @@ export const useTableParamsData = (props: TableProps): UseTableParamsDataResultT
     filterRequestValue = true,
     responseDataHandler,
   } = props
-  let getTableDataPromise: TableRequestParamsType | null = null
   const { tableConfig } = useConfigContext()
   const {
     current: currentFieldName = '',
@@ -59,8 +58,8 @@ export const useTableParamsData = (props: TableProps): UseTableParamsDataResultT
   const [queryParams, setQueryParams] = useState({})
   const [urlSearchParams, setUrlSearchParams] = useState<string>('')
 
-  if (propsRequest) {
-    getTableDataPromise = async (
+  const getTableDataPromise = useCallback<() => TableRequestParamsType | null>(() => {
+    return async (
       searchParams: UseAntdTablePaginationType,
       formData: Record<string, any>
     ): Promise<UseAntdRowItemType> => {
@@ -145,9 +144,22 @@ export const useTableParamsData = (props: TableProps): UseTableParamsDataResultT
         }
       }
     }
-  }
+  }, [
+    currentFieldName,
+    dataFieldName,
+    filterRequestValue,
+    initParams,
+    pageSizeFieldName,
+    propsRequest,
+    recordsFieldName,
+    request,
+    requestOptions,
+    requestParamsHandler,
+    responseDataHandler,
+    totalFieldName,
+  ])
 
-  const tableParamsData = useAntdTable(getTableDataPromise as TableRequestParamsType, {
+  const tableParamsData = useAntdTable(getTableDataPromise() as unknown as TableRequestParamsType, {
     ...useAntdTableOptions,
   })
 

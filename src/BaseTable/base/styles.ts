@@ -221,10 +221,10 @@ export type BaseTableCSSVariables = Partial<{
 }>
 
 const outerBorderStyleMixin = (Classes: BaseTableContextProps['Classes']) => css`
-  border-top: 1px solid #cccccc;
-  border-inline-end: 1px solid #cccccc;
-  border-bottom: 1px solid #cccccc;
-  border-left: 1px solid #cccccc;
+  border-top: 1px solid #e7e7e7;
+  border-inline-end: 1px solid #e7e7e7;
+  border-bottom: 1px solid #e7e7e7;
+  border-left: 1px solid #e7e7e7;
 
   td.${Classes?.first}, th.${Classes?.first} {
     border-left: none;

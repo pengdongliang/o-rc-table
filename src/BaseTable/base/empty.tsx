@@ -65,7 +65,7 @@ export function EmptyHtmlTable({
             <TdComponent
               className={cx(Classes?.tableCell, Classes?.first, Classes?.last)}
               colSpan={descriptors.length}
-              style={{ height: emptyCellHeight ?? 200 }}
+              style={{ height: emptyCellHeight ?? 120 }}
             />
           </TrComponent>
         </WrapperComponent>

@@ -73,7 +73,7 @@ const STOSingleProductionDeliveryPlan = () => {
         width: 120,
         children: [
           {
-            title: '物料组1',
+            title: '新/老品',
             dataIndex: 'materialGroup1',
             fixed: 'left',
             width: 100,
@@ -333,17 +333,23 @@ const STOSingleProductionDeliveryPlan = () => {
             ref={tableRef}
             columns={columns}
             useTableForm={useTableForm}
-            request={() => {
+            request={(options) => {
               return new Promise((resolve) => {
                 setTimeout(() => {
+                  const newDataList = JSON.parse(JSON.stringify(dataSourceMock)) as any
+                  const { materialCodes } = options?.params ?? {}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
-                  // const firstData = dataSourceMock.data.list.splice(0, 5)
+                  const firstData = newDataList.data.list.splice(0, 0)
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
-                  // dataSourceMock.data.list = firstData
-                  // dataSourceMock.data.list = firstData.concat(dataSourceMock.data.list.sort(() => Math.random() - 0.5))
-                  resolve(dataSourceMock)
+                  newDataList.data.list = firstData
+                  // newDataList.data.list = firstData.concat(newDataList.data.list.sort(() => Math.random() - 0.5))
+                  if (materialCodes) {
+                    const findItem = newDataList.data.list.find((i: any) => i?.materialCode?.includes(materialCodes))
+                    newDataList.data.list = [findItem]
+                  }
+                  resolve(newDataList)
                 }, 300)
               })
             }}

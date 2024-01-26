@@ -15,7 +15,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { BehaviorSubject, noop, Subject, Subscription } from 'rxjs'
+import { asyncScheduler, BehaviorSubject, noop, Subject, Subscription } from 'rxjs'
 import * as op from 'rxjs/operators'
 
 import type { ColumnType } from '../interfaces'
@@ -27,7 +27,7 @@ import { EmptyHtmlTable } from './empty'
 import TableHeader from './header'
 import { getFullRenderRange, makeRowHeightManager } from './helpers/rowHeightManager'
 import { TableDOMHelper } from './helpers/TableDOMUtils'
-import { HtmlTable } from './html-table'
+import HtmlTable from './html-table'
 import type {
   GetComponent,
   RenderInfo,
@@ -660,7 +660,7 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
         op.tap((nextOffsetX) => {
           syncHorizontalScroll(nextOffsetX)
         }),
-        op.debounceTime(30)
+        op.debounceTime(30, asyncScheduler)
       )
       .subscribe((nextOffsetX) => {
         updateOffsetX(nextOffsetX)
@@ -726,12 +726,12 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
               maxRenderWidth: clipRect.right - clipRect.left,
               offsetY: y,
               contentHeight: clipRect.height,
-              contentHeightChanged: false,
+              preContentHeight: clipRect.height,
             }
           }),
           op.scan((pre, cur) => ({
             ...cur,
-            contentHeightChanged: pre.maxRenderHeight === cur.maxRenderHeight,
+            preContentHeight: pre.contentHeight,
           })),
           op.distinctUntilChanged((x, y) => {
             // 如果表格区域被隐藏， 不需要触发组件重渲染
@@ -743,15 +743,16 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
               Math.abs(x.maxRenderWidth - y.maxRenderWidth) < OVERSCAN_SIZE / 2 &&
               Math.abs(x.maxRenderHeight - y.maxRenderHeight) < OVERSCAN_SIZE / 2 &&
               Math.abs(x.offsetY - y.offsetY) < OVERSCAN_SIZE / 2 &&
-              x.contentHeightChanged === y.contentHeightChanged
+              x.contentHeight >= y.contentHeight
             )
-          })
+          }),
+          op.debounceTime(30, asyncScheduler)
         )
         .subscribe((ops) => {
           setMaxRenderHeight(ops?.maxRenderHeight)
           setMaxRenderWidth(ops?.maxRenderWidth)
           setOffsetY(ops?.offsetY)
-          if (ops?.contentHeightChanged) {
+          if (ops?.preContentHeight < ops?.contentHeight) {
             setHasScrollY(true)
           }
         })
@@ -799,7 +800,15 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
     //       scrollLoad?.callback(startIndex)
     //     })
     // )
-  }, [adjustNeedRenderLock, setTableWidth, syncHorizontalScroll, updateOffsetX, updateStickyScroll, virtualDebugLabel])
+  }, [
+    adjustNeedRenderLock,
+    setHasScrollY,
+    setTableWidth,
+    syncHorizontalScroll,
+    updateOffsetX,
+    updateStickyScroll,
+    virtualDebugLabel,
+  ])
 
   /**
    * 更新 DOM 节点的引用，方便其他方法直接操作 DOM
@@ -970,4 +979,4 @@ export function genTable(shouldTriggerRender?: CompareProps<typeof BaseTable>) {
   return makeImmutable(RefTable, shouldTriggerRender) as ForwardGenericTable
 }
 
-export default RefTable
+export default React.memo(RefTable)
