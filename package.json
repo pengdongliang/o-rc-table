@@ -1,6 +1,6 @@
 {
   "name": "o-rc-table",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Table ui component for react",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
