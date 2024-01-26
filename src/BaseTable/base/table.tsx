@@ -271,7 +271,6 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
 
   const renderTableHeader = useCallback(
     (info: RenderInfo) => {
-      // TODO 在未占满高度的情况下展开行会导致表头少了滚动宽度
       const renderHeader = getTableRenderTemplate('header')
       if (typeof renderHeader === 'function') {
         return renderHeader(info, props)
@@ -726,8 +725,14 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
               maxRenderHeight: clipRect.bottom - clipRect.top,
               maxRenderWidth: clipRect.right - clipRect.left,
               offsetY: y,
+              contentHeight: clipRect.height,
+              contentHeightChanged: false,
             }
           }),
+          op.scan((pre, cur) => ({
+            ...cur,
+            contentHeightChanged: pre.maxRenderHeight === cur.maxRenderHeight,
+          })),
           op.distinctUntilChanged((x, y) => {
             // 如果表格区域被隐藏， 不需要触发组件重渲染
             if (y.maxRenderHeight === 0 && y.maxRenderWidth === 0) {
@@ -737,7 +742,8 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
             return (
               Math.abs(x.maxRenderWidth - y.maxRenderWidth) < OVERSCAN_SIZE / 2 &&
               Math.abs(x.maxRenderHeight - y.maxRenderHeight) < OVERSCAN_SIZE / 2 &&
-              Math.abs(x.offsetY - y.offsetY) < OVERSCAN_SIZE / 2
+              Math.abs(x.offsetY - y.offsetY) < OVERSCAN_SIZE / 2 &&
+              x.contentHeightChanged === y.contentHeightChanged
             )
           })
         )
@@ -745,6 +751,9 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
           setMaxRenderHeight(ops?.maxRenderHeight)
           setMaxRenderWidth(ops?.maxRenderWidth)
           setOffsetY(ops?.offsetY)
+          if (ops?.contentHeightChanged) {
+            setHasScrollY(true)
+          }
         })
     )
 

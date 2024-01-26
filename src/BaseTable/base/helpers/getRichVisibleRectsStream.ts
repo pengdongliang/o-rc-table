@@ -203,20 +203,23 @@ export function getRichVisibleRectsStream(
           scrollParentRect: getRelativeLayoutRect(commonOffsetAncestor, scrollParent),
           event,
         })),
-        op.map(({ event, scrollParentRect, targetRect }) => ({
-          event,
-          targetRect,
-          scrollParentRect,
-          offsetY: Math.max(0, scrollParentRect.top - targetRect.top),
-          // 表格的横向滚动总是发生在表格内部，所以这里不需要计算 offsetX
-          // offsetX: Math.max(0, scrollParentRect.left - targetRect.left),
-          clipRect: {
-            left: Math.max(targetRect.left, scrollParentRect.left),
-            top: Math.max(targetRect.top, scrollParentRect.top),
-            right: Math.min(targetRect.right, scrollParentRect.right),
-            bottom: Math.min(targetRect.bottom, scrollParentRect.bottom),
-          },
-        }))
+        op.map(({ event, scrollParentRect, targetRect }) => {
+          return {
+            event,
+            targetRect,
+            scrollParentRect,
+            offsetY: Math.max(0, scrollParentRect.top - targetRect.top),
+            // 表格的横向滚动总是发生在表格内部，所以这里不需要计算 offsetX
+            // offsetX: Math.max(0, scrollParentRect.left - targetRect.left),
+            clipRect: {
+              left: Math.max(targetRect.left, scrollParentRect.left),
+              top: Math.max(targetRect.top, scrollParentRect.top),
+              right: Math.min(targetRect.right, scrollParentRect.right),
+              bottom: Math.min(targetRect.bottom, scrollParentRect.bottom),
+              height: targetRect.bottom,
+            },
+          }
+        })
       )
     }),
     op.tap((rects) => {
