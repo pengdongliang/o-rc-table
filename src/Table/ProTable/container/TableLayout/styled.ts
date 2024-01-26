@@ -21,10 +21,6 @@ export const StyledTableLayout = styled.div<{ tableHeight: number }>(({ theme, t
           }
         }
       }
-
-      .${namespace}-table-container:first-of-type {
-        border-top: 1px solid #e7e7e7 !important;
-      }
     }
   `
 })

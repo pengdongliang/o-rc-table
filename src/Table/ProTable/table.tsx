@@ -301,7 +301,6 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
                     } else {
                       tableParamsData?.search?.submit()
                     }
-                    oTableRef.current?.initScrollBar()
                   }}
                   onReset={(...args) => {
                     if (typeof useTableForm?.onReset === 'function') {
@@ -309,7 +308,6 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
                     } else {
                       tableParamsData?.search?.reset()
                     }
-                    oTableRef.current?.initScrollBar()
                   }}
                 />
               ) : null}
@@ -355,4 +353,4 @@ if (process.env.NODE_ENV !== 'production') {
   Table.displayName = 'Table'
 }
 
-export default React.memo(Table)
+export { Table }

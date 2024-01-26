@@ -16,4 +16,4 @@ export type {
   UseAntdTableOptionsType,
   UseAntdTablePaginationType,
 } from './table'
-export { default as ProTable } from './table'
+export { Table as ProTable } from './table'

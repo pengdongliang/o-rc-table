@@ -34,7 +34,7 @@ export const useTableLayoutHeight = (props: TableLayoutHeightProps) => {
   const tableHeight = useMemo(() => {
     const { height = 0 } = headerRect
     const paginationHeight = pagination ? (paginationRect?.height ?? 24) + 8 : 0
-    return Math.round(remainingHeight - height - paginationHeight - 10 - 8)
+    return Math.round(remainingHeight - height - paginationHeight - 10 - 8 - 11)
   }, [headerRect, pagination, paginationRect?.height, remainingHeight])
 
   return [tableHeight]
