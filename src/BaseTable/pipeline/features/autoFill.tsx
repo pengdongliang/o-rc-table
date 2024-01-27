@@ -89,10 +89,12 @@ export const autoFillTableWidth = () => (pipeline: TablePipeline) => {
 
   function appendLastColumnWidth(cols: ColumnType[], remainingWidthSum: number) {
     const lastColumn = cols[cols.length - 1]
-    if (isLeafNode(lastColumn)) {
-      cols[cols.length - 1].width = remainingWidthSum + ((lastColumn.width as number) ?? 0)
-    } else if (lastColumn.children?.length) {
-      cols[cols.length - 1].children = appendLastColumnWidth(lastColumn.children, remainingWidthSum)
+    if (lastColumn) {
+      if (isLeafNode(lastColumn)) {
+        cols[cols.length - 1].width = remainingWidthSum + ((lastColumn.width as number) ?? 0)
+      } else if (lastColumn.children?.length) {
+        cols[cols.length - 1].children = appendLastColumnWidth(lastColumn.children, remainingWidthSum)
+      }
     }
     return cols
   }

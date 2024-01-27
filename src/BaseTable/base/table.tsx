@@ -380,13 +380,15 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
 
       // 低版本Edge浏览器下也会出现双滚动条，这里设置overflow: 'hidden'，先去掉edge的方向键控制滚动条的功能
       const virtualStyle = browserType.isIE || browserType.isEdge ? { overflow: 'hidden' } : {}
+      const slotBlankHeight = getSlotBlankHeight()
+      const slotBlankStyle = slotBlankHeight > 0 ? { height: '100%' } : {}
 
       if (dataSource.length === 0) {
         const { EmptyContent } = components ?? {}
 
         return (
           <div className={cx(tableBodyClassName, contextValue.Classes?.tableBodyEmpty)}>
-            <div className={contextValue.Classes?.virtual} tabIndex={-1} style={virtualStyle}>
+            <div className={contextValue.Classes?.virtual} tabIndex={-1} style={{ ...virtualStyle, ...slotBlankStyle }}>
               <EmptyHtmlTable
                 descriptors={info.visible}
                 loading={loading}
@@ -408,9 +410,6 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
           stickyRightOffset,
         })
       }
-
-      const slotBlankHeight = getSlotBlankHeight()
-      const slotBlankStyle = slotBlankHeight > 0 ? { height: '100%' } : {}
 
       return (
         <div className={tableBodyClassName}>
