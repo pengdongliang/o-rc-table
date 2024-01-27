@@ -2,18 +2,10 @@ import { Global } from '@emotion/react'
 import { RequestHandlerArgs, RequestOptions, type TableConfigType, useThemeContext } from '@ocloud/admin-context'
 import { usePaginationConfig } from '@ocloud/admin-hooks'
 import type { FormRef } from '@ocloud/antd'
-import {
-  Empty,
-  FormOptionsType,
-  OSearchForm,
-  Space,
-  Spin,
-  Table as ATable,
-  TableProps as ATableProps,
-} from '@ocloud/antd'
+import { FormOptionsType, OSearchForm, Space, Spin, Table as ATable, TableProps as ATableProps } from '@ocloud/antd'
 import { useCreation, useMemoizedFn, useUpdateEffect } from 'ahooks'
 import type { AntdTableOptions, Params as AntdTableParams } from 'ahooks/es/useAntdTable/types'
-import React, { useImperativeHandle, useRef, useState } from 'react'
+import React, { useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 
 import type { AnyObject } from '../../theme/interface'
 import type { TableRef as OTableRef } from '../index'
@@ -154,10 +146,11 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
   ref: React.Ref<TableRef>
 ) => {
   const [editingRowKey, setEditingRowKey] = useState('')
-  const [locale, setLocale] = useState<TableProps['locale']>({ emptyText: <div /> })
+  // const [locale, setLocale] = useState<TableProps['locale']>({ emptyText: <div /> })
   const searchFormRef = useRef<FormRef>(null)
   const tableContainerRef = useRef<HTMLDivElement | null>(null)
   const oTableRef = useRef<OTableRef>(null)
+  const now = useRef(performance.now())
 
   const { antdTheme } = useThemeContext()
   const finalTableConfig = useDefaultTableConfig<RecordType>(props)
@@ -260,17 +253,16 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
       ...tableProps?.pagination,
       ...finalTableConfig?.pagination,
     }
-  }, [paginationConfig, finalTableConfig?.pagination, tableProps?.pagination, paginationVisible])
+  }, [paginationConfig, finalTableConfig?.pagination, paginationVisible])
 
   const Component = useCreation(() => containerNode ?? TableLayout, [containerNode])
 
-  useUpdateEffect(() => {
-    const content = realDisabled ? <div /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-    setLocale({ emptyText: content })
-  }, [realDisabled])
+  // useUpdateEffect(() => {
+  //   const content = realDisabled ? <div /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+  //   setLocale({ emptyText: content })
+  // }, [realDisabled])
 
   const tableConfig = {
-    locale,
     ...customTableData,
     ...finalTableConfig,
     ...tableProps,
@@ -282,6 +274,10 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
     className: 'table_container',
     ref: oTableRef,
   }
+
+  useLayoutEffect(() => {
+    console.info('耗时: ', performance.now() - now.current)
+  })
 
   return (
     <TableProvider value={TableContextData}>
@@ -296,6 +292,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
                   ref={searchFormRef}
                   className="table-search-form_container"
                   onSubmit={(...args) => {
+                    now.current = performance.now()
                     if (typeof useTableForm?.onSubmit === 'function') {
                       useTableForm?.onSubmit?.(tableParamsData?.search?.submit, ...args)
                     } else {

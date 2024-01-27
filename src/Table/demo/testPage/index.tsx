@@ -38,7 +38,7 @@ export function filterData(item: any) {
 const STOSingleProductionDeliveryPlan = () => {
   const tableRef = useRef<TableRef>()
   const [dataList, setDataList] = useState<any>([])
-  const [expKeys, setExpKeys]: any = useState([])
+  // const [expKeys, setExpKeys]: any = useState([])
 
   const columns = useMemo(() => {
     let showDataList = []
@@ -254,9 +254,7 @@ const STOSingleProductionDeliveryPlan = () => {
       ],
       formItemAppendNodes: (
         <>
-          <Button type="default" onClick={() => setExpKeys([])}>
-            导出
-          </Button>
+          <Button type="default">导出</Button>
         </>
       ),
     }
@@ -334,6 +332,7 @@ const STOSingleProductionDeliveryPlan = () => {
             columns={columns}
             useTableForm={useTableForm}
             request={(options) => {
+              console.info('start request')
               return new Promise((resolve) => {
                 setTimeout(() => {
                   const newDataList = JSON.parse(JSON.stringify(dataSourceMock)) as any
@@ -364,11 +363,11 @@ const STOSingleProductionDeliveryPlan = () => {
               }
             }}
             expandable={{
-              expandedRowKeys: expKeys,
-              onExpand: (b: any, r: any) => {
-                const newExp: any = b ? [...expKeys, r.id] : expKeys.filter((i: any) => i !== r.id)
-                setExpKeys(newExp)
-              },
+              // expandedRowKeys: expKeys,
+              // onExpand: (b: any, r: any) => {
+              //   const newExp: any = b ? [...expKeys, r.id] : expKeys.filter((i: any) => i !== r.id)
+              //   setExpKeys(newExp)
+              // },
               expandedRowRender,
             }}
           />
