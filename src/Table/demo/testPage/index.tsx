@@ -369,6 +369,11 @@ const STOSingleProductionDeliveryPlan = () => {
               // },
               expandedRowRender,
             }}
+            rowSelection={{
+              onChange: (rowKeys, rows) => {
+                console.log('rowSelection', rowKeys, rows)
+              },
+            }}
           />
         </KeepAlive>
       </AliveScope>

@@ -251,7 +251,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
       ...tableProps?.pagination,
       ...finalTableConfig?.pagination,
     }
-  }, [paginationConfig, finalTableConfig?.pagination, paginationVisible])
+  }, [paginationConfig, finalTableConfig?.pagination, paginationVisible, dataSource])
 
   const Component = useCreation(() => containerNode ?? TableLayout, [containerNode])
 
@@ -344,5 +344,6 @@ Table.Summary = ATable.Summary
 if (process.env.NODE_ENV !== 'production') {
   Table.displayName = 'Table'
 }
+const MemoTable = React.memo(Table)
 
-export { Table }
+export default MemoTable
