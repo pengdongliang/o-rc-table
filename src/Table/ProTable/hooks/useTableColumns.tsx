@@ -103,7 +103,7 @@ export const useTableColumns = <T = Record<string, any>,>(props: UseTableColumns
             : {}
         newCol = {
           ...newCol,
-          render: (text: string, record: Record<string, any>, index: number) => (
+          render: (text, record, index) => (
             <Tooltip placement="topLeft" destroyTooltipOnHide title={text} color="orange" {...tooltipProps}>
               <div
                 style={{
@@ -138,7 +138,7 @@ export const useTableColumns = <T = Record<string, any>,>(props: UseTableColumns
       if (changeHandler || moreActions) {
         return {
           ...newCol,
-          onCell: ((record: Record<string, any>, rowIndex: number) => {
+          onCell: ((record, rowIndex) => {
             return {
               ...newCol,
               record,
@@ -174,7 +174,7 @@ export const useTableColumns = <T = Record<string, any>,>(props: UseTableColumns
   }, [
     formatMessage,
     columns,
-    // disabled,
+    disabled,
     moreActions,
     editableConfig,
     hasColumnEditable,
@@ -199,7 +199,7 @@ export const useTableColumns = <T = Record<string, any>,>(props: UseTableColumns
       components: obj,
       ...(hasColumnEditable
         ? {
-            rowClassName: (record: Record<string, any>, index: number) => {
+            rowClassName: (record, index) => {
               return (
                 'table-editable-row' +
                 ` ${typeof rowClassName === 'string' ? rowClassName : rowClassName?.(record, index, null)}`

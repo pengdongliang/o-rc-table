@@ -146,7 +146,6 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
   ref: React.Ref<TableRef>
 ) => {
   const [editingRowKey, setEditingRowKey] = useState('')
-  // const [locale, setLocale] = useState<TableProps['locale']>({ emptyText: <div /> })
   const searchFormRef = useRef<FormRef>(null)
   const tableContainerRef = useRef<HTMLDivElement | null>(null)
   const oTableRef = useRef<OTableRef>(null)
@@ -218,7 +217,6 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
     columns,
     editableConfig,
     serialNumber,
-    disabled: realDisabled,
     resizable,
     tableContainerRef,
     moreActions,
@@ -257,23 +255,20 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
 
   const Component = useCreation(() => containerNode ?? TableLayout, [containerNode])
 
-  // useUpdateEffect(() => {
-  //   const content = realDisabled ? <div /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-  //   setLocale({ emptyText: content })
-  // }, [realDisabled])
-
-  const tableConfig = {
-    ...customTableData,
-    ...finalTableConfig,
-    ...tableProps,
-    rowClassName: customTableData?.rowClassName ?? finalTableConfig?.rowClassName,
-    pagination,
-    dataSource,
-    columns: realColumns,
-    loading: !!finalTableConfig?.loading,
-    className: 'table_container',
-    ref: oTableRef,
-  }
+  const tableConfig = useCreation(() => {
+    return {
+      ...customTableData,
+      ...finalTableConfig,
+      ...tableProps,
+      rowClassName: customTableData?.rowClassName ?? finalTableConfig?.rowClassName,
+      pagination,
+      dataSource,
+      columns: realColumns,
+      loading: !!finalTableConfig?.loading,
+      className: 'table_container',
+      ref: oTableRef,
+    }
+  }, [customTableData, dataSource, finalTableConfig, pagination, realColumns, tableProps])
 
   useLayoutEffect(() => {
     console.info('耗时: ', performance.now() - now.current)

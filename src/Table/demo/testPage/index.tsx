@@ -332,7 +332,6 @@ const STOSingleProductionDeliveryPlan = () => {
             columns={columns}
             useTableForm={useTableForm}
             request={(options) => {
-              console.info('start request')
               return new Promise((resolve) => {
                 setTimeout(() => {
                   const newDataList = JSON.parse(JSON.stringify(dataSourceMock)) as any

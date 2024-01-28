@@ -59,7 +59,7 @@ export type CustomizeComponent<P = any> =
 
 export interface TableComponents {
   /** 数据为空时，表格的展示内容。 */
-  EmptyContent?: React.ComponentType
+  EmptyContent?: React.ReactNode
   table?: CustomizeComponent
   header?: {
     wrapper?: CustomizeComponent

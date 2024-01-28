@@ -33,14 +33,14 @@ export interface EmptyTableProps {
   descriptors: VisibleColumnDescriptor[]
   loading: boolean
   emptyCellHeight?: number
-  EmptyContent?: React.ComponentType
+  EmptyContent?: React.ReactNode
 }
 
 export function EmptyHtmlTable({
   descriptors,
   loading,
   emptyCellHeight,
-  EmptyContent = DefaultEmptyContent,
+  EmptyContent = <DefaultEmptyContent />,
 }: EmptyTableProps) {
   const show = !loading
 
@@ -72,7 +72,7 @@ export function EmptyHtmlTable({
       </TableComponent>
       {show && (
         <div className={Classes?.emptyWrapper} key="empty">
-          <EmptyContent />
+          {EmptyContent}
         </div>
       )}
     </>
