@@ -65,6 +65,7 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     tableHeaderCell: `${prefix}-header-cell`,
     tableHeaderCellContent: `${prefix}-header-cell-content`,
     tableHeaderCellResize: `${prefix}-header-cell-resize`,
+    tableHeaderCellResizeDragging: `${prefix}-header-cell-resize-dragging`,
     /** 单元格省略 */
     tableCellEllipsis: `${prefix}-cell-ellipsis`,
     virtualBlank: `${prefix}-virtual-blank`,

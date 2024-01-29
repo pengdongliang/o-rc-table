@@ -1,14 +1,13 @@
-/* eslint-disable */
+import styled from '@emotion/styled'
+import classnames from 'classnames'
 import React from 'react'
 import { fromEvent } from 'rxjs'
 import * as op from 'rxjs/operators'
-import styled from '@emotion/styled'
 
 import { ColumnType } from '../../interfaces'
 import { internals } from '../../internals'
 import { collectNodes, isGroupColumn, makeRecursiveMapper, mergeCellProps } from '../../utils'
 import { TablePipeline } from '../pipeline'
-import classnames from 'classnames'
 
 const TableHeaderCellResize = styled.div`
   position: absolute;
@@ -31,6 +30,14 @@ const TableHeaderCellResize = styled.div`
     height: 60%;
     top: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  &:hover,
+  &.${({ theme }) => theme?.Classes?.tableHeaderCellResizeDragging} {
+    scale: 1.2;
+    &:after {
+      background-color: #333 !important;
+    }
   }
 `
 
@@ -73,6 +80,7 @@ function disableSelect(event: Event) {
 }
 
 const stateKey = 'columnResize'
+const RESIZE_BAR_KEY = 'resizeBarKey'
 export const COLUMN_SIZE_KEY = 'columnResize'
 export const RESIZED_COLUMN_KEY = 'resizedColumn'
 export const LAST_RESIZED_COLUMN_KEY = 'lastResizedColumn'
@@ -83,6 +91,8 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
   const maxSize = opts.maxSize ?? 1000
   return function columnResizeFeature(pipeline: TablePipeline) {
     const columnSize: ColumnSize = opts.columnSize ?? pipeline.getStateAtKey(stateKey) ?? {}
+    const resizeBarSize: ColumnSize = pipeline.getStateAtKey(RESIZE_BAR_KEY) ?? {}
+
     const leafColumns = collectNodes(pipeline.getColumns(), 'leaf-only')
     leafColumns.forEach(({ dataIndex, width }) => {
       if (columnSize[dataIndex] === undefined) {
@@ -98,10 +108,17 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
     // 存在state里可能存到取不到最新的
     pipeline.setFeatureOptions(COLUMN_SIZE_KEY, columnSize)
 
-    const onChangeSize = (nextColumnSize: ColumnSize) => {
+    const onChangeSize = (nextColumnSize: ColumnSize, dataIndex: string) => {
       window.requestAnimationFrame(() => {
         pipeline.setStateAtKey(stateKey, nextColumnSize)
+        pipeline.setStateAtKey(RESIZE_BAR_KEY, { [dataIndex]: 0 })
         opts?.onChangeSize?.(nextColumnSize)
+      })
+    }
+
+    const onChangeDragBarSize = (nextColumnSize: ColumnSize) => {
+      window.requestAnimationFrame(() => {
+        pipeline.setStateAtKey(RESIZE_BAR_KEY, nextColumnSize)
       })
     }
 
@@ -117,57 +134,58 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
       const { minWidth, maxWidth } = features
       const realMinSize = typeof minWidth === 'number' ? minWidth : minSize
       const realMaxSize = typeof maxWidth === 'number' ? maxWidth : maxSize
-      const columnSize = pipeline.getFeatureOptions(COLUMN_SIZE_KEY)
-      let recordColumnSize = columnSize
+      const tempColumnSize = pipeline.getFeatureOptions(COLUMN_SIZE_KEY)
+      const nextColumnSize = { ...tempColumnSize }
+      let recordColumnSize = tempColumnSize
       e.stopPropagation()
       const nextSize$ = fromEvent<MouseEvent>(window, 'mousemove').pipe(
         op.takeUntil(fromEvent(window, 'mouseup')),
-        op.map((e) => {
-          const movingX = e.clientX
-          const nextColumnSize = { ...columnSize }
+        op.map((event) => {
+          const movingX = event.clientX
           const deltaSum = movingX - startX
           let deltaRemaining = deltaSum
           if (children?.length > 0) {
             const leafChildColumns = collectNodes(children, 'leaf-only')
-            const childrenWidthSum = leafChildColumns.reduce((sum, { dataIndex }) => {
-              return sum + columnSize[dataIndex]
+            const childrenWidthSum = leafChildColumns.reduce((sum, { dataIndex: sumDataIndex }) => {
+              return sum + tempColumnSize[sumDataIndex]
             }, 0)
-            leafChildColumns.forEach(({ dataIndex }, index) => {
-              const startSize = columnSize[dataIndex]
+            leafChildColumns.forEach(({ dataIndex: leafDataIndex }, index) => {
+              const startSize = tempColumnSize[leafDataIndex]
               const currentDeltaWidth = Math.round((deltaSum * startSize) / childrenWidthSum)
               if (index < leafChildColumns.length - 1) {
-                nextColumnSize[dataIndex] = clamp(realMinSize, startSize + currentDeltaWidth, realMaxSize)
-                changedColumnSize[dataIndex] = nextColumnSize[dataIndex]
+                nextColumnSize[leafDataIndex] = clamp(realMinSize, startSize + currentDeltaWidth, realMaxSize)
+                changedColumnSize[leafDataIndex] = nextColumnSize[leafDataIndex]
                 deltaRemaining -= currentDeltaWidth
               } else {
-                nextColumnSize[dataIndex] = clamp(realMinSize, startSize + deltaRemaining, realMaxSize)
-                changedColumnSize[dataIndex] = nextColumnSize[dataIndex]
+                nextColumnSize[leafDataIndex] = clamp(realMinSize, startSize + deltaRemaining, realMaxSize)
+                changedColumnSize[leafDataIndex] = nextColumnSize[leafDataIndex]
               }
             })
           } else {
-            const startSize = columnSize[dataIndex]
+            const startSize = tempColumnSize[dataIndex]
             nextColumnSize[dataIndex] = clamp(realMinSize, startSize + deltaSum, realMaxSize)
             changedColumnSize[dataIndex] = nextColumnSize[dataIndex]
           }
           recordColumnSize = nextColumnSize
           return nextColumnSize
-        }),
+        })
       )
 
       nextSize$.subscribe({
-        next: (nextColumnSize) => {
-          onChangeSize(nextColumnSize)
+        next: (nextSize) => {
+          onChangeDragBarSize(nextSize)
           // 由于COLUMN_RESIZE_KEY记录的是全量的列宽，此处记录被改变过的列宽
           const resizedColumnSet = pipeline.getFeatureOptions(RESIZED_COLUMN_KEY) || new Set()
-          Object.keys(changedColumnSize).forEach((dataIndex) => {
-            resizedColumnSet.add(dataIndex, changedColumnSize[dataIndex])
+          Object.keys(changedColumnSize).forEach((resizedDataIndex) => {
+            resizedColumnSet.add(resizedDataIndex, changedColumnSize[resizedDataIndex])
           })
           pipeline.setFeatureOptions(RESIZED_COLUMN_KEY, resizedColumnSet)
           pipeline.setFeatureOptions(LAST_RESIZED_COLUMN_KEY, dataIndex)
         },
         complete() {
-          const changedColumnSizes = Object.keys(changedColumnSize).map((dataIndex) => {
-            return { dataIndex, width: changedColumnSize[dataIndex] }
+          onChangeSize(nextColumnSize, dataIndex)
+          const changedColumnSizes = Object.keys(changedColumnSize).map((changedDataIndex) => {
+            return { dataIndex: changedDataIndex, width: changedColumnSize[changedDataIndex] }
           })
           window.requestAnimationFrame(() => {
             opts?.afterChangeSize?.(recordColumnSize, changedColumnSizes)
@@ -180,36 +198,48 @@ export function columnResize(opts: ColumnResizeOptions = {}) {
     const isGroup = isGroupColumn(pipeline.getColumns())
 
     return pipeline.mapColumns(
-      makeRecursiveMapper((col, {isLast}) => {
+      makeRecursiveMapper((col, { isLast }) => {
         const prevTitle = internals.safeRenderHeader(col)
         const { dataIndex, features, width } = col
+        const finalWidth = columnSize[dataIndex] ?? width
+        const dragging = resizeBarSize[dataIndex]
+        const positionRight = `${(dragging ? (finalWidth as number) - (dragging ?? 0) : 0) - 5}px`
+
         return {
           ...col,
-          width: columnSize[dataIndex] ?? width,
+          width: finalWidth,
           title: (
             <>
               {prevTitle}
               {features?.resizeable !== false &&
                 (isGroup ? (
                   <TableHeaderGroupCellResize
-                    className={classnames({[pipeline.getTableContext().Classes?.tableHeaderCellResize]: !isLast})}
+                    className={classnames({
+                      [pipeline.getTableContext().Classes?.tableHeaderCellResize]: !isLast,
+                    })}
                     onDoubleClick={(e: React.MouseEvent<HTMLSpanElement>) => handleDoubleClick(e, col)}
                     onMouseDown={(e: React.MouseEvent<HTMLSpanElement>) => handleMouseDown(e, col)}
+                    style={{ right: positionRight }}
                   />
                 ) : (
                   <TableHeaderCellResize
-                    className={classnames({[pipeline.getTableContext().Classes?.tableHeaderCellResize]: !isLast})}
+                    className={classnames({
+                      [pipeline.getTableContext().Classes?.tableHeaderCellResize]: !isLast,
+                      [pipeline.getTableContext().Classes?.tableHeaderCellResizeDragging]: positionRight !== '-5px',
+                    })}
                     onDoubleClick={(e: React.MouseEvent<HTMLSpanElement>) => handleDoubleClick(e, col)}
                     onMouseDown={(e: React.MouseEvent<HTMLSpanElement>) => handleMouseDown(e, col)}
+                    style={{ right: positionRight }}
                   />
                 ))}
             </>
           ),
-          onHeaderCell: ()=> mergeCellProps(col.onHeaderCell?.(col), {
-            className: 'resizeable',
-          }),
+          onHeaderCell: () =>
+            mergeCellProps(col.onHeaderCell?.(col), {
+              className: 'resizeable',
+            }),
         }
-      }),
+      })
     )
   }
 }
