@@ -38,7 +38,7 @@ export const TableContainerStyled = styled.div(({ theme }) => {
       .${namespace}-table-thead, .${namespace}-table-tbody {
         & > tr {
           & > th {
-            font-size: ${antdTheme.token.fontSize - 2}px;
+            font-size: ${antdTheme?.token?.fontSize - 2}px;
             font-weight: 580;
           }
 
@@ -61,7 +61,7 @@ export const TableContainerStyled = styled.div(({ theme }) => {
               font-size: 12px;
 
               &:hover {
-                color: ${antdTheme.token.colorPrimary};
+                color: ${antdTheme?.token?.colorPrimary};
               }
             }
 
@@ -100,7 +100,7 @@ export const TableContainerStyled = styled.div(({ theme }) => {
 
           :not(:has(.${namespace}-table-body-empty)) {
             td {
-              background-color: ${antdTheme.components.Table?.headerBg};
+              background-color: ${antdTheme?.components?.Table?.headerBg};
             }
           }
         }
