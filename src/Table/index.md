@@ -28,9 +28,8 @@ export default () => {
 
 ## 代码演示
 
-<!-- prettier-ignore -->
-
 <code src="./demo/basic.tsx">动态控制表格属性</code>
 
-<!-- prettier-ignore -->
 <code src="./demo/testPage/index.tsx">表格调试</code>
+
+<code src="./demo/complexPage/index.tsx">复杂表格虚拟滚动调试</code>
