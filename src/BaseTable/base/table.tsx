@@ -15,7 +15,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { asyncScheduler, BehaviorSubject, noop, Subject, Subscription } from 'rxjs'
+import { BehaviorSubject, noop, Subject, Subscription } from 'rxjs'
 import * as op from 'rxjs/operators'
 
 import type { ColumnType } from '../interfaces'
@@ -666,8 +666,8 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
       .pipe(
         op.tap((nextOffsetX) => {
           syncHorizontalScroll(nextOffsetX)
-        }),
-        op.debounceTime(30, asyncScheduler)
+        })
+        // op.debounceTime(30, asyncScheduler)
       )
       .subscribe((nextOffsetX) => {
         updateOffsetX(nextOffsetX)
@@ -752,8 +752,8 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
               Math.abs(x.offsetY - y.offsetY) < OVERSCAN_SIZE / 2 &&
               x.contentHeight >= y.contentHeight
             )
-          }),
-          op.debounceTime(30, asyncScheduler)
+          })
+          // op.debounceTime(30, asyncScheduler)
         )
         .subscribe((ops) => {
           setMaxRenderHeight(ops?.maxRenderHeight)

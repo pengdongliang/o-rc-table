@@ -1,13 +1,13 @@
-import { EditOutlined } from '@ant-design/icons'
 import type { FormOptionsType } from '@ocloud/antd'
 import { OAppContainer } from '@ocloud/antd'
+import { ForecastDetails } from '@table/demo/complexPage/components/ForecastDetails'
 import { ProTable, TableProps, TableRef } from '@table/ProTable'
-import { Button, InputNumber, message, Popconfirm, Space, Tag, Tooltip } from 'antd'
+import { Button, message, Space, Tag, Tooltip } from 'antd'
 import { useMemo, useRef, useState } from 'react'
 
 import dataSourceMock from './dataSourceMock.json'
 import storeList from './storeList.json'
-import { StyledModify, TableStyle } from './styled'
+import { TableStyle } from './styled'
 
 const Ordered = () => {
   const tableRef = useRef<TableRef>(null)
@@ -86,81 +86,7 @@ const Ordered = () => {
                     <span style={{ color: row.lockSalesResList[i]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
                       {row.lockSalesResList[i].totalSalesQty}
                     </span>
-                    <Popconfirm
-                      title="预测详情"
-                      destroyTooltipOnHide
-                      description={
-                        <>
-                          <StyledModify>
-                            {row.moq > 0 && (
-                              <div>
-                                <div>
-                                  <span className="title">MOQ:</span>
-                                  <InputNumber disabled min={0} precision={0} />
-                                </div>
-                                <div>
-                                  <span className="title">当前总需求:</span>
-                                  <InputNumber disabled min={0} precision={0} />
-                                </div>
-                                <div>
-                                  <span className="title">当前MOQ欠数:</span>
-                                  <InputNumber disabled min={0} precision={0} />
-                                </div>
-                                <div>
-                                  <span className="title">SAP剩余需求:</span>
-                                  <InputNumber disabled min={0} precision={0} />
-                                </div>
-                              </div>
-                            )}
-                            <div>
-                              <div>
-                                <span className="title">可变需求</span>
-                                <InputNumber
-                                  defaultValue={row.lockSalesResList[i]?.predictSales}
-                                  min={0}
-                                  precision={0}
-                                  onChange={() => {}}
-                                />
-                              </div>
-                              <div>
-                                <span className="title">火力池下单</span>
-                                <InputNumber
-                                  min={0}
-                                  precision={0}
-                                  disabled
-                                  defaultValue={row.lockSalesResList[i]?.dynamicPoolSales}
-                                />
-                              </div>
-                              <div>
-                                <span className="title">预测借货数量</span>
-                                <InputNumber disabled defaultValue={row.lockSalesResList[i]?.predictBorrowSales} />
-                              </div>
-                              <div>
-                                <span className="title">火力池借货数量</span>
-                                <InputNumber disabled defaultValue={row.lockSalesResList[i]?.dynamicPoolBorrowSales} />
-                              </div>
-                            </div>
-                          </StyledModify>
-                        </>
-                      }
-                      onConfirm={() => {}}
-                      onCancel={() => {}}
-                      okText="保存"
-                      cancelText="取消"
-                    >
-                      <>
-                        {!Lock && row.lockSalesResList[i].supportModifyFlag ? (
-                          <EditOutlined
-                            onClick={() => {
-                              if (row.moq <= 0) return false
-                            }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                      </>
-                      {/* <a href="#">Delete</a> */}
-                    </Popconfirm>
+                    <ForecastDetails row={row} index={i} />
                   </div>
                   <div style={{ width: '40%', borderLeft: '1px solid #E7E7E7' }}>
                     {row.lockSalesResList[i].replenishQty}
@@ -208,73 +134,7 @@ const Ordered = () => {
                   <span style={{ color: row.fickleSalesResList[i]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
                     {row.fickleSalesResList[i].totalSalesQty}
                   </span>
-                  <Popconfirm
-                    title="预测详情"
-                    destroyTooltipOnHide
-                    description={
-                      <>
-                        <StyledModify>
-                          {row.moq > 0 && (
-                            <div>
-                              <div>
-                                <span className="title">MOQ:</span>
-                                <InputNumber disabled min={0} precision={0} />
-                              </div>
-                              <div>
-                                <span className="title">当前总需求:</span>
-                                <InputNumber disabled min={0} precision={0} />
-                              </div>
-                              <div>
-                                <span className="title">当前MOQ欠数:</span>
-                                <InputNumber disabled min={0} precision={0} />
-                              </div>
-                              <div>
-                                <span className="title">SAP剩余需求:</span>
-                                <InputNumber disabled min={0} precision={0} />
-                              </div>
-                            </div>
-                          )}
-                          <div>
-                            <div>
-                              <span className="title">可变需求</span>
-                              <InputNumber
-                                min={0}
-                                precision={0}
-                                defaultValue={row.fickleSalesResList[i]?.predictSales || 0}
-                                onChange={() => {}}
-                              />
-                            </div>
-                            <div>
-                              <span className="title">火力池下单</span>
-                              <InputNumber min={0} precision={0} disabled defaultValue={dynamicPoolSales} />
-                            </div>
-                            <div>
-                              <span className="title">预测借货数量</span>
-                              <InputNumber disabled defaultValue={predictBorrowSales} />
-                            </div>
-                            <div>
-                              <span className="title">火力池借货数量</span>
-                              <InputNumber disabled defaultValue={dynamicPoolBorrowSales} />
-                            </div>
-                          </div>
-                        </StyledModify>
-                      </>
-                    }
-                    onConfirm={() => {}}
-                    onCancel={() => {}}
-                    okText="保存"
-                    cancelText="取消"
-                  >
-                    {row?.fickleSalesResList[i]?.supportModifyFlag ? (
-                      <EditOutlined
-                        onClick={() => {
-                          if (row.moq <= 0) return false
-                        }}
-                      />
-                    ) : (
-                      ''
-                    )}
-                  </Popconfirm>
+                  <ForecastDetails row={row} index={i} />
                 </div>
                 <div style={{ width: '40%', borderLeft: '1px solid #E7E7E7' }}>
                   {row.fickleSalesResList[i].replenishQty}
