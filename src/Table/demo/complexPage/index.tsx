@@ -1,17 +1,21 @@
+import { EditOutlined } from '@ant-design/icons'
 import type { FormOptionsType } from '@ocloud/antd'
 import { OAppContainer } from '@ocloud/antd'
-import { ForecastDetails } from '@table/demo/complexPage/components/ForecastDetails'
 import { ProTable, TableProps, TableRef } from '@table/ProTable'
-import { Button, message, Space, Tag, Tooltip } from 'antd'
+import { Button, message, Space, Tag } from 'antd'
 import { useMemo, useRef, useState } from 'react'
 
 import dataSourceMock from './dataSourceMock.json'
+import { useForecastDetails } from './hooks/useForecastDetails'
 import storeList from './storeList.json'
 import { TableStyle } from './styled'
 
 const Ordered = () => {
   const tableRef = useRef<TableRef>(null)
   const [dataList, setDataList]: any = useState([])
+  const [Lock] = useState(false)
+
+  const { renderPopconfirm } = useForecastDetails()
 
   // 固定需求列表处理
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -36,22 +40,17 @@ const Ordered = () => {
         render: (_text: any, row: any) => {
           return (
             <>
-              <Tooltip
-                title={`预测下单:${row?.fixedSalesResList[0]?.predictSales},火力池下单:${row.fixedSalesResList[0]?.dynamicPoolSales},借货:${row?.fixedSalesResList[0]?.borrowSales}`}
-                placement="leftBottom"
-              >
-                <div style={{ display: 'flex' }}>
-                  <div style={{ width: '70%' }}>
-                    <span style={{ color: row.fixedSalesResList[0]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
-                      {row.fixedSalesResList[0].totalSalesQty}
-                    </span>
-                    /{row.fixedSalesResList[0].allowPlaceOrderSalesQty}
-                  </div>
-                  <div style={{ width: '30%', borderLeft: '1px solid #E7E7E7' }}>
-                    {row.fixedSalesResList[0].replenishQty}
-                  </div>
+              <div style={{ display: 'flex' }}>
+                <div style={{ width: '70%' }}>
+                  <span style={{ color: row.fixedSalesResList[0]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
+                    {row.fixedSalesResList[0].totalSalesQty}
+                  </span>
+                  /{row.fixedSalesResList[0].allowPlaceOrderSalesQty}
                 </div>
-              </Tooltip>
+                <div style={{ width: '30%', borderLeft: '1px solid #E7E7E7' }}>
+                  {row.fixedSalesResList[0].replenishQty}
+                </div>
+              </div>
             </>
           )
         },
@@ -75,24 +74,33 @@ const Ordered = () => {
         dataIndex: `predictSales-${res.id}`,
         width: 130,
         render: (_text: any, row: any) => {
+          const editClsName = `predictSales-edit-${res.id}`
+          const EditItem = (
+            <EditOutlined
+              onClick={(e) => {
+                if (row.moq <= 0) return false
+                renderPopconfirm({ row, index: i, event: e, children: EditItem, clsName: editClsName })
+              }}
+            />
+          )
+
           return (
             <>
-              <Tooltip
-                title={`预测下单:${row.lockSalesResList[i]?.predictSales},火力池下单:${row.lockSalesResList[i]?.dynamicPoolSales},借货:${row?.lockSalesResList[i]?.borrowSales}`}
-                placement="leftBottom"
-              >
-                <div style={{ display: 'flex' }}>
-                  <div style={{ width: '60%' }}>
-                    <span style={{ color: row.lockSalesResList[i]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
-                      {row.lockSalesResList[i].totalSalesQty}
-                    </span>
-                    <ForecastDetails row={row} index={i} />
-                  </div>
-                  <div style={{ width: '40%', borderLeft: '1px solid #E7E7E7' }}>
-                    {row.lockSalesResList[i].replenishQty}
-                  </div>
+              <div style={{ display: 'flex' }}>
+                <div style={{ width: '60%' }}>
+                  <span style={{ color: row.lockSalesResList[i]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
+                    {row.lockSalesResList[i].totalSalesQty}
+                  </span>
+                  {!Lock && row.lockSalesResList[i].supportModifyFlag ? (
+                    <span className={editClsName}>{EditItem}</span>
+                  ) : (
+                    ''
+                  )}
                 </div>
-              </Tooltip>
+                <div style={{ width: '40%', borderLeft: '1px solid #E7E7E7' }}>
+                  {row.lockSalesResList[i].replenishQty}
+                </div>
+              </div>
             </>
           )
         },
@@ -126,7 +134,24 @@ const Ordered = () => {
         dataIndex: `predictSales-${res.id}-${i}`,
         width: 130,
         render: (_text: any, row: any) => {
-          const { dynamicPoolSales, predictBorrowSales, dynamicPoolBorrowSales } = row.fickleSalesResList[i] || {}
+          const clsName = `predictSales-edit-${res.id}-${i}`
+
+          const EditItem = (
+            <EditOutlined
+              onClick={(e) => {
+                if (row.moq <= 0) return false
+                renderPopconfirm({
+                  row,
+                  index: i,
+                  event: e,
+                  fieldsNames: { listField: 'fickleSalesResList' },
+                  children: EditItem,
+                  clsName,
+                })
+              }}
+            />
+          )
+
           return (
             <>
               <div style={{ display: 'flex' }}>
@@ -134,7 +159,7 @@ const Ordered = () => {
                   <span style={{ color: row.fickleSalesResList[i]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
                     {row.fickleSalesResList[i].totalSalesQty}
                   </span>
-                  <ForecastDetails row={row} index={i} />
+                  {row?.fickleSalesResList[i]?.supportModifyFlag ? <span className={clsName}>{EditItem}</span> : ''}
                 </div>
                 <div style={{ width: '40%', borderLeft: '1px solid #E7E7E7' }}>
                   {row.fickleSalesResList[i].replenishQty}
@@ -466,7 +491,7 @@ const Ordered = () => {
         </Button>
       </Space>
     )
-  }, [])
+  }, [Lock])
 
   return (
     <OAppContainer>
@@ -503,7 +528,7 @@ const Ordered = () => {
             const resDataList = list?.list || list
             const result = resDataList?.map((res: any) => {
               res.lockSalesResList = res.lockSalesResList.map((data: any) => {
-                return { ...data, popoverState: false }
+                return { ...data, popoverState: false, supportModifyFlag: true }
               })
               res.fickleSalesResList = res.fickleSalesResList.map((data: any) => {
                 return { ...data, popoverState: false }
