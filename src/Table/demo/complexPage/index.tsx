@@ -39,19 +39,21 @@ const Ordered = () => {
         width: 180,
         render: (_text: any, row: any) => {
           return (
-            <>
-              <div style={{ display: 'flex' }}>
-                <div style={{ width: '70%' }}>
-                  <span style={{ color: row.fixedSalesResList[0]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
-                    {row.fixedSalesResList[0].totalSalesQty}
-                  </span>
-                  /{row.fixedSalesResList[0].allowPlaceOrderSalesQty}
-                </div>
-                <div style={{ width: '30%', borderLeft: '1px solid #E7E7E7' }}>
-                  {row.fixedSalesResList[0].replenishQty}
-                </div>
+            <div
+              style={{ display: 'flex' }}
+              className="system-title"
+              title={`预测下单:${row?.fixedSalesResList[0]?.predictSales},火力池下单:${row.fixedSalesResList[0]?.dynamicPoolSales},借货:${row?.fixedSalesResList[0]?.borrowSales}`}
+            >
+              <div style={{ width: '70%' }}>
+                <span style={{ color: row.fixedSalesResList[0]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
+                  {row.fixedSalesResList[0].totalSalesQty}
+                </span>
+                /{row.fixedSalesResList[0].allowPlaceOrderSalesQty}
               </div>
-            </>
+              <div style={{ width: '30%', borderLeft: '1px solid #E7E7E7' }}>
+                {row.fixedSalesResList[0].replenishQty}
+              </div>
+            </div>
           )
         },
         onCell: () => {
@@ -85,23 +87,25 @@ const Ordered = () => {
           )
 
           return (
-            <>
-              <div style={{ display: 'flex' }}>
-                <div style={{ width: '60%' }}>
-                  <span style={{ color: row.lockSalesResList[i]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
-                    {row.lockSalesResList[i].totalSalesQty}
-                  </span>
-                  {!Lock && row.lockSalesResList[i].supportModifyFlag ? (
-                    <span className={editClsName}>{EditItem}</span>
-                  ) : (
-                    ''
-                  )}
-                </div>
-                <div style={{ width: '40%', borderLeft: '1px solid #E7E7E7' }}>
-                  {row.lockSalesResList[i].replenishQty}
-                </div>
+            <div
+              style={{ display: 'flex' }}
+              className="system-title"
+              title={`预测下单:${row.lockSalesResList[i]?.predictSales},火力池下单:${row.lockSalesResList[i]?.dynamicPoolSales},借货:${row?.lockSalesResList[i]?.borrowSales}`}
+            >
+              <div style={{ width: '60%' }}>
+                <span style={{ color: row.lockSalesResList[i]?.dynamicPoolSales > 0 ? '#6e87ee' : '' }}>
+                  {row.lockSalesResList[i].totalSalesQty}
+                </span>
+                {!Lock && row.lockSalesResList[i].supportModifyFlag ? (
+                  <span className={editClsName}>{EditItem}</span>
+                ) : (
+                  ''
+                )}
               </div>
-            </>
+              <div style={{ width: '40%', borderLeft: '1px solid #E7E7E7' }}>
+                {row.lockSalesResList[i].replenishQty}
+              </div>
+            </div>
           )
         },
         onCell: (_text: string, record: any) => {

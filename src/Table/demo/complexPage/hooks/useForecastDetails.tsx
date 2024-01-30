@@ -1,6 +1,6 @@
 import { InputNumber, Popconfirm, Tooltip, type TooltipProps } from '@ocloud/antd'
 import { StyledModify } from '@table/demo/complexPage/styled'
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import ReactDOM from 'react-dom'
 
 const defaultFieldsNames = {
@@ -16,7 +16,10 @@ export interface RenderPopconfirmType {
   clsName: string
 }
 
-export type RenderTooltipType = Pick<RenderPopconfirmType, 'event' | 'children'> & TooltipProps
+export type RenderTooltipType = Pick<RenderPopconfirmType, 'event' | 'children'> &
+  TooltipProps & {
+    open: boolean
+  }
 
 export const useForecastDetails = () => {
   const renderPopconfirm = useCallback((args: RenderPopconfirmType) => {
@@ -91,25 +94,16 @@ export const useForecastDetails = () => {
   }, [])
 
   const renderTooltip = useCallback((args: RenderTooltipType) => {
-    const { event, children, clsName, ...rest } = args
+    const { event, children, clsName, open, ...rest } = args
     const target = (event.target as any).closest(`.${clsName}`)
 
     const Item = (
-      <Tooltip
-        placement="leftBottom"
-        defaultOpen
-        destroyTooltipOnHide
-        fresh
-        mouseEnterDelay={0.5}
-        mouseLeaveDelay={0}
-        {...rest}
-      >
+      <Tooltip placement="leftBottom" defaultOpen mouseLeaveDelay={0} {...rest}>
         {children}
       </Tooltip>
     )
-
     // eslint-disable-next-line react/no-deprecated
-    target && ReactDOM.render(event.type === 'mouseleave' ? <>{children}</> : Item, target)
+    target && ReactDOM.render(open ? Item : <>{children}</>, target)
   }, [])
 
   return { renderPopconfirm, renderTooltip }

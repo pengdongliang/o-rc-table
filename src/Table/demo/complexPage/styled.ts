@@ -43,6 +43,12 @@ export const TableStyle = styled.div<StyledProps>(({ formItemOptions }) => {
     .fixed-style-brown {
       background-color: rgb(250, 205, 145) !important;
     }
+    .system-title {
+      transition: opacity 0.5s ease-in-out;
+      &:hover {
+        opacity: 1;
+      }
+    }
   `
 })
 
