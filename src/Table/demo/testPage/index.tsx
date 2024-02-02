@@ -338,7 +338,7 @@ const STOSingleProductionDeliveryPlan = () => {
                   const { materialCodes } = options?.params ?? {}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
-                  // const firstData = newDataList.data.list.splice(0, 5)
+                  // const firstData = newDataList.data.list.splice(0, 6)
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   // newDataList.data.list = firstData
@@ -369,11 +369,11 @@ const STOSingleProductionDeliveryPlan = () => {
               // },
               expandedRowRender,
             }}
-            rowSelection={{
-              onChange: (rowKeys, rows) => {
-                console.info('rowSelection', rowKeys, rows)
-              },
-            }}
+            // rowSelection={{
+            //   onChange: (rowKeys, rows) => {
+            //     console.info('rowSelection', rowKeys, rows)
+            //   },
+            // }}
           />
         </KeepAlive>
       </AliveScope>

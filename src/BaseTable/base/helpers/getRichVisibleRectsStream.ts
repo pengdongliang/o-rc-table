@@ -59,13 +59,15 @@ function accumulateScrollOffset(
 function getRelativeLayoutRect(
   base: HTMLElement | Window,
   target: HTMLElement | Window
-): { top: number; left: number; bottom: number; right: number } {
+): { top: number; left: number; bottom: number; right: number; width: number; height: number } {
   if (isWindow(target) || isHtmlOrBody(target)) {
     return {
       left: 0,
       right: window.innerWidth,
       top: 0,
       bottom: window.innerHeight,
+      width: window.innerWidth,
+      height: window.innerHeight,
     }
   }
 
@@ -97,6 +99,8 @@ function getRelativeLayoutRect(
     bottom: deltaY + target.offsetHeight,
     left: deltaX,
     right: deltaX + target.offsetWidth,
+    width: deltaX + target.offsetWidth,
+    height: deltaX + target.offsetHeight,
   }
 }
 
@@ -216,7 +220,8 @@ export function getRichVisibleRectsStream(
               top: Math.max(targetRect.top, scrollParentRect.top),
               right: Math.min(targetRect.right, scrollParentRect.right),
               bottom: Math.min(targetRect.bottom, scrollParentRect.bottom),
-              height: targetRect.bottom,
+              width: targetRect.width,
+              height: targetRect.height,
             },
           }
         })
