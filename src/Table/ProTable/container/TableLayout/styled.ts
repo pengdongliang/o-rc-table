@@ -6,16 +6,18 @@ export const StyledTableLayout = styled.div<{ tableHeight: number }>(({ theme, t
 
   return css`
     &.table_layout {
-      .${namespace}-table-container {
-        & > .${namespace}-table-body {
-          border-bottom: 1px solid #e7e7e7;
-          height: ${tableHeight}px;
+      .${namespace}-table-container:not(.${namespace}-table-is-expand-content-row .${namespace}-table-container) {
+         {
+          & > .${namespace}-table-body {
+            border-bottom: 1px solid #e7e7e7;
+            height: ${tableHeight}px;
 
-          & > table {
-            .${namespace}-table-placeholder {
-              .${namespace}-table-cell {
-                padding: 0;
-                border: 0;
+            & > table {
+              .${namespace}-table-placeholder {
+                .${namespace}-table-cell {
+                  padding: 0;
+                  border: 0;
+                }
               }
             }
           }

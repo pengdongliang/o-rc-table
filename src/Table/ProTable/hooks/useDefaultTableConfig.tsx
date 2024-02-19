@@ -22,7 +22,16 @@ export const useDefaultTableConfig = <RecordType extends AnyObject = AnyObject>(
       ...props,
     }
   }, [props])
-  const { responseDataHandler, containerNode, simple, rowKey, expandable, scroll, rowClassName } = finalProps
+  const {
+    responseDataHandler,
+    containerNode,
+    simple,
+    rowKey,
+    expandable,
+    scroll,
+    rowClassName,
+    style: styleProp,
+  } = finalProps
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([])
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -96,10 +105,21 @@ export const useDefaultTableConfig = <RecordType extends AnyObject = AnyObject>(
   }, [simple, containerNode])
 
   const realProps = useCreation<TableProps<RecordType>>(() => {
+    const style: { width?: string | number | boolean; height?: string | number | boolean } = styleProp ?? {}
+    if (scroll?.x !== undefined) {
+      style.width = scroll?.x
+    }
+    if (scroll?.y !== undefined) {
+      style.height = scroll?.y
+    }
+
     return {
       ...simpleConfig,
       ...finalProps,
-      ...(!containerNode && !simpleConfig.containerNode ? { scroll: { x: '100%', y: '100%', ...scroll } } : {}),
+      ...(!containerNode && !simpleConfig.containerNode
+        ? { style: { width: scroll?.x ?? '100%', height: scroll?.y ?? '100%' } }
+        : {}),
+      style,
       ...finalExpandable,
       rowClassName: (record, index) => {
         const classList = [index % 2 === 0 ? `${namespace}-table-row_odd` : `${namespace}-table-row_even`]
