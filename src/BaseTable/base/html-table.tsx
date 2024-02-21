@@ -77,9 +77,18 @@ function HtmlTable({
         fixedShadowInfo.right && isFixedRight && flat?.right?.[flat?.right?.length - 1]?.key === column.key
 
       let cellContent: ReactNode = value
+      const isLastFixedEllipsis = column.ellipsis && (isFixedLeftLast || isFixedRightFirst)
       if (column.render) {
-        cellContent = column.render(value, record, record.$dataIndex ?? rowIndex)
-      } else if (column.ellipsis && (isFixedLeftLast || isFixedRightFirst)) {
+        if (isLastFixedEllipsis) {
+          cellContent = (
+            <span key={column.key} className={Classes?.tableCellContent}>
+              {column.render(value, record, record.$dataIndex ?? rowIndex)}
+            </span>
+          )
+        } else {
+          cellContent = column.render(value, record, record.$dataIndex ?? rowIndex)
+        }
+      } else if (isLastFixedEllipsis) {
         cellContent = (
           <span key={column.key} className={Classes?.tableCellContent}>
             {cellContent}
