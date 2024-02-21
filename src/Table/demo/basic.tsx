@@ -223,7 +223,7 @@ export default () => {
   }, [columns])
 
   return (
-    <ConfigProvider theme={antdTheme} prefixCls="ocloud">
+    <ConfigProvider theme={antdTheme} prefixCls="pro-table">
       <Form layout="inline" style={{ marginBottom: '10px' }}>
         <Form.Item label="单元格自动省略">
           <Switch value={ellipsis} onChange={setEllipsis} />

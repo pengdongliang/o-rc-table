@@ -16,7 +16,7 @@ const defaultGetPrefixCls = (suffixCls?: string, customizePrefixCls?: string) =>
   if (customizePrefixCls) {
     return customizePrefixCls
   }
-  return suffixCls ? `ocloud-${suffixCls}` : 'ocloud'
+  return suffixCls ? `pro-table-${suffixCls}` : 'pro-table'
 }
 
 export const ConfigContext = React.createContext<ConfigConsumerProps>({

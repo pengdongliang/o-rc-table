@@ -1,7 +1,38 @@
 {
-  "extends": "@ocloud/admin-ts-config/react-library.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "types": ["node", "jest"],
   "compilerOptions": {
+    "sourceMap": false,
+    "declaration": true,
+    "jsxImportSource": "@emotion/react",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "target": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": false,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "strictNullChecks": false,
+    "downlevelIteration": true,
+    "noFallthroughCasesInSwitch": true,
+    "composite": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true,
+    "preserveSymlinks": true,
+    "noImplicitReturns": false,
     "outDir": "dist",
+    "declarationMap": false,
     "baseUrl": ".",
     "paths": {
       "@@/*": [".dumi/tmp/*"],
@@ -12,6 +43,18 @@
       "@src/*": ["src/*"]
     }
   },
+  "rules": {
+    "member-access": false,
+    "ordered-imports": false,
+    "quotemark": false,
+    "no-console": false,
+    "semicolon": false,
+    "jsx-no-lambda": false
+  },
+  "linterOptions": {
+    "exclude": ["node_modules/**/*.ts"]
+  },
   "include": ["**/*.ts", "**/*.tsx", "../../types"],
   "exclude": ["dist", "build", "node_modules"]
 }
+

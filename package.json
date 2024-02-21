@@ -6,7 +6,7 @@
   "module": "dist/es/index.js",
   "types": "dist/es/index.d.ts",
   "scripts": {
-    "start": "npm run dev",
+    "start": "pnpm run dev",
     "dev": "dumi dev",
     "build": "father build",
     "build:watch": "father dev",
@@ -16,10 +16,10 @@
     "husky:prepare": "husky install && dumi setup",
     "commit": "./node_modules/cz-customizable/standalone.js",
     "doctor": "father doctor",
-    "lint": "npm run lint:es",
+    "lint": "pnpm run lint:es",
     "lint:css": "stylelint \"{src,test}/**/*.{css,less}\"",
     "lint:es": "eslint \"{src,test}/**/*.{js,jsx,ts,tsx}\" --fix",
-    "prepublishOnly": "father doctor && npm run build",
+    "prepublishOnly": "father doctor && pnpm run build",
     "re-install": "pnpm run clean && rm pnpm-lock.yaml && pnpm install",
     "clean": "pnpm run clean:node_modules",
     "clean:node_modules": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
@@ -29,6 +29,15 @@
     "README.md",
     "CHANGELOG.md"
   ],
+  "bin": {
+    "commitlint": "node_modules/@commitlint/cli/cli.js",
+    "commit": "node_modules/cz-customizable/standalone.js"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-customizable"
+    }
+  },
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -63,17 +72,6 @@
     "@types/react-dom": "^18.2.5",
     "@types/lodash-es": "^4.17.10",
     "@umijs/lint": "^4.0.0",
-    "@ocloud/admin-eslint-config": "^1.0.0",
-    "@ocloud/admin-prettier-config": "^1.0.0",
-    "@ocloud/admin-stylelint-config": "^1.0.0",
-    "@ocloud/admin-ts-config": "^1.0.0",
-    "@ocloud/admin-commitlint-config": "^1.0.0",
-    "@ocloud/admin-commitizen-config": "^1.0.0",
-    "@ocloud/antd": "^1.2.0",
-    "@ocloud/admin-hooks": "^1.2.0",
-    "@ocloud/admin-context": "^1.2.0",
-    "@ocloud/admin-config": "^1.2.0",
-    "@ocloud/admin-utils": "^1.1.0",
     "@ant-design/icons": "^5.1.4",
     "rc-field-form": "~1.39.0",
     "react": "^18.2.0",
@@ -84,7 +82,29 @@
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "csstype": "^3.1.3",
-    "react-activation": "^0.12.4"
+    "react-activation": "^0.12.4",
+    "@typescript-eslint/eslint-plugin": "^5.30.4",
+    "@typescript-eslint/parser": "^5.30.4",
+    "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-webpack-plugin": "^3.2.0",
+    "eslint-config-next": "^13.1.1",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "typescript": "^4.9.5",
+    "prettier": "^2.8.8",
+    "@types/prettier": "^2.7.3",
+    "stylelint": "^14.16.1",
+    "stylelint-config-prettier": "^9.0.4",
+    "stylelint-config-recommended": "^9.0.0",
+    "stylelint-config-standard": "^29.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-order": "^6.0.1",
+    "stylelint-processor-styled-components": "^1.10.0"
   },
   "browserslist": [
     "last 2 versions",
