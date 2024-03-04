@@ -81,7 +81,7 @@ export default () => {
 
   const footerDataSource = [
     {
-      id: '5',
+      id: '6',
       'No': '合计',
       'order': 'AP-202009-00004',
       'from': '11111111',

@@ -84,6 +84,6 @@ export default () => {
         onChangeExtendStatus: onChangeExtendStatus,
       },
     ))
-  return <Table className="bordered" {...pipeline.getProps()} />
+  return <Table bordered {...pipeline.getProps()} />
 }
 ```

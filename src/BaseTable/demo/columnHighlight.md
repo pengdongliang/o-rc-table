@@ -78,6 +78,6 @@ export default () => {
     .input({ dataSource: dataSource, columns: columns })
     .use(features.columnRangeHover())
 
-  return <Table className="bordered" {...pipeline.getProps()} />
+  return <Table bordered {...pipeline.getProps()} />
 }
 ```

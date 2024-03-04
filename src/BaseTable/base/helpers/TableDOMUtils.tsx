@@ -37,6 +37,7 @@
 
 // 表格 DOM 结构辅助工具
 import { BaseTableContextProps } from 'o-rc-table'
+import React from 'react'
 
 export class TableDOMHelper {
   readonly artTableWrapper: HTMLDivElement

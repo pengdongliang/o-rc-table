@@ -125,9 +125,9 @@ function getPercentageColumn(pipeline: TablePipeline) {
   const cols = pipeline.getColumns()
   const remainingWidth = Math.floor(tableWidth - columnsWidthSum)
   const preRemainingWidthSum = tableWidth
-  const aa = dfs(cols, preRemainingWidthSum)
+  const arr = dfs(cols, preRemainingWidthSum)
 
-  return aa
+  return arr
 
   function dfs(columns: ColumnType[], remainingWidthSum: number) {
     const emptyColumns = columns.reduce((pre, cur) => {

@@ -239,12 +239,12 @@ const outerBorderStyleMixin = (Classes: BaseTableContextProps['Classes']) => css
     border-top: none;
   }
 
-  &${Classes?.hasFooter} tfoot tr.${Classes?.last} td {
+  &.${Classes?.hasFooter} tfoot tr.${Classes?.last} td {
     border-bottom: none;
   }
 
-  &:not(${Classes?.hasFooter}) tbody tr.${Classes?.last} td {
-    //border-bottom: none;
+  &:not(.${Classes?.hasFooter}) tbody tr.${Classes?.last} td {
+    border-bottom: none;
   }
 
   td.${Classes?.rowSpan}:not(.${Classes?.first}) {
@@ -307,7 +307,6 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
     flex-direction: column;
 
     // 表格外边框由 o-rc-table-wrapper 提供，而不是由单元格提供
-
     &.${Classes?.outerBorder} {
       ${outerBorderStyleMixin(Classes)};
     }
@@ -508,9 +507,9 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       position: relative;
     }
 
-    th.${Classes?.leaf} {
-      border-bottom: none;
-    }
+    // th.${Classes?.leaf} {
+    //   border-bottom: none;
+    // }
 
     tr.${Classes?.first} th {
       border-top: var(--header-cell-border-vertical);
@@ -532,7 +531,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       border-bottom: none;
     }
 
-    .${Classes?.artTableBordered} {
+    &.${Classes?.artTableBordered} {
       th {
         border-inline-end: var(--header-cell-border-horizontal);
       }
@@ -862,7 +861,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
 })
 export const ButtonCSS = (Classes: BaseTableContextProps['Classes']) => css`
   ${variableConst}
-  //#region 按钮
+    //#region 按钮
   .${Classes?.button} {
     color: var(--color);
     background: #ffffff;

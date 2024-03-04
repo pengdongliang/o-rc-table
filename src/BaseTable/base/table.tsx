@@ -355,17 +355,17 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   const handleRowMouseEnter = useCallback((e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
     const nodeList = domHelper.current.getRowNodeListByEvent(e)
     nodeList &&
-      nodeList.forEach((node) => {
-        node.classList.add('row-hover')
-      })
+    nodeList.forEach((node) => {
+      node.classList.add('row-hover')
+    })
   }, [])
 
   const handleRowMouseLeave = useCallback((e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
     const nodeList = domHelper.current.getRowNodeListByEvent(e)
     nodeList &&
-      nodeList.forEach((node) => {
-        node.classList.remove('row-hover')
-      })
+    nodeList.forEach((node) => {
+      node.classList.remove('row-hover')
+    })
   }, [])
 
   const getSlotBlankHeight = () => {
@@ -957,9 +957,9 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
               <div {...tableProps} className={cx(getTableClasses(namespace)?.artTable, tableProps.className)}>
                 {renderTableHeader(info)}
                 {renderTableBody(info)}
-                {footerDataSource?.length > 0 && renderTableFooter(info)}
               </div>
               {renderStickyScroll()}
+              {footerDataSource?.length > 0 && renderTableFooter(info)}
             </>
           )}
         </StyledArtTableWrapper>

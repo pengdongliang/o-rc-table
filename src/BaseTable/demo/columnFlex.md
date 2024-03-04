@@ -47,7 +47,7 @@ export default () => {
     ))
 
   return (
-      <Table {...pipeline.getProps()} className="aaa" style={{ height: 200 }} />
+      <Table {...pipeline.getProps()} style={{ height: 200 }} />
   )
 }
 ```
