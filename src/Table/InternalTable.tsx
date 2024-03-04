@@ -41,6 +41,8 @@ export interface TableProps<RecordType = any> extends Omit<BaseTableProps<Record
     sorter: SorterResult<RecordType> | SorterResult<RecordType>[],
     extra: TableCurrentDataSource<RecordType>
   ) => void
+  /** 表格底部总结栏 */
+  summary?: (data: readonly RecordType[]) => RecordType[]
 }
 
 /** Same as `TableProps` but we need record parent render times */
@@ -57,7 +59,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
   const pipeline = usePipeline({ ...props, prefixCls: customizePrefixCls })
 
   const finalProps = { ...props, ...pipeline.getProps(), prefixCls: customizePrefixCls }
-  const { prefixCls, className, style, dataSource, columns, loading, ...rest } = finalProps
+  const { prefixCls, className, style, dataSource, columns, loading, summary, ...rest } = finalProps
 
   const mergedStyle: React.CSSProperties = { ...table?.style, ...style }
   const rootCls = useCSSVarCls(prefixCls)
@@ -109,6 +111,7 @@ const InternalTable = <RecordType extends AnyObject = AnyObject>(
             className={classNames(cssVarCls, rootCls, hashId)}
             dataSource={dataSource}
             columns={columns}
+            footerDataSource={summary?.(dataSource)}
             ref={(tableRef: BaseTableRef) => pipeline.setFeatureOptions(RCTABLEREF, tableRef)}
           />
         </Spin>

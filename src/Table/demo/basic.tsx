@@ -420,6 +420,10 @@ export default () => {
             )
           },
         }}
+        summary={(data) => {
+          const totalBalance = data?.reduce((p, c) => (p += +c?.balance), 0)
+          return [{ balance: totalBalance }]
+        }}
       />
     </ConfigProvider>
   )

@@ -50,6 +50,7 @@ export const getTableClasses = (prefix = 'o-rc-table') => {
     virtual: `${prefix}-virtual`,
     tableFooter: `${prefix}-footer`,
     tableFooterMain: `${prefix}-footer-main`,
+    tableSummary: `${prefix}-summary`,
 
     /** 表格行 */
     tableRow: `${prefix}-row`,
@@ -307,6 +308,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
     flex-direction: column;
 
     // 表格外边框由 o-rc-table-wrapper 提供，而不是由单元格提供
+
     &.${Classes?.outerBorder} {
       ${outerBorderStyleMixin(Classes)};
     }
@@ -356,6 +358,10 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
     .${Classes?.tableFooter} {
       display: flex;
       flex: none;
+
+      &.${Classes?.tableSummary} {
+        border: none;
+      }
     }
 
     .${Classes?.tableBody} {
@@ -372,6 +378,10 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
       overflow-x: hidden;
       overflow-anchor: none;
       position: relative;
+
+      &.${Classes?.tableSummary} {
+        overflow: hidden;
+      }
 
       &.empty {
         position: relative;
@@ -861,7 +871,7 @@ export const StyledArtTableWrapper = styled.div(({ theme }) => {
 })
 export const ButtonCSS = (Classes: BaseTableContextProps['Classes']) => css`
   ${variableConst}
-    //#region 按钮
+  //#region 按钮
   .${Classes?.button} {
     color: var(--color);
     background: #ffffff;

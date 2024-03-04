@@ -375,7 +375,7 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
       },
 
       // ============================ Footer ============================
-      [`${componentCls}-footer`]: {
+      [`${componentCls}-footer:not(${componentCls}-summary)`]: {
         padding: `${unit(tablePaddingVertical)} ${unit(tablePaddingHorizontal)}`,
         color: tableFooterTextColor,
         background: tableFooterBg,

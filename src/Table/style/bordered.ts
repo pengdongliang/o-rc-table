@@ -54,7 +54,7 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = (token) => {
             > ${componentCls}-content,
             > ${componentCls}-header,
             > ${componentCls}-body,
-            > ${componentCls}-summary
+            ~ ${componentCls}-summary
           `]: {
             [`> ${componentCls}-virtual > table, > table`]: {
               // ============================= Cell =============================

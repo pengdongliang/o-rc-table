@@ -355,17 +355,17 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
   const handleRowMouseEnter = useCallback((e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
     const nodeList = domHelper.current.getRowNodeListByEvent(e)
     nodeList &&
-    nodeList.forEach((node) => {
-      node.classList.add('row-hover')
-    })
+      nodeList.forEach((node) => {
+        node.classList.add('row-hover')
+      })
   }, [])
 
   const handleRowMouseLeave = useCallback((e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
     const nodeList = domHelper.current.getRowNodeListByEvent(e)
     nodeList &&
-    nodeList.forEach((node) => {
-      node.classList.remove('row-hover')
-    })
+      nodeList.forEach((node) => {
+        node.classList.remove('row-hover')
+      })
   }, [])
 
   const getSlotBlankHeight = () => {
@@ -483,7 +483,11 @@ const BaseTable = (props: BaseTableProps, ref: React.Ref<BaseTableRef>) => {
 
       return (
         <div
-          className={cx(contextValue.Classes?.tableFooter, contextValue.Classes?.horizontalScrollContainer)}
+          className={cx(
+            contextValue.Classes?.tableFooter,
+            contextValue.Classes?.tableSummary,
+            contextValue.Classes?.horizontalScrollContainer
+          )}
           style={{ bottom: stickyBottom === 0 ? undefined : stickyBottom }}
         >
           <HtmlTable
